@@ -48,7 +48,6 @@ const MILESTONES = [
   },
 ];
 
-// ── PARALLAX HOOK ─────────────────────────────────────────────
 function useParallax(ref, speed = 0.3) {
   const [offset, setOffset] = useState(0);
   useEffect(() => {
@@ -66,7 +65,6 @@ function useParallax(ref, speed = 0.3) {
   return offset;
 }
 
-// ── FADE IN HOOK ──────────────────────────────────────────────
 function useFadeIn(ref, threshold = 0.15) {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -81,7 +79,6 @@ function useFadeIn(ref, threshold = 0.15) {
   return visible;
 }
 
-// ── ACTIVE MILESTONE TRACKER ──────────────────────────────────
 function useActiveIndex(refs) {
   const [active, setActive] = useState(0);
   useEffect(() => {
@@ -104,180 +101,6 @@ function useActiveIndex(refs) {
   return active;
 }
 
-// ── DESKTOP STICKY SCROLL LAYOUT ─────────────────────────────
-// ── DESKTOP STICKY SCROLL LAYOUT ─────────────────────────────
-function DesktopTimeline() {
-  const rowRefs = useRef(MILESTONES.map(() => ({ current: null })));
-  const activeIndex = useActiveIndex(rowRefs.current);
-  const sectionRef = useRef(null);
-  const parallaxOffset = useParallax(sectionRef, 0.08);
-
-  return (
-    <div
-      ref={sectionRef}
-      className="hidden sm:flex"
-      style={{
-        gap: 0,
-        position: "relative",
-        alignItems: "flex-start", // ← CRITICAL: flex-start not stretch
-      }}
-    >
-
-      {/* ── LEFT STICKY PANEL ── */}
-      <div
-        style={{
-          width: 280,
-          flexShrink: 0,
-          position: "sticky",
-          top: 24,            // ← distance from top of viewport when stuck
-          alignSelf: "flex-start", // ← CRITICAL: must be flex-start
-          zIndex: 10,
-        }}
-      >
-        {/* 3D floating year display */}
-        <div
-          style={{
-            background: "linear-gradient(145deg, #1a1916, #2e2b26)",
-            borderRadius: 20,
-            padding: "2rem 1.75rem",
-            boxShadow: "0 24px 64px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.08)",
-            transform: `translateY(${parallaxOffset * -0.4}px)`,
-            transition: "transform 0.1s linear",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          {/* Glossy shimmer */}
-          <div style={{
-            position: "absolute", top: 0, left: 0, right: 0, height: "45%",
-            background: "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 100%)",
-            borderRadius: "20px 20px 0 0", pointerEvents: "none",
-          }} />
-
-          <p style={{
-            fontSize: 10, fontWeight: 600, letterSpacing: "0.14em",
-            textTransform: "uppercase", color: "rgba(255,255,255,0.4)", margin: "0 0 12px",
-          }}>
-            Currently viewing
-          </p>
-
-          <div
-            key={activeIndex}
-            style={{
-              fontSize: "clamp(3rem, 5vw, 4.5rem)",
-              fontWeight: 800, letterSpacing: "-0.05em",
-              color: "#ffffff", lineHeight: 1, margin: "0 0 10px",
-              animation: "yearPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both",
-            }}
-          >
-            {MILESTONES[activeIndex].year}
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "0 0 16px" }}>
-            <span style={{
-              fontSize: 10, background: "rgba(255,255,255,0.12)",
-              color: "rgba(255,255,255,0.7)", borderRadius: 99, padding: "3px 10px",
-              fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase",
-            }}>
-              {MILESTONES[activeIndex].tag}
-            </span>
-          </div>
-
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", lineHeight: 1.6, margin: "0 0 20px" }}>
-            {MILESTONES[activeIndex].title}
-          </p>
-
-          {/* Progress bar */}
-          <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 99, height: 3, overflow: "hidden" }}>
-            <div style={{
-              height: "100%",
-              width: `${((activeIndex + 1) / MILESTONES.length) * 100}%`,
-              background: "linear-gradient(90deg, #4ade80, #22d3ee)",
-              borderRadius: 99,
-              transition: "width 0.5s cubic-bezier(0.4,0,0.2,1)",
-            }} />
-          </div>
-          <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", margin: "6px 0 0", letterSpacing: "0.05em" }}>
-            {activeIndex + 1} of {MILESTONES.length} milestones
-          </p>
-
-          {/* Dot nav */}
-          <div style={{ display: "flex", gap: 6, marginTop: 20, flexWrap: "wrap" }}>
-            {MILESTONES.map((_, i) => (
-              <div
-                key={i}
-                onClick={() => rowRefs.current[i]?.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                style={{
-                  width: i === activeIndex ? 20 : 6,
-                  height: 6, borderRadius: 99,
-                  background: i === activeIndex ? "#4ade80" : "rgba(255,255,255,0.2)",
-                  transition: "all 0.3s ease",
-                  cursor: "pointer",
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Mini index list */}
-        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 2 }}>
-          {MILESTONES.map((m, i) => (
-            <div
-              key={m.year}
-              onClick={() => rowRefs.current[i]?.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
-              style={{
-                display: "flex", alignItems: "center", gap: 10,
-                padding: "8px 12px", borderRadius: 10, cursor: "pointer",
-                background: i === activeIndex ? "rgba(255,255,255,0.8)" : "transparent",
-                border: `1px solid ${i === activeIndex ? "#dedad2" : "transparent"}`,
-                transition: "all 0.25s ease",
-              }}
-            >
-              <div style={{
-                width: 6, height: 6, borderRadius: "50%",
-                background: i === activeIndex ? "#1a1916" : "#c8c5bc",
-                transition: "background 0.25s", flexShrink: 0,
-              }} />
-              <span style={{
-                fontSize: 12,
-                fontWeight: i === activeIndex ? 600 : 400,
-                color: i === activeIndex ? "#1a1916" : "#a0998c",
-                letterSpacing: "-0.01em", transition: "all 0.25s",
-              }}>
-                {m.year} — {m.title}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── RIGHT SCROLLABLE CARDS ── */}
-      <div
-        style={{
-          flex: 1,
-          paddingLeft: 40,
-          display: "flex",
-          flexDirection: "column",
-          gap: 0,
-          // No overflow hidden here — lets sticky work
-        }}
-      >
-        {MILESTONES.map((m, i) => (
-          <MilestoneCard
-            key={m.year}
-            m={m}
-            index={i}
-            isLast={i === MILESTONES.length - 1}
-            isActive={i === activeIndex}
-            ref={rowRefs.current[i]}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ── MILESTONE CARD (desktop right) ───────────────────────────
 const MilestoneCard = ({ m, index, isLast, isActive, ref: outerRef }) => {
   const innerRef = useRef(null);
   const visible = useFadeIn(innerRef);
@@ -312,46 +135,32 @@ const MilestoneCard = ({ m, index, isLast, isActive, ref: outerRef }) => {
         paddingBottom: isLast ? 0 : 16,
       }}
     >
-      {/* Spine column */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 4 }}>
-        {/* Icon dot */}
-        <div
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: "50%",
-            background: isActive
-              ? "linear-gradient(145deg, #2a2926, #1a1916)"
-              : "linear-gradient(145deg, #d5d2ca, #c8c5bc)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            boxShadow: isActive
-              ? "0 6px 20px rgba(0,0,0,0.25), 0 0 0 5px #f7f5f1, inset 0 1px 0 rgba(255,255,255,0.12)"
-              : "0 2px 8px rgba(0,0,0,0.08), 0 0 0 4px #f7f5f1",
-            transition: "all 0.4s ease",
-            zIndex: 2,
-          }}
-        >
+        <div style={{
+          width: 44, height: 44, borderRadius: "50%",
+          background: isActive
+            ? "linear-gradient(145deg, #2a2926, #1a1916)"
+            : "linear-gradient(145deg, #d5d2ca, #c8c5bc)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          flexShrink: 0,
+          boxShadow: isActive
+            ? "0 6px 20px rgba(0,0,0,0.25), 0 0 0 5px #f7f5f1, inset 0 1px 0 rgba(255,255,255,0.12)"
+            : "0 2px 8px rgba(0,0,0,0.08), 0 0 0 4px #f7f5f1",
+          transition: "all 0.4s ease", zIndex: 2,
+        }}>
           <Icon size={16} color={isActive ? "#f5f4f0" : "#8a8278"} strokeWidth={1.8} />
         </div>
-
-        {/* Spine line */}
         {!isLast && (
           <div style={{
             width: 2, flex: 1, minHeight: 60,
             background: isActive
               ? "linear-gradient(to bottom, #4ade80 0%, #c8c5bc 60%, transparent 100%)"
               : "linear-gradient(to bottom, #c8c5bc 0%, #e5e3dc 80%, transparent 100%)",
-            borderRadius: 2,
-            transition: "background 0.5s ease",
-            marginTop: 2,
+            borderRadius: 2, transition: "background 0.5s ease", marginTop: 2,
           }} />
         )}
       </div>
 
-      {/* Card */}
       <div style={{ paddingLeft: 24, paddingBottom: 32 }}>
         <div
           ref={cardRef}
@@ -359,9 +168,7 @@ const MilestoneCard = ({ m, index, isLast, isActive, ref: outerRef }) => {
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => { setTilt({ x: 0, y: 0 }); setHovered(false); }}
           style={{
-            background: isActive
-              ? "#ffffff"
-              : hovered ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.5)",
+            background: isActive ? "#ffffff" : hovered ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.5)",
             border: `1.5px solid ${isActive ? "#d0cdc5" : hovered ? "#d5d2ca" : "#e8e5de"}`,
             borderRadius: 20,
             padding: "1.5rem 1.6rem",
@@ -376,12 +183,9 @@ const MilestoneCard = ({ m, index, isLast, isActive, ref: outerRef }) => {
               : hovered
                 ? "0 12px 32px rgba(0,0,0,0.09), 0 2px 8px rgba(0,0,0,0.05)"
                 : "0 2px 8px rgba(0,0,0,0.03)",
-            position: "relative",
-            overflow: "hidden",
-            willChange: "transform",
+            position: "relative", overflow: "hidden", willChange: "transform",
           }}
         >
-          {/* Active left bar */}
           {isActive && (
             <div style={{
               position: "absolute", left: 0, top: "15%", bottom: "15%",
@@ -389,60 +193,38 @@ const MilestoneCard = ({ m, index, isLast, isActive, ref: outerRef }) => {
               background: "linear-gradient(to bottom, #4ade80, #22d3ee)",
             }} />
           )}
-
-          {/* Shimmer */}
           <div style={{
             position: "absolute", top: 0, left: 0, right: 0, height: "40%",
             background: "linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%)",
             borderRadius: "20px 20px 0 0", pointerEvents: "none",
           }} />
-
-          {/* Accent glow */}
           <div style={{
             position: "absolute", width: 140, height: 140, borderRadius: "50%",
             background: `radial-gradient(circle, ${m.accent}${isActive ? "22" : "10"} 0%, transparent 70%)`,
-            top: -40, right: -40, pointerEvents: "none",
-            transition: "opacity 0.3s",
+            top: -40, right: -40, pointerEvents: "none", transition: "opacity 0.3s",
           }} />
-
-          {/* Tag + year */}
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
             <span style={{
               fontSize: 10, fontWeight: 600, letterSpacing: "0.12em",
               color: "#a0998c", textTransform: "uppercase",
-            }}>
-              {m.tag}
-            </span>
+            }}>{m.tag}</span>
             <span style={{
               fontSize: 10, background: m.accent, color: "#f5f4f0",
               borderRadius: 99, padding: "2px 10px", fontWeight: 700, letterSpacing: "0.04em",
-            }}>
-              {m.year}
-            </span>
+            }}>{m.year}</span>
             {isActive && (
               <span style={{
                 fontSize: 9, background: "linear-gradient(90deg,#4ade80,#22d3ee)",
                 color: "#fff", borderRadius: 99, padding: "2px 8px",
                 fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
-              }}>
-                Now viewing
-              </span>
+              }}>Now viewing</span>
             )}
           </div>
-
           <h3 style={{
-            fontSize: isActive ? 17 : 15,
-            fontWeight: 700, letterSpacing: "-0.025em",
-            color: "#1a1916", margin: "0 0 8px", lineHeight: 1.3,
-            transition: "font-size 0.3s",
-          }}>
-            {m.title}
-          </h3>
-
-          <p style={{
-            fontSize: 13, color: "#7a7167",
-            lineHeight: 1.7, margin: 0,
-          }}>
+            fontSize: isActive ? 17 : 15, fontWeight: 700, letterSpacing: "-0.025em",
+            color: "#1a1916", margin: "0 0 8px", lineHeight: 1.3, transition: "font-size 0.3s",
+          }}>{m.title}</h3>
+          <p style={{ fontSize: 13, color: "#7a7167", lineHeight: 1.7, margin: 0 }}>
             {m.description}
           </p>
         </div>
@@ -451,7 +233,6 @@ const MilestoneCard = ({ m, index, isLast, isActive, ref: outerRef }) => {
   );
 };
 
-// ── MOBILE CARD ───────────────────────────────────────────────
 function MobileCard({ m, index, isLast }) {
   const ref = useRef(null);
   const visible = useFadeIn(ref);
@@ -464,16 +245,12 @@ function MobileCard({ m, index, isLast }) {
     <div
       ref={ref}
       style={{
-        display: "flex",
-        gap: 14,
+        display: "flex", gap: 14,
         opacity: visible ? 1 : 0,
-        transform: visible
-          ? `translateY(${parallaxOffset}px)`
-          : `translateY(${20 + parallaxOffset}px)`,
+        transform: visible ? `translateY(${parallaxOffset}px)` : `translateY(${20 + parallaxOffset}px)`,
         transition: `opacity 0.5s ease ${delay}, transform 0.15s linear`,
       }}
     >
-      {/* Spine */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
         <div style={{
           width: 38, height: 38, borderRadius: "50%",
@@ -487,28 +264,21 @@ function MobileCard({ m, index, isLast }) {
         {!isLast && (
           <div style={{
             width: 2, flex: 1, minHeight: 28,
-            background: "linear-gradient(to bottom, #c8c5bc, #e5e3dc)",
-            borderRadius: 2,
+            background: "linear-gradient(to bottom, #c8c5bc, #e5e3dc)", borderRadius: 2,
           }} />
         )}
       </div>
-
-      {/* Card */}
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
-          flex: 1,
-          paddingBottom: isLast ? 0 : 24,
+          flex: 1, paddingBottom: isLast ? 0 : 24,
           background: hovered ? "#ffffff" : "rgba(255,255,255,0.6)",
           border: `1.5px solid ${hovered ? "#d0cdc5" : "#e8e5de"}`,
-          borderRadius: 16,
-          padding: "1rem 1.1rem",
+          borderRadius: 16, padding: "1rem 1.1rem",
           marginBottom: isLast ? 0 : 8,
           transition: "background 0.2s, border-color 0.2s, box-shadow 0.2s",
-          boxShadow: hovered
-            ? "0 12px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.05)"
-            : "0 2px 6px rgba(0,0,0,0.03)",
+          boxShadow: hovered ? "0 12px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.05)" : "0 2px 6px rgba(0,0,0,0.03)",
           position: "relative", overflow: "hidden",
         }}
       >
@@ -517,28 +287,17 @@ function MobileCard({ m, index, isLast }) {
           background: "linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%)",
           borderRadius: "16px 16px 0 0", pointerEvents: "none",
         }} />
-
         <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
-          <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", color: "#a0998c", textTransform: "uppercase" }}>
-            {m.tag}
-          </span>
-          <span style={{ fontSize: 9, background: m.accent, color: "#f5f4f0", borderRadius: 99, padding: "1.5px 8px", fontWeight: 700 }}>
-            {m.year}
-          </span>
+          <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", color: "#a0998c", textTransform: "uppercase" }}>{m.tag}</span>
+          <span style={{ fontSize: 9, background: m.accent, color: "#f5f4f0", borderRadius: 99, padding: "1.5px 8px", fontWeight: 700 }}>{m.year}</span>
         </div>
-
-        <h3 style={{ fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em", color: "#1a1916", margin: "0 0 5px", lineHeight: 1.3 }}>
-          {m.title}
-        </h3>
-        <p style={{ fontSize: 12, color: "#7a7167", lineHeight: 1.65, margin: 0 }}>
-          {m.description}
-        </p>
+        <h3 style={{ fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em", color: "#1a1916", margin: "0 0 5px", lineHeight: 1.3 }}>{m.title}</h3>
+        <p style={{ fontSize: 12, color: "#7a7167", lineHeight: 1.65, margin: 0 }}>{m.description}</p>
       </div>
     </div>
   );
 }
 
-// ── MAIN EXPORT ───────────────────────────────────────────────
 export default function TimelineSection() {
   const headerRef = useRef(null);
   const headerVisible = useFadeIn(headerRef);
@@ -565,8 +324,7 @@ export default function TimelineSection() {
         {/* Parallax blobs */}
         <div style={{
           position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden",
-          transform: `translateY(${bgParallax * 0.5}px)`,
-          transition: "transform 0.1s linear",
+          transform: `translateY(${bgParallax * 0.5}px)`, transition: "transform 0.1s linear",
         }}>
           <div style={{
             position: "absolute", width: 500, height: 500, borderRadius: "50%",
@@ -580,7 +338,7 @@ export default function TimelineSection() {
           }} />
         </div>
 
-        {/* ── WHITE CARD ── */}
+        {/* White card */}
         <div style={{
           background: "linear-gradient(160deg, #fdfcfb 0%, #f7f5f1 100%)",
           borderRadius: 24,
@@ -588,104 +346,76 @@ export default function TimelineSection() {
           boxShadow: "0 2px 24px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9)",
           border: "1px solid #e8e5de",
           position: "relative",
-          // ← NO overflow hidden here
         }}>
 
-          {/* ── HEADER — this scrolls away normally ── */}
+          {/* ── DESKTOP: sticky left + scrollable right ── */}
           <div
-            ref={headerRef}
-            style={{
-              marginBottom: "clamp(2.5rem, 6vw, 4rem)",
-              opacity: headerVisible ? 1 : 0,
-              transform: headerVisible ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity 0.6s ease, transform 0.6s ease",
-            }}
+            className="hidden sm:flex"
+            style={{ gap: 0, position: "relative", alignItems: "flex-start" }}
           >
-            <div className="inline-flex items-center gap-2 mb-3">
-              <span style={{
-                fontSize: 10, fontWeight: 600, letterSpacing: "0.14em",
-                textTransform: "uppercase", color: "#a0998c",
-                background: "#ece9e2", padding: "4px 12px",
-                borderRadius: 99, border: "1px solid #dedad2",
-              }}>
-                Our Journey
-              </span>
-            </div>
-
+            {/* LEFT STICKY PANEL */}
             <div style={{
-              display: "flex", alignItems: "flex-end",
-              justifyContent: "space-between", flexWrap: "wrap", gap: 20,
+              width: 300,
+              flexShrink: 0,
+              position: "sticky",
+              top: 24,
+              alignSelf: "flex-start",
+              zIndex: 10,
             }}>
-              <h2 style={{
-                fontSize: "clamp(1.7rem, 4.5vw, 2.6rem)",
-                fontWeight: 700, letterSpacing: "-0.03em",
-                lineHeight: 1.15, color: "#1a1916", margin: 0,
-              }}>
-                15 years of moving<br />the world forward
-              </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "flex-end" }}>
+
+              {/* ── HEADING BLOCK (sticky from the top) ── */}
+              <div
+                className="mt-5"
+                ref={headerRef}
+                style={{
+                  opacity: headerVisible ? 1 : 0,
+                  transform: headerVisible ? "translateY(0)" : "translateY(16px)",
+                  transition: "opacity 0.6s ease, transform 0.6s ease",
+                  marginBottom: 24,
+                }}
+              >
+                <div style={{ display: "inline-flex", alignItems: "center", marginBottom: 12 }}>
+                  <span style={{
+                    fontSize: 10, fontWeight: 600, letterSpacing: "0.14em",
+                    textTransform: "uppercase", color: "#a0998c",
+                    background: "#ece9e2", padding: "4px 12px",
+                    borderRadius: 99, border: "1px solid #dedad2",
+                  }}>Our Journey</span>
+                </div>
+
+                <h2 style={{
+                  fontSize: "clamp(1.4rem, 2.8vw, 1.85rem)",
+                  fontWeight: 700, letterSpacing: "-0.03em",
+                  lineHeight: 1.15, color: "#1a1916", margin: "0 0 10px",
+                }}>
+                  15 years of moving<br />the world forward
+                </h2>
+
                 <p style={{
-                  fontSize: 14, color: "#7a7167", lineHeight: 1.65,
-                  maxWidth: 320, margin: 0, textAlign: "right",
+                  fontSize: 13, color: "#7a7167", lineHeight: 1.6, margin: "0 0 14px",
                 }}>
                   From a single trade lane out of Chennai to a global network spanning 30+ countries.
                 </p>
-                <button style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  background: "#1a1916", color: "#f5f4f0",
-                  border: "none", borderRadius: 99, padding: "10px 20px",
-                  fontSize: 13, fontWeight: 600, cursor: "pointer",
-                  letterSpacing: "-0.01em",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
-                }}>
-                  Our full story <ArrowRight size={13} />
-                </button>
+                <a href="/about">
+                  <button style={{
+                    display: "inline-flex", alignItems: "center", gap: 7,
+                    background: "#1a1916", color: "#f5f4f0",
+                    border: "none", borderRadius: 99, padding: "9px 18px",
+                    fontSize: 12, fontWeight: 600, cursor: "pointer",
+                    letterSpacing: "-0.01em",
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+                  }}>
+                    Our full story <ArrowRight size={12} />
+                  </button></a>
               </div>
-            </div>
 
-            <div style={{
-              height: 1,
-              background: "linear-gradient(to right, transparent, #dedad2, transparent)",
-              marginTop: 32,
-            }} />
-          </div>
-
-          {/* ── STICKY ZONE — header scrolls away, this section sticks ── */}
-          {/* 
-            Key idea: the sticky panel's top value must account for 
-            how far down the page the white card starts.
-            Use top: 24 to stick just below the browser top edge.
-            The sticky stops naturally when the right column runs out.
-          */}
-          <div
-            className="hidden sm:flex"
-            style={{
-              gap: 0,
-              position: "relative",
-              alignItems: "flex-start", // ← CRITICAL
-            }}
-          >
-
-            {/* ── LEFT STICKY PANEL ── */}
-            <div
-              style={{
-                width: 280,
-                flexShrink: 0,
-                position: "sticky",
-                top: 24,                  // ← sticks 24px from top of viewport
-                alignSelf: "flex-start",  // ← CRITICAL, do not remove
-                zIndex: 10,
-                // Panel will naturally unstick when right column ends
-              }}
-            >
-              {/* Dark year card */}
+              {/* ── DARK YEAR CARD ── */}
               <div style={{
                 background: "linear-gradient(145deg, #1a1916, #2e2b26)",
                 borderRadius: 20,
                 padding: "2rem 1.75rem",
                 boxShadow: "0 24px 64px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.08)",
-                position: "relative",
-                overflow: "hidden",
+                position: "relative", overflow: "hidden",
               }}>
                 <div style={{
                   position: "absolute", top: 0, left: 0, right: 0, height: "45%",
@@ -696,9 +426,7 @@ export default function TimelineSection() {
                 <p style={{
                   fontSize: 10, fontWeight: 600, letterSpacing: "0.14em",
                   textTransform: "uppercase", color: "rgba(255,255,255,0.4)", margin: "0 0 12px",
-                }}>
-                  Currently viewing
-                </p>
+                }}>Currently viewing</p>
 
                 <div
                   key={activeIndex}
@@ -726,7 +454,6 @@ export default function TimelineSection() {
                   {MILESTONES[activeIndex].title}
                 </p>
 
-                {/* Progress bar */}
                 <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 99, height: 3, overflow: "hidden" }}>
                   <div style={{
                     height: "100%",
@@ -740,15 +467,13 @@ export default function TimelineSection() {
                   {activeIndex + 1} of {MILESTONES.length} milestones
                 </p>
 
-                {/* Dot nav */}
                 <div style={{ display: "flex", gap: 6, marginTop: 20, flexWrap: "wrap" }}>
                   {MILESTONES.map((_, i) => (
                     <div
                       key={i}
                       onClick={() => rowRefs.current[i]?.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
                       style={{
-                        width: i === activeIndex ? 20 : 6,
-                        height: 6, borderRadius: 99,
+                        width: i === activeIndex ? 20 : 6, height: 6, borderRadius: 99,
                         background: i === activeIndex ? "#4ade80" : "rgba(255,255,255,0.2)",
                         transition: "all 0.3s ease", cursor: "pointer",
                       }}
@@ -757,7 +482,7 @@ export default function TimelineSection() {
                 </div>
               </div>
 
-              {/* Mini index */}
+              {/* ── MINI INDEX ── */}
               <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 2 }}>
                 {MILESTONES.map((m, i) => (
                   <div
@@ -789,7 +514,7 @@ export default function TimelineSection() {
               </div>
             </div>
 
-            {/* ── RIGHT SCROLLABLE CARDS ── */}
+            {/* RIGHT SCROLLABLE CARDS */}
             <div style={{ flex: 1, paddingLeft: 40, display: "flex", flexDirection: "column" }}>
               {MILESTONES.map((m, i) => (
                 <MilestoneCard
@@ -806,10 +531,11 @@ export default function TimelineSection() {
 
           {/* ── MOBILE ── */}
           <div className="sm:hidden flex flex-col gap-0">
-  {MILESTONES.map((m, i) => (
-    <MobileCard key={m.year} m={m} index={i} isLast={i === MILESTONES.length - 1} />
-  ))}
-</div>
+            {MILESTONES.map((m, i) => (
+              <MobileCard key={m.year} m={m} index={i} isLast={i === MILESTONES.length - 1} />
+            ))}
+          </div>
+
           {/* ── FOOTER ── */}
           <div style={{
             marginTop: "clamp(2rem, 5vw, 3rem)", paddingTop: "1.5rem",
