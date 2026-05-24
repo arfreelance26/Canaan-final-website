@@ -22,7 +22,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
 }
 
 /* ── PREMIUM ANIMATIONS SYSTEM ── */
@@ -98,6 +98,29 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05), 
               0 6px 16px rgba(0, 0, 0, 0.02);
   border-color: rgba(0, 0, 0, 0.16);
+}
+
+/* ── HERO ENTRANCE ANIMATIONS ────────────────────────────── */
+/* A: clip-path bottom→top sweep  B: simultaneous blur→sharp */
+@keyframes heroRevealUp {
+  from { clip-path: inset(100% 0 0 0); opacity: 0; filter: blur(14px); }
+  to   { clip-path: inset(0%   0 0 0); opacity: 1; filter: blur(0px);  }
+}
+
+/* A: clip-path left→right sweep  B: simultaneous blur→sharp */
+@keyframes heroRevealRight {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; filter: blur(6px); }
+  to   { clip-path: inset(0 0%   0 0); opacity: 1; filter: blur(0px); }
+}
+
+@keyframes goldBarDraw {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes heroPulseDown {
+  0%, 100% { transform: translateY(0px);  }
+  50%       { transform: translateY(5px); }
 }
 
 /* Stagger delays */

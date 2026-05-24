@@ -1,557 +1,456 @@
-"use client";
+﻿"use client";
 import { useEffect, useRef, useState } from "react";
 import {
   Anchor, Globe, Package, Award,
-  TrendingUp, Users, Zap, Star, ArrowRight
+  TrendingUp, Users, Zap, Star,
 } from "lucide-react";
 
 const MILESTONES = [
   {
-    year: "2009", icon: Anchor, title: "Founded in Chennai",
-    description: "Canaan Global International was established with a single vision — to make cross-border freight simple, reliable, and human. Our first shipment crossed into Sri Lanka within weeks of opening.",
-    tag: "Origin", accent: "#1a1916",
+    year: "2009",
+    icon: Anchor,
+    title: "Founded in Chennai",
+    tag: "Origin",
+    description:
+      "Canaan Shipping & Logistics was born from a vision to simplify international freight — starting with a single trade lane between India and Europe.",
+    image:
+      "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1400&q=85",
   },
   {
-    year: "2012", icon: Globe, title: "First intercontinental route",
-    description: "We launched our inaugural Europe corridor, connecting Indian exporters to Germany and the Netherlands — our evolution from regional player to global freight partner.",
-    tag: "Expansion", accent: "#2d4a3e",
+    year: "2012",
+    icon: Globe,
+    title: "First intercontinental route",
+    tag: "Expansion",
+    description:
+      "We established our first Europe–India full-container corridor, connecting Chennai to Hamburg with reliable weekly sailings.",
+    image:
+      "https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=1400&q=85",
   },
   {
-    year: "2015", icon: Package, title: "Full customs clearance desk",
-    description: "We brought customs clearance entirely in-house — cutting client wait times by 40% and giving us end-to-end control of every shipment.",
-    tag: "Operations", accent: "#1a1916",
+    year: "2015",
+    icon: Package,
+    title: "Full customs clearance desk",
+    tag: "Operations",
+    description:
+      "A dedicated in-house customs brokerage team was formed, cutting clearance times by 40% and eliminating third-party delays for our clients.",
+    image:
+      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1400&q=85",
   },
   {
-    year: "2017", icon: Award, title: "ISO 9001 certified",
-    description: "We earned ISO 9001 certification for quality management, reinforcing our commitment to consistent, auditable processes across every office and corridor.",
-    tag: "Quality", accent: "#2d4a3e",
+    year: "2017",
+    icon: Award,
+    title: "ISO 9001 certified",
+    tag: "Quality",
+    description:
+      "Canaan achieved ISO 9001:2015 certification, formalising our quality management processes and opening doors to Tier-1 global accounts.",
+    image:
+      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1400&q=85",
   },
   {
-    year: "2019", icon: Users, title: "10,000 shipments milestone",
-    description: "A decade in, we celebrated our 10,000th delivered shipment — our client roster spanning 20 countries across four continents.",
-    tag: "Milestone", accent: "#1a1916",
+    year: "2019",
+    icon: Users,
+    title: "10,000 shipments milestone",
+    tag: "Milestone",
+    description:
+      "A decade of trust — we celebrated 10,000 successful shipments across 18 countries, with a growing team of 85 logistics professionals.",
+    image:
+      "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1400&q=85",
   },
   {
-    year: "2021", icon: Zap, title: "Real-time tracking platform",
-    description: "We launched our proprietary shipment tracking portal, giving clients live visibility into cargo status, customs stages, and delivery ETAs.",
-    tag: "Technology", accent: "#2d4a3e",
+    year: "2021",
+    icon: Zap,
+    title: "Real-time tracking platform",
+    tag: "Technology",
+    description:
+      "We launched our proprietary CargoTrack portal — live GPS, customs status, ETA updates, and document management, all in one dashboard.",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=85",
   },
   {
-    year: "2023", icon: TrendingUp, title: "30 countries, 50K+ shipments",
-    description: "Canaan now operates active trade lanes across 30+ countries. Our team of 200+ professionals moves over 50,000 shipments annually.",
-    tag: "Growth", accent: "#1a1916",
+    year: "2023",
+    icon: TrendingUp,
+    title: "30 countries, 50K+ shipments",
+    tag: "Growth",
+    description:
+      "Expansion into Southeast Asia, the Middle East, and North America brought us to 30 active trade corridors and over 50,000 lifetime shipments.",
+    image:
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1400&q=85",
   },
   {
-    year: "2025", icon: Star, title: "Best Freight Forwarder Award",
-    description: "Recognised as Best International Freight Forwarder at the Asia Logistics Awards — a testament to our people, processes, and the trust of every client.",
-    tag: "Recognition", accent: "#2d4a3e",
+    year: "2025",
+    icon: Star,
+    title: "Best Freight Forwarder Award",
+    tag: "Recognition",
+    description:
+      "Recognised at the Asia Freight & Logistics Awards as Best Freight Forwarder — a testament to our team, our clients, and 15 years of relentless commitment.",
+    image:
+      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1400&q=85",
   },
 ];
 
-function useParallax(ref, speed = 0.3) {
-  const [offset, setOffset] = useState(0);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const onScroll = () => {
-      const rect = el.getBoundingClientRect();
-      const centerY = rect.top + rect.height / 2 - window.innerHeight / 2;
-      setOffset(centerY * speed);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [speed]);
-  return offset;
-}
-
-function useFadeIn(ref, threshold = 0.15) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    if (!ref.current) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold }
-    );
-    obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return visible;
-}
-
-function useActiveIndex(refs) {
-  const [active, setActive] = useState(0);
-  useEffect(() => {
-    const onScroll = () => {
-      const mid = window.innerHeight / 2;
-      let closest = 0;
-      let closestDist = Infinity;
-      refs.forEach((ref, i) => {
-        if (!ref.current) return;
-        const rect = ref.current.getBoundingClientRect();
-        const dist = Math.abs(rect.top + rect.height / 2 - mid);
-        if (dist < closestDist) { closestDist = dist; closest = i; }
-      });
-      setActive(closest);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [refs]);
-  return active;
-}
-
-const MilestoneCard = ({ m, index, isLast, isActive, ref: outerRef }) => {
-  const innerRef = useRef(null);
-  const visible = useFadeIn(innerRef);
-  const parallaxOffset = useParallax(innerRef, 0.12);
-  const cardRef = useRef(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [hovered, setHovered] = useState(false);
-  const Icon = m.icon;
-  const delay = `${index * 80}ms`;
-
-  const handleMouseMove = (e) => {
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const dx = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
-    const dy = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
-    setTilt({ x: dy * -5, y: dx * 5 });
-  };
-
-  return (
-    <div
-      ref={(el) => { innerRef.current = el; if (outerRef) outerRef.current = el; }}
-      style={{
-        display: "grid",
-        gridTemplateColumns: "48px 1fr",
-        gap: 0,
-        alignItems: "flex-start",
-        opacity: visible ? 1 : 0,
-        transform: visible
-          ? `translateY(${parallaxOffset}px)`
-          : `translateY(${24 + parallaxOffset}px)`,
-        transition: `opacity 0.6s ease ${delay}, transform 0.15s linear`,
-        paddingBottom: isLast ? 0 : 16,
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: 4 }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: "50%",
-          background: isActive
-            ? "linear-gradient(145deg, #2a2926, #1a1916)"
-            : "linear-gradient(145deg, #d5d2ca, #c8c5bc)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          flexShrink: 0,
-          boxShadow: isActive
-            ? "0 6px 20px rgba(0,0,0,0.25), 0 0 0 5px #f7f5f1, inset 0 1px 0 rgba(255,255,255,0.12)"
-            : "0 2px 8px rgba(0,0,0,0.08), 0 0 0 4px #f7f5f1",
-          transition: "all 0.4s ease", zIndex: 2,
-        }}>
-          <Icon size={16} color={isActive ? "#f5f4f0" : "#8a8278"} strokeWidth={1.8} />
-        </div>
-        {!isLast && (
-          <div style={{
-            width: 2, flex: 1, minHeight: 60,
-            background: isActive
-              ? "linear-gradient(to bottom, #4ade80 0%, #c8c5bc 60%, transparent 100%)"
-              : "linear-gradient(to bottom, #c8c5bc 0%, #e5e3dc 80%, transparent 100%)",
-            borderRadius: 2, transition: "background 0.5s ease", marginTop: 2,
-          }} />
-        )}
-      </div>
-
-      <div style={{ paddingLeft: 24, paddingBottom: 32 }}>
-        <div
-          ref={cardRef}
-          onMouseMove={handleMouseMove}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => { setTilt({ x: 0, y: 0 }); setHovered(false); }}
-          style={{
-            background: isActive ? "#ffffff" : hovered ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.5)",
-            border: `1.5px solid ${isActive ? "#d0cdc5" : hovered ? "#d5d2ca" : "#e8e5de"}`,
-            borderRadius: 20,
-            padding: "1.5rem 1.6rem",
-            transform: hovered
-              ? `perspective(700px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(${isActive ? 14 : 8}px)`
-              : `perspective(700px) rotateX(0deg) rotateY(0deg) translateZ(${isActive ? 4 : 0}px)`,
-            transition: hovered
-              ? "transform 0.08s linear, box-shadow 0.2s, background 0.2s, border-color 0.2s"
-              : "transform 0.45s cubic-bezier(0.34,1.2,0.64,1), box-shadow 0.4s, background 0.3s, border-color 0.3s",
-            boxShadow: isActive
-              ? "0 20px 56px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.07)"
-              : hovered
-                ? "0 12px 32px rgba(0,0,0,0.09), 0 2px 8px rgba(0,0,0,0.05)"
-                : "0 2px 8px rgba(0,0,0,0.03)",
-            position: "relative", overflow: "hidden", willChange: "transform",
-          }}
-        >
-          {isActive && (
-            <div style={{
-              position: "absolute", left: 0, top: "15%", bottom: "15%",
-              width: 3, borderRadius: "0 3px 3px 0",
-              background: "linear-gradient(to bottom, #4ade80, #22d3ee)",
-            }} />
-          )}
-          <div style={{
-            position: "absolute", top: 0, left: 0, right: 0, height: "40%",
-            background: "linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%)",
-            borderRadius: "20px 20px 0 0", pointerEvents: "none",
-          }} />
-          <div style={{
-            position: "absolute", width: 140, height: 140, borderRadius: "50%",
-            background: `radial-gradient(circle, ${m.accent}${isActive ? "22" : "10"} 0%, transparent 70%)`,
-            top: -40, right: -40, pointerEvents: "none", transition: "opacity 0.3s",
-          }} />
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-            <span style={{
-              fontSize: 10, fontWeight: 600, letterSpacing: "0.12em",
-              color: "#a0998c", textTransform: "uppercase",
-            }}>{m.tag}</span>
-            <span style={{
-              fontSize: 10, background: m.accent, color: "#f5f4f0",
-              borderRadius: 99, padding: "2px 10px", fontWeight: 700, letterSpacing: "0.04em",
-            }}>{m.year}</span>
-            {isActive && (
-              <span style={{
-                fontSize: 9, background: "linear-gradient(90deg,#4ade80,#22d3ee)",
-                color: "#fff", borderRadius: 99, padding: "2px 8px",
-                fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
-              }}>Now viewing</span>
-            )}
-          </div>
-          <h3 style={{
-            fontSize: isActive ? 17 : 15, fontWeight: 700, letterSpacing: "-0.025em",
-            color: "#1a1916", margin: "0 0 8px", lineHeight: 1.3, transition: "font-size 0.3s",
-          }}>{m.title}</h3>
-          <p style={{ fontSize: 13, color: "#7a7167", lineHeight: 1.7, margin: 0 }}>
-            {m.description}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-function MobileCard({ m, index, isLast }) {
-  const ref = useRef(null);
-  const visible = useFadeIn(ref);
-  const parallaxOffset = useParallax(ref, 0.08);
-  const [hovered, setHovered] = useState(false);
-  const Icon = m.icon;
-  const delay = `${index * 70}ms`;
-
-  return (
-    <div
-      ref={ref}
-      style={{
-        display: "flex", gap: 14,
-        opacity: visible ? 1 : 0,
-        transform: visible ? `translateY(${parallaxOffset}px)` : `translateY(${20 + parallaxOffset}px)`,
-        transition: `opacity 0.5s ease ${delay}, transform 0.15s linear`,
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-        <div style={{
-          width: 38, height: 38, borderRadius: "50%",
-          background: "linear-gradient(145deg, #2a2926, #1a1916)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.2), 0 0 0 4px #f5f4f0, inset 0 1px 0 rgba(255,255,255,0.1)",
-          flexShrink: 0,
-        }}>
-          <Icon size={14} color="#f5f4f0" strokeWidth={1.8} />
-        </div>
-        {!isLast && (
-          <div style={{
-            width: 2, flex: 1, minHeight: 28,
-            background: "linear-gradient(to bottom, #c8c5bc, #e5e3dc)", borderRadius: 2,
-          }} />
-        )}
-      </div>
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          flex: 1, paddingBottom: isLast ? 0 : 24,
-          background: hovered ? "#ffffff" : "rgba(255,255,255,0.6)",
-          border: `1.5px solid ${hovered ? "#d0cdc5" : "#e8e5de"}`,
-          borderRadius: 16, padding: "1rem 1.1rem",
-          marginBottom: isLast ? 0 : 8,
-          transition: "background 0.2s, border-color 0.2s, box-shadow 0.2s",
-          boxShadow: hovered ? "0 12px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.05)" : "0 2px 6px rgba(0,0,0,0.03)",
-          position: "relative", overflow: "hidden",
-        }}
-      >
-        <div style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: "40%",
-          background: "linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%)",
-          borderRadius: "16px 16px 0 0", pointerEvents: "none",
-        }} />
-        <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
-          <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", color: "#a0998c", textTransform: "uppercase" }}>{m.tag}</span>
-          <span style={{ fontSize: 9, background: m.accent, color: "#f5f4f0", borderRadius: 99, padding: "1.5px 8px", fontWeight: 700 }}>{m.year}</span>
-        </div>
-        <h3 style={{ fontSize: 14, fontWeight: 700, letterSpacing: "-0.02em", color: "#1a1916", margin: "0 0 5px", lineHeight: 1.3 }}>{m.title}</h3>
-        <p style={{ fontSize: 12, color: "#7a7167", lineHeight: 1.65, margin: 0 }}>{m.description}</p>
-      </div>
-    </div>
-  );
-}
-
 export default function TimelineSection() {
-  const headerRef = useRef(null);
-  const headerVisible = useFadeIn(headerRef);
-  const bgRef = useRef(null);
-  const bgParallax = useParallax(bgRef, 0.15);
-  const rowRefs = useRef(MILESTONES.map(() => ({ current: null })));
-  const activeIndex = useActiveIndex(rowRefs.current);
+  const sectionRef = useRef(null);
+  const progressBarRef = useRef(null);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const activeIdxRef = useRef(0);
+
+  useEffect(() => {
+    let rafId = null;
+    const onScroll = () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const section = sectionRef.current;
+        if (!section) return;
+        const rect = section.getBoundingClientRect();
+        const scrolled = -rect.top;
+        const scrollable = rect.height - window.innerHeight;
+        if (scrollable <= 0) return;
+        const prog = Math.max(0, Math.min(1, scrolled / scrollable));
+        if (progressBarRef.current) {
+          progressBarRef.current.style.width = `${prog * 100}%`;
+        }
+        const newIdx = Math.min(
+          MILESTONES.length - 1,
+          Math.round(prog * (MILESTONES.length - 1))
+        );
+        if (newIdx !== activeIdxRef.current) {
+          activeIdxRef.current = newIdx;
+          setActiveIdx(newIdx);
+        }
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  const m = MILESTONES[activeIdx];
 
   return (
     <>
       <style>{`
-        .timeline-section * { box-sizing: border-box; }
-        @keyframes yearPop {
-          0% { opacity: 0; transform: translateY(8px) scale(0.92); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
+        .tl-overlay {
+          position: absolute; inset: 0; pointer-events: none;
+          background: linear-gradient(
+            to top,
+            rgba(245,244,240,1) 0%,
+            rgba(245,244,240,0.96) 28%,
+            rgba(245,244,240,0.55) 52%,
+            rgba(245,244,240,0.08) 78%,
+            rgba(245,244,240,0) 100%
+          );
+        }
+        @media (min-width: 1024px) {
+          .tl-overlay {
+            background: linear-gradient(
+              104deg,
+              rgba(245,244,240,1) 0%,
+              rgba(245,244,240,1) 26%,
+              rgba(245,244,240,0.94) 44%,
+              rgba(245,244,240,0.32) 63%,
+              rgba(245,244,240,0) 80%
+            );
+          }
+        }
+        .tl-content {
+          position: absolute;
+          bottom: clamp(28px, 6vh, 56px);
+          left: clamp(20px, 5vw, 32px);
+          right: clamp(20px, 5vw, 32px);
+          z-index: 3;
+        }
+        @media (min-width: 1024px) {
+          .tl-content {
+            top: 50%;
+            bottom: auto;
+            left: clamp(40px, 6vw, 88px);
+            right: auto;
+            width: min(500px, 46%);
+            transform: translateY(-56%);
+          }
+        }
+        .tl-ghost {
+          display: none;
+        }
+        @media (min-width: 1024px) {
+          .tl-ghost {
+            display: block;
+            position: absolute;
+            right: 3%;
+            bottom: 5%;
+            z-index: 2;
+            pointer-events: none;
+            user-select: none;
+            font-size: clamp(8rem, 18vw, 15rem);
+            font-weight: 900;
+            letter-spacing: -0.06em;
+            line-height: 1;
+          }
+        }
+        .tl-topbar {
+          position: absolute;
+          top: clamp(18px, 3.2vh, 38px);
+          left: clamp(20px, 5vw, 32px);
+          right: clamp(20px, 5vw, 32px);
+          z-index: 4;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        @media (min-width: 1024px) {
+          .tl-topbar {
+            left: clamp(40px, 6vw, 88px);
+            right: clamp(40px, 6vw, 88px);
+          }
+        }
+        @keyframes tlUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes tlImgIn {
+          from { opacity: 0; transform: scale(1.04); }
+          to   { opacity: 1; transform: scale(1); }
         }
       `}</style>
 
       <section
-        ref={bgRef}
-        className="timeline-section relative font-sans"
-        style={{ background: "#f5f4f0", padding: "0 1.25rem 1.25rem" }}
+        ref={sectionRef}
+        style={{ height: `${MILESTONES.length * 100}vh`, position: "relative" }}
+        className="font-sans"
       >
-        {/* Parallax blobs */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden",
-          transform: `translateY(${bgParallax * 0.5}px)`, transition: "transform 0.1s linear",
-        }}>
-          <div style={{
-            position: "absolute", width: 500, height: 500, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(74,222,128,0.06) 0%, transparent 70%)",
-            top: "10%", right: "-10%",
-          }} />
-          <div style={{
-            position: "absolute", width: 400, height: 400, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 70%)",
-            bottom: "20%", left: "-5%",
-          }} />
-        </div>
+        {/* ── STICKY VIEWPORT PANEL ── */}
+        <div
+          style={{
+            position: "sticky",
+            top: 0,
+            height: "100vh",
+            overflow: "hidden",
+            background: "#f5f4f0",
+          }}
+        >
+          {/* Background images — crossfade */}
+          {MILESTONES.map((mi, i) => (
+            <img
+              key={i}
+              src={mi.image}
+              alt=""
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+                opacity: i === activeIdx ? 1 : 0,
+                transition: "opacity 1.1s cubic-bezier(0.4,0,0.2,1)",
+                willChange: "opacity",
+              }}
+            />
+          ))}
 
-        {/* White card */}
-        <div style={{
-          background: "linear-gradient(160deg, #fdfcfb 0%, #f7f5f1 100%)",
-          borderRadius: 24,
-          padding: "clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 5vw, 3.5rem)",
-          boxShadow: "0 2px 24px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9)",
-          border: "1px solid #e8e5de",
-          position: "relative",
-        }}>
+          {/* Directional warm overlay */}
+          <div className="tl-overlay" style={{ zIndex: 1 }} />
 
-          {/* ── DESKTOP: sticky left + scrollable right ── */}
+          {/* Bottom fade reinforcement */}
           <div
-            className="hidden sm:flex"
-            style={{ gap: 0, position: "relative", alignItems: "flex-start" }}
-          >
-            {/* LEFT STICKY PANEL */}
-            <div style={{
-              width: 300,
-              flexShrink: 0,
-              position: "sticky",
-              top: 24,
-              alignSelf: "flex-start",
-              zIndex: 10,
-            }}>
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "18%",
+              background:
+                "linear-gradient(to top, rgba(245,244,240,0.9), transparent)",
+              zIndex: 2,
+              pointerEvents: "none",
+            }}
+          />
 
-              {/* ── HEADING BLOCK (sticky from the top) ── */}
-              <div
-                className="mt-5"
-                ref={headerRef}
-                style={{
-                  opacity: headerVisible ? 1 : 0,
-                  transform: headerVisible ? "translateY(0)" : "translateY(16px)",
-                  transition: "opacity 0.6s ease, transform 0.6s ease",
-                  marginBottom: 24,
-                }}
-              >
-                <div style={{ display: "inline-flex", alignItems: "center", marginBottom: 12 }}>
-                  <span style={{
-                    fontSize: 10, fontWeight: 600, letterSpacing: "0.14em",
-                    textTransform: "uppercase", color: "#a0998c",
-                    background: "#ece9e2", padding: "4px 12px",
-                    borderRadius: 99, border: "1px solid #dedad2",
-                  }}>Our Journey</span>
-                </div>
-
-                <h2 style={{
-                  fontSize: "clamp(1.4rem, 2.8vw, 1.85rem)",
-                  fontWeight: 700, letterSpacing: "-0.03em",
-                  lineHeight: 1.15, color: "#1a1916", margin: "0 0 10px",
-                }}>
-                  15 years of moving<br />the world forward
-                </h2>
-
-                <p style={{
-                  fontSize: 13, color: "#7a7167", lineHeight: 1.6, margin: "0 0 14px",
-                }}>
-                  From a single trade lane out of Chennai to a global network spanning 30+ countries.
-                </p>
-                <a href="/about">
-                  <button style={{
-                    display: "inline-flex", alignItems: "center", gap: 7,
-                    background: "#1a1916", color: "#f5f4f0",
-                    border: "none", borderRadius: 99, padding: "9px 18px",
-                    fontSize: 12, fontWeight: 600, cursor: "pointer",
-                    letterSpacing: "-0.01em",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
-                  }}>
-                    Our full story <ArrowRight size={12} />
-                  </button></a>
-              </div>
-
-              {/* ── DARK YEAR CARD ── */}
-              <div style={{
-                background: "linear-gradient(145deg, #1a1916, #2e2b26)",
-                borderRadius: 20,
-                padding: "2rem 1.75rem",
-                boxShadow: "0 24px 64px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.08)",
-                position: "relative", overflow: "hidden",
-              }}>
-                <div style={{
-                  position: "absolute", top: 0, left: 0, right: 0, height: "45%",
-                  background: "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 100%)",
-                  borderRadius: "20px 20px 0 0", pointerEvents: "none",
-                }} />
-
-                <p style={{
-                  fontSize: 10, fontWeight: 600, letterSpacing: "0.14em",
-                  textTransform: "uppercase", color: "rgba(255,255,255,0.4)", margin: "0 0 12px",
-                }}>Currently viewing</p>
-
-                <div
-                  key={activeIndex}
-                  style={{
-                    fontSize: "clamp(3rem, 5vw, 4.5rem)",
-                    fontWeight: 800, letterSpacing: "-0.05em",
-                    color: "#ffffff", lineHeight: 1, margin: "0 0 10px",
-                    animation: "yearPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both",
-                  }}
-                >
-                  {MILESTONES[activeIndex].year}
-                </div>
-
-                <span style={{
-                  fontSize: 10, background: "rgba(255,255,255,0.12)",
-                  color: "rgba(255,255,255,0.7)", borderRadius: 99,
-                  padding: "3px 10px", fontWeight: 600,
-                  letterSpacing: "0.08em", textTransform: "uppercase",
-                  display: "inline-block", marginBottom: 16,
-                }}>
-                  {MILESTONES[activeIndex].tag}
-                </span>
-
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", lineHeight: 1.6, margin: "0 0 20px" }}>
-                  {MILESTONES[activeIndex].title}
-                </p>
-
-                <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 99, height: 3, overflow: "hidden" }}>
-                  <div style={{
-                    height: "100%",
-                    width: `${((activeIndex + 1) / MILESTONES.length) * 100}%`,
-                    background: "linear-gradient(90deg, #4ade80, #22d3ee)",
-                    borderRadius: 99,
-                    transition: "width 0.5s cubic-bezier(0.4,0,0.2,1)",
-                  }} />
-                </div>
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", margin: "6px 0 0", letterSpacing: "0.05em" }}>
-                  {activeIndex + 1} of {MILESTONES.length} milestones
-                </p>
-
-                <div style={{ display: "flex", gap: 6, marginTop: 20, flexWrap: "wrap" }}>
-                  {MILESTONES.map((_, i) => (
-                    <div
-                      key={i}
-                      onClick={() => rowRefs.current[i]?.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                      style={{
-                        width: i === activeIndex ? 20 : 6, height: 6, borderRadius: 99,
-                        background: i === activeIndex ? "#4ade80" : "rgba(255,255,255,0.2)",
-                        transition: "all 0.3s ease", cursor: "pointer",
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* ── MINI INDEX ── */}
-              <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 2 }}>
-                {MILESTONES.map((m, i) => (
-                  <div
-                    key={m.year}
-                    onClick={() => rowRefs.current[i]?.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 10,
-                      padding: "8px 12px", borderRadius: 10, cursor: "pointer",
-                      background: i === activeIndex ? "rgba(255,255,255,0.8)" : "transparent",
-                      border: `1px solid ${i === activeIndex ? "#dedad2" : "transparent"}`,
-                      transition: "all 0.25s ease",
-                    }}
-                  >
-                    <div style={{
-                      width: 6, height: 6, borderRadius: "50%",
-                      background: i === activeIndex ? "#1a1916" : "#c8c5bc",
-                      transition: "background 0.25s", flexShrink: 0,
-                    }} />
-                    <span style={{
-                      fontSize: 12,
-                      fontWeight: i === activeIndex ? 600 : 400,
-                      color: i === activeIndex ? "#1a1916" : "#a0998c",
-                      letterSpacing: "-0.01em", transition: "all 0.25s",
-                    }}>
-                      {m.year} — {m.title}
-                    </span>
-                  </div>
-                ))}
-              </div>
+          {/* Ghost year on image side (desktop only) */}
+          {MILESTONES.map((mi, i) => (
+            <div
+              key={i}
+              className="tl-ghost"
+              style={{
+                color: "rgba(255,255,255,0.09)",
+                opacity: i === activeIdx ? 1 : 0,
+                transition: "opacity 1.1s ease",
+              }}
+            >
+              {mi.year}
             </div>
+          ))}
 
-            {/* RIGHT SCROLLABLE CARDS */}
-            <div style={{ flex: 1, paddingLeft: 40, display: "flex", flexDirection: "column" }}>
-              {MILESTONES.map((m, i) => (
-                <MilestoneCard
-                  key={m.year}
-                  m={m}
-                  index={i}
-                  isLast={i === MILESTONES.length - 1}
-                  isActive={i === activeIndex}
-                  ref={rowRefs.current[i]}
+          {/* ── Top bar ── */}
+          <div className="tl-topbar">
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "#8a6f24",
+              }}
+            >
+              Our Journey
+            </span>
+
+            {/* Pill progress dots */}
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              {MILESTONES.map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    height: 6,
+                    width: i === activeIdx ? 22 : 6,
+                    borderRadius: 3,
+                    background:
+                      i === activeIdx
+                        ? "#c8a84b"
+                        : "rgba(10,9,8,0.12)",
+                    transition:
+                      "width 0.5s cubic-bezier(0.34,1.2,0.64,1), background 0.35s ease",
+                  }}
                 />
               ))}
             </div>
           </div>
 
-          {/* ── MOBILE ── */}
-          <div className="sm:hidden flex flex-col gap-0">
-            {MILESTONES.map((m, i) => (
-              <MobileCard key={m.year} m={m} index={i} isLast={i === MILESTONES.length - 1} />
-            ))}
+          {/* ── Main content block ── */}
+          <div className="tl-content">
+            {/* Year watermark */}
+            <div
+              key={`yw-${activeIdx}`}
+              style={{
+                fontSize: "clamp(5.5rem, 13vw, 10.5rem)",
+                fontWeight: 900,
+                letterSpacing: "-0.06em",
+                lineHeight: 0.85,
+                color: "#0a0908",
+                opacity: 0.055,
+                marginBottom: "-0.15em",
+                marginLeft: "-0.035em",
+                userSelect: "none",
+                animation: "tlUp 0.5s cubic-bezier(0.22,1,0.36,1) both",
+              }}
+            >
+              {m.year}
+            </div>
+
+            {/* Tag row */}
+            <div
+              key={`tag-${activeIdx}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 14,
+                animation: "tlUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.06s both",
+              }}
+            >
+              <div
+                style={{ width: 28, height: 1.5, background: "#c8a84b", flexShrink: 0 }}
+              />
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "#8a6f24",
+                }}
+              >
+                {m.tag}
+              </span>
+            </div>
+
+            {/* Title */}
+            <h2
+              key={`title-${activeIdx}`}
+              style={{
+                fontSize: "clamp(1.8rem, 4.5vw, 3.1rem)",
+                fontWeight: 800,
+                letterSpacing: "-0.04em",
+                lineHeight: 1.05,
+                color: "#0a0908",
+                margin: "0 0 16px",
+                animation: "tlUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.11s both",
+              }}
+            >
+              {m.title}
+            </h2>
+
+            {/* Description */}
+            <p
+              key={`desc-${activeIdx}`}
+              style={{
+                fontSize: "clamp(0.82rem, 1.4vw, 0.94rem)",
+                color: "rgba(10,9,8,0.52)",
+                lineHeight: 1.75,
+                margin: "0 0 24px",
+                maxWidth: 400,
+                animation: "tlUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.16s both",
+              }}
+            >
+              {m.description}
+            </p>
+
+            {/* Counter */}
+            <div
+              key={`count-${activeIdx}`}
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                gap: 6,
+                animation: "tlUp 0.55s cubic-bezier(0.22,1,0.36,1) 0.21s both",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "clamp(1rem, 2.5vw, 1.5rem)",
+                  fontWeight: 800,
+                  letterSpacing: "-0.03em",
+                  color: "#0a0908",
+                }}
+              >
+                {String(activeIdx + 1).padStart(2, "0")}
+              </span>
+              <span
+                style={{
+                  fontSize: 12,
+                  color: "rgba(10,9,8,0.28)",
+                  fontWeight: 500,
+                }}
+              >
+                &thinsp;/&thinsp;{String(MILESTONES.length).padStart(2, "0")}
+              </span>
+            </div>
           </div>
 
-          {/* ── FOOTER ── */}
-          <div style={{
-            marginTop: "clamp(2rem, 5vw, 3rem)", paddingTop: "1.5rem",
-            borderTop: "1px solid #ece9e2",
-            display: "flex", alignItems: "center",
-            justifyContent: "space-between", flexWrap: "wrap", gap: 16,
-          }}>
-            <p style={{ fontSize: 12, color: "#a0998c", margin: 0 }}>
-              Est. 2009 · Chennai, India · Worldwide operations
-            </p>
-            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              {["🇮🇳", "🇩🇪", "🇦🇪", "🇺🇸", "🇯🇵", "🇸🇬", "🇬🇧"].map((flag, i) => (
-                <span key={i} style={{ fontSize: 18 }}>{flag}</span>
-              ))}
-              <span style={{ fontSize: 12, color: "#a0998c", marginLeft: 4 }}>+23</span>
-            </div>
+          {/* ── Gold progress bar ── */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 3,
+              background: "rgba(10,9,8,0.07)",
+              zIndex: 5,
+            }}
+          >
+            <div
+              ref={progressBarRef}
+              style={{
+                height: "100%",
+                width: "0%",
+                background: "linear-gradient(to right, #c8a84b, #d4af37)",
+              }}
+            />
           </div>
         </div>
       </section>
