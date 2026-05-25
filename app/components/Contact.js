@@ -49,16 +49,15 @@ export default function ContactSection() {
   };
 
   return (
-    <section 
+    <section
       ref={sectionRef}
-      id="contact" 
+      id="contact"
       className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 overflow-hidden"
     >
 
       {/* ── HEADER CARD ── */}
-      <p className={`text-[22px] sm:text-[40px] text-center font-medium tracking-[0.12em] uppercase text-neutral-500 shrink-0 transition-all duration-700 ease-out transform ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-      }`}>
+      <p className={`text-[22px] sm:text-[40px] text-center font-medium tracking-[0.12em] uppercase text-neutral-500 shrink-0 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}>
         Contact Us
       </p>
 
@@ -70,12 +69,11 @@ export default function ContactSection() {
           {CONTACT_INFO.map(({ icon: Icon, label, value }, i) => (
             <div
               key={label}
-              style={{ 
-                transitionDelay: isVisible ? `${i * 60}ms` : "0ms" 
+              style={{
+                transitionDelay: isVisible ? `${i * 60}ms` : "0ms"
               }}
-              className={`group relative rounded-2xl overflow-hidden bg-white/80 border border-black/10 px-4 py-5 sm:px-5 sm:py-6 flex flex-col justify-between min-h-[130px] sm:min-h-[150px] bento-card transition-all duration-500 ease-out transform ${
-                isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-              }`}
+              className={`group relative rounded-2xl overflow-hidden bg-white/80 border border-black/10 px-4 py-5 sm:px-5 sm:py-6 flex flex-col justify-between min-h-[130px] sm:min-h-[150px] bento-card transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+                }`}
             >
               {/* Top icon */}
               <div className="w-9 h-9 rounded-full border border-black/10 flex items-center justify-center mb-3 group-hover:bg-[#1a1916] group-hover:text-[#f5f4f0] transition-colors duration-300">
@@ -94,53 +92,67 @@ export default function ContactSection() {
           ))}
 
           {/* Map card */}
-          <div 
-            style={{ 
-              transitionDelay: isVisible ? "240ms" : "0ms" 
-            }}
-            className={`col-span-2 relative rounded-2xl overflow-hidden min-h-[160px] sm:min-h-[180px] group cursor-pointer bento-card transition-all duration-700 ease-out transform ${
-              isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-            }`}
+          <div
+            style={{ transitionDelay: isVisible ? "240ms" : "0ms" }}
+            className={`col-span-2 relative rounded-2xl overflow-hidden min-h-[200px] sm:min-h-[220px] group bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+              }`}
           >
-            <img
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2070"
-              alt="Global operations map"
-              className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+            {/* Google Maps iframe */}
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3942.3!2d78.1338!3d8.7642!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b03ef3e59a63c97%3A0x8b1e0e1e1e1e1e1e!2sThoothukudi%2C%20Tamil%20Nadu%20628%20103!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{
+                position: "absolute",
+                inset: 0,
+                border: 0,
+                filter: "grayscale(20%) contrast(1.05)",
+                minHeight: 220,
+              }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Canaan Global International — Tuticorin Head Office"
             />
-            <div className="absolute inset-0 bg-black/35 group-hover:bg-black/40 transition-colors duration-500" />
+
+            {/* Light overlay so overlays are readable */}
+            <div className="absolute inset-0 bg-white/10 pointer-events-none" />
 
             {/* TOP LEFT */}
-            <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2.5 rounded-br-2xl z-10">
-              <span className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
-                Global reach
-              </span>
-            </div>
+            
 
             {/* BOTTOM */}
-            <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm px-4 py-4 rounded-t-2xl z-10 flex items-center justify-between">
+            <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm px-4 py-4 rounded-t-2xl z-10 flex items-center justify-between pointer-events-none">
               <div>
                 <p className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400 mb-0.5">
-                  Operating across
+                  Head office
                 </p>
                 <p className="text-base font-bold tracking-[-0.02em] text-neutral-900">
-                  30+ Countries worldwide
+                  Tuticorin, Tamil Nadu
+                </p>
+                <p className="text-[11px] text-neutral-400 mt-0.5 tracking-tight">
+                  3/802-124, Zion Nagar, Puthukottai — 628 103
                 </p>
               </div>
-              <div className="w-8 h-8 rounded-full border border-black/20 flex items-center justify-center shrink-0 group-hover:bg-neutral-950 group-hover:text-white transition-all duration-300">
-                <ArrowRight size={13} className="text-neutral-600 group-hover:text-white transition-colors" />
-              </div>
+              <a
+                href="https://maps.google.com/?q=Tuticorin,Tamil+Nadu+628103"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full border border-black/20 flex items-center justify-center shrink-0 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all duration-300 pointer-events-auto"
+              >
+                <ArrowRight size={13} className="text-neutral-600 hover:text-white transition-colors" />
+              </a>
             </div>
           </div>
         </div>
 
         {/* ── RIGHT — Form card ── */}
-        <div 
-          style={{ 
-            transitionDelay: isVisible ? "150ms" : "0ms" 
+        <div
+          style={{
+            transitionDelay: isVisible ? "150ms" : "0ms"
           }}
-          className={`lg:col-span-3 relative rounded-2xl overflow-hidden bg-white/80 border border-black/10 transition-all duration-700 ease-out transform ${
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+          className={`lg:col-span-3 relative rounded-2xl overflow-hidden bg-white/80 border border-black/10 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
         >
 
           {/* TOP LEFT — label */}
@@ -176,9 +188,8 @@ export default function ContactSection() {
 
               {/* Name + Email row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`} style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}>
+                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                  }`} style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                     Full name
                   </label>
@@ -190,9 +201,8 @@ export default function ContactSection() {
                     className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300"
                   />
                 </div>
-                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`} style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}>
+                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                  }`} style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                     Email address
                   </label>
@@ -208,9 +218,8 @@ export default function ContactSection() {
 
               {/* Phone + Service row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`} style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}>
+                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                  }`} style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                     Phone number
                   </label>
@@ -222,9 +231,8 @@ export default function ContactSection() {
                     className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300"
                   />
                 </div>
-                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
+                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                  }`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                     Service needed
                   </label>
@@ -248,9 +256,8 @@ export default function ContactSection() {
               </div>
 
               {/* Message */}
-              <div className={`flex flex-col gap-1.5 mb-5 transition-all duration-500 ease-out transform ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`} style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}>
+              <div className={`flex flex-col gap-1.5 mb-5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                }`} style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}>
                 <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                   Your message
                 </label>
@@ -281,9 +288,8 @@ export default function ContactSection() {
       </div>
 
       {/* ── BOTTOM STRIP ── */}
-      <div className={`flex flex-wrap gap-2 px-1 transition-all duration-700 ease-out transform ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-      }`} style={{ transitionDelay: isVisible ? "350ms" : "0ms" }}>
+      <div className={`flex flex-wrap gap-2 px-1 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`} style={{ transitionDelay: isVisible ? "350ms" : "0ms" }}>
         {[
           "Freight Forwarding", "Customs Clearance", "Warehousing",
           "Air Cargo", "Sea Freight", "Road Transport",

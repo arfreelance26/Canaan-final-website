@@ -8,7 +8,6 @@ import FounderSection from "./components/Founder";
 import ClientsSection from "./components/Client";
 import TestimonialsSection from "./components/Testimonial";
 import TimelineSection from "./components/Timeline";
-import FrameScrollSection from "./components/Frame";
 import ContactSection from "./components/Contact";
 import WorldNetworkSection from "./components/World";
 import GroupSection from "./components/Group";
@@ -18,7 +17,6 @@ const SECTIONS = [
   GroupSection,
   CustomerGlobeSection,
   TimelineSection,
-  FrameScrollSection,
   FleetSection,
   WorldNetworkSection,
   ClientsSection,
