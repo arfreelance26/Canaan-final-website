@@ -1,79 +1,89 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { ArrowRight, Globe2 } from "lucide-react";
 
 const Globe = dynamic(() => import("react-globe.gl"), { ssr: false });
 
 const ROUTES = [
-  { from: "Tuticorin", to: "China", startLat: 8.76, startLng: 78.13, endLat: 35.86, endLng: 104.19, animMs: 1900 },
-  { from: "Tuticorin", to: "UAE", startLat: 8.76, startLng: 78.13, endLat: 25.20, endLng: 55.27, animMs: 1600 },
-  { from: "Tuticorin", to: "United Kingdom", startLat: 8.76, startLng: 78.13, endLat: 55.37, endLng: -3.43, animMs: 2800 },
-  { from: "Tuticorin", to: "Germany", startLat: 8.76, startLng: 78.13, endLat: 51.16, endLng: 10.45, animMs: 2700 },
-  { from: "Tuticorin", to: "Singapore", startLat: 8.76, startLng: 78.13, endLat: 1.35, endLng: 103.81, animMs: 1500 },
-  { from: "Tuticorin", to: "Japan", startLat: 8.76, startLng: 78.13, endLat: 36.20, endLng: 138.25, animMs: 2100 },
-  { from: "Tuticorin", to: "USA", startLat: 8.76, startLng: 78.13, endLat: 37.09, endLng: -95.71, animMs: 3200 },
-  { from: "Tuticorin", to: "Australia", startLat: 8.76, startLng: 78.13, endLat: -25.27, endLng: 133.77, animMs: 2200 },
-  { from: "Tuticorin", to: "Saudi Arabia", startLat: 8.76, startLng: 78.13, endLat: 23.88, endLng: 45.07, animMs: 1700 },
-  { from: "Tuticorin", to: "Malaysia", startLat: 8.76, startLng: 78.13, endLat: 4.21, endLng: 101.97, animMs: 1600 },
-  { from: "Tuticorin", to: "Netherlands", startLat: 8.76, startLng: 78.13, endLat: 52.13, endLng: 5.29, animMs: 2900 },
-  { from: "Tuticorin", to: "South Africa", startLat: 8.76, startLng: 78.13, endLat: -30.55, endLng: 22.93, animMs: 2500 },
+  { from: "Tuticorin", to: "China",          startLat: 8.76, startLng: 78.13, endLat:  31.23, endLng: 121.28, animMs: 1900 },
+  { from: "Tuticorin", to: "UAE",            startLat: 8.76, startLng: 78.13, endLat:  25.20, endLng:  55.27, animMs: 1600 },
+  { from: "Tuticorin", to: "United Kingdom", startLat: 8.76, startLng: 78.13, endLat:  51.51, endLng:  -0.13, animMs: 2800 },
+  { from: "Tuticorin", to: "Germany",        startLat: 8.76, startLng: 78.13, endLat:  53.55, endLng:   9.97, animMs: 2700 },
+  { from: "Tuticorin", to: "Singapore",      startLat: 8.76, startLng: 78.13, endLat:   1.36, endLng: 103.82, animMs: 1500 },
+  { from: "Tuticorin", to: "Japan",          startLat: 8.76, startLng: 78.13, endLat:  35.68, endLng: 139.60, animMs: 2100 },
+  { from: "Tuticorin", to: "USA",            startLat: 8.76, startLng: 78.13, endLat:  40.71, endLng: -74.00, animMs: 3200 },
+  { from: "Tuticorin", to: "Australia",      startLat: 8.76, startLng: 78.13, endLat: -33.87, endLng: 151.15, animMs: 2200 },
+  { from: "Tuticorin", to: "Saudi Arabia",   startLat: 8.76, startLng: 78.13, endLat:  21.49, endLng:  39.19, animMs: 1700 },
+  { from: "Tuticorin", to: "Malaysia",       startLat: 8.76, startLng: 78.13, endLat:   3.14, endLng: 101.70, animMs: 1600 },
+  { from: "Tuticorin", to: "Netherlands",    startLat: 8.76, startLng: 78.13, endLat:  51.91, endLng:   4.48, animMs: 2900 },
+  { from: "Tuticorin", to: "South Africa",   startLat: 8.76, startLng: 78.13, endLat: -29.87, endLng:  30.92, animMs: 2500 },
 ];
 
-const STATS = [
-  { num: "30+", label: "Countries" },
-  { num: "12", label: "Active routes" },
-  { num: "50K+", label: "Shipments" },
-  { num: "2009", label: "Est." },
+// Arc data: one base arc + one glow arc per route (all always active)
+const ARCS_DATA = [
+  ...ROUTES.map(r => ({ ...r, _glow: false })),
+  ...ROUTES.map(r => ({ ...r, _glow: true  })),
 ];
 
 const LABEL_POINTS = [
-  { lat: 8.76, lng: 78.13, label: "Tuticorin", isHub: true },
-  { lat: 35.86, lng: 104.19, label: "China" },
-  { lat: 25.20, lng: 55.27, label: "UAE" },
-  { lat: 55.37, lng: -3.43, label: "United Kingdom" },
-  { lat: 51.16, lng: 10.45, label: "Germany" },
-  { lat: 1.35, lng: 103.81, label: "Singapore" },
-  { lat: 36.20, lng: 138.25, label: "Japan" },
-  { lat: 37.09, lng: -95.71, label: "USA" },
-  { lat: -25.27, lng: 133.77, label: "Australia" },
-  { lat: 23.88, lng: 45.07, label: "Saudi Arabia" },
-  { lat: 4.21, lng: 101.97, label: "Malaysia" },
-  { lat: 52.13, lng: 5.29, label: "Netherlands" },
-  { lat: -30.55, lng: 22.93, label: "South Africa" },
+  { lat:   9.92, lng:  78.12, label: "Tuticorin",     isHub: true  },
+  { lat:  31.23, lng: 121.28, label: "China" },
+  { lat:  25.20, lng:  55.27, label: "UAE" },
+  { lat:  51.51, lng:  -0.13, label: "United Kingdom" },
+  { lat:  53.55, lng:   9.97, label: "Germany" },
+  { lat:   1.36, lng: 103.82, label: "Singapore" },
+  { lat:  35.68, lng: 139.60, label: "Japan" },
+  { lat:  40.71, lng: -74.00, label: "USA" },
+  { lat: -33.87, lng: 151.15, label: "Australia" },
+  { lat:  21.49, lng:  39.19, label: "Saudi Arabia" },
+  { lat:   3.14, lng: 101.70, label: "Malaysia" },
+  { lat:  51.91, lng:   4.48, label: "Netherlands" },
+  { lat: -29.87, lng:  30.92, label: "South Africa" },
 ];
 
+const STATS = [
+  { num: "50K+",  label: "Shipments" },
+  { num: "30+",   label: "Countries" },
+  { num: "12",    label: "Sea Routes" },
+  { num: "25+",   label: "Years" },
+];
+
+const FIXED_ALT = 2.2;
+
 function makeLabelEl(d) {
+  const dotSize = d.isHub ? 9 : 7;
   const wrap = document.createElement("div");
-  wrap.dataset.lat = d.lat;
-  wrap.dataset.lng = d.lng;
-  wrap.style.cssText = "pointer-events:none; display:flex; flex-direction:column; align-items:center; gap:3px;";
+  wrap.style.cssText = "pointer-events:none; position:relative; width:0; height:0; transition:opacity 0.2s ease;";
 
   const dot = document.createElement("div");
   dot.style.cssText = `
-    width: ${d.isHub ? 9 : 7}px;
-    height: ${d.isHub ? 9 : 7}px;
+    position: absolute;
+    width: ${dotSize}px;
+    height: ${dotSize}px;
     border-radius: 50%;
     background: ${d.isHub ? "#1a1916" : "rgba(26,25,22,0.65)"};
     border: ${d.isHub ? "2px solid rgba(255,255,255,0.85)" : "1.5px solid rgba(255,255,255,0.6)"};
     box-shadow: 0 0 ${d.isHub ? 10 : 6}px rgba(0,0,0,0.35);
-    flex-shrink: 0;
+    transform: translate(-50%, -50%);
   `;
 
   const pill = document.createElement("div");
   pill.style.cssText = `
+    position: absolute;
+    bottom: ${dotSize / 2 + 4}px;
+    left: 0;
+    transform: translateX(-50%);
     font-family: system-ui, -apple-system, sans-serif;
     font-size: ${d.isHub ? 9 : 8}px;
     font-weight: ${d.isHub ? 700 : 600};
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: ${d.isHub ? "#1a1916" : "rgba(26,25,22,0.8)"};
-    background: rgba(245,244,240,0.92);
+    background: rgba(245,244,240,0.97);
     border: 1px solid rgba(0,0,0,${d.isHub ? 0.14 : 0.08});
     border-radius: 6px;
     padding: 2px 7px;
     white-space: nowrap;
-    backdrop-filter: blur(8px);
     box-shadow: 0 1px 6px rgba(0,0,0,0.12);
   `;
   pill.textContent = d.label;
@@ -82,359 +92,234 @@ function makeLabelEl(d) {
   wrap.appendChild(pill);
   return wrap;
 }
+
 export default function CustomerGlobeSection() {
-  const globeRef = useRef(null);
-  const containerRef = useRef(null);
-  const headerRef = useRef(null);
-  const [dims, setDims] = useState({ w: 600, h: 500 });
-  const [globeReady, setGlobeReady] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [hoveredRoute, setHoveredRoute] = useState(null);
-  const [selectedDest,  setSelectedDest]  = useState(null);
+  const globeRef     = useRef(null);
+  const cleanupRef   = useRef(null);
+  const sectionRef   = useRef(null);
 
-  // ── Resize ────────────────────────────────────────────────────
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() =>
-      setDims({ w: el.offsetWidth, h: el.offsetHeight })
-    );
-    ro.observe(el);
-    setDims({ w: el.offsetWidth, h: el.offsetHeight });
-    return () => ro.disconnect();
-  }, []);
+  const [globeVisible,  setGlobeVisible]  = useState(false);
+  const [sectionIn,     setSectionIn]     = useState(false);
 
-  // ── Entrance observer ─────────────────────────────────────────
+
+  // ── Section entrance: observe + orchestrate animations ──────────
   useEffect(() => {
-    const el = headerRef.current;
+    const el = sectionRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
-      { threshold: 0.1 }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setSectionIn(true);
+        } else {
+          // Reset for re-entry
+          setSectionIn(false);
+          setGlobeVisible(false);
+          const gl = globeRef.current;
+          if (gl) {
+            try {
+              gl.controls().autoRotate = false;
+              gl.pointOfView({ lat: 0, lng: -100, altitude: FIXED_ALT }, 0);
+            } catch (_) {}
+          }
+        }
+      },
+      { threshold: 0.25 }
     );
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
 
-  // ── Globe setup ───────────────────────────────────────────────
+  // ── Trigger animations when section enters ───────────────────────
   useEffect(() => {
-    if (!globeReady || !globeRef.current) return;
+    if (!sectionIn) return;
+    const timers = [];
+    // Globe fade-in
+    timers.push(setTimeout(() => setGlobeVisible(true), 350));
+    // Globe spin: Pacific Ocean → Tuticorin
+    timers.push(setTimeout(() => {
+      const gl = globeRef.current;
+      if (!gl) return;
+      try {
+        gl.controls().autoRotate = false;
+        gl.pointOfView({ lat: 8.76, lng: 78.13, altitude: FIXED_ALT }, 2200);
+        setTimeout(() => {
+          try { const c = globeRef.current?.controls(); if (c) c.autoRotate = true; } catch (_) {}
+        }, 2300);
+      } catch (_) {}
+    }, 400));
+    return () => timers.forEach(clearTimeout);
+  }, [sectionIn]);
+
+  // ── Globe ready ──────────────────────────────────────────────────
+  const handleGlobeReady = useCallback(() => {
     const gl = globeRef.current;
+    if (!gl) return;
     const controls = gl.controls();
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.4;
-    controls.enableZoom = false;
-    gl.pointOfView({ lat: 8.76, lng: 78.13, altitude: 2.4 }, 1200);
+    controls.autoRotate      = false; // enabled after spin-in animation
+    controls.autoRotateSpeed = 0.35;
+    controls.enableZoom      = false;
+    controls.enablePan       = false;
+    controls.enableRotate    = true;
+    const lockedDist = 100 * (1 + FIXED_ALT);
+    controls.minDistance = lockedDist;
+    controls.maxDistance = lockedDist;
+    // Start at Pacific Ocean — will spin to Tuticorin on section entry
+    gl.pointOfView({ lat: 0, lng: -100, altitude: FIXED_ALT }, 0);
+    try { gl.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 1.2)); } catch (_) {}
 
-    try {
-      gl.renderer().setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    } catch (_) { }
+    let resumeTimer;
+    const onDragStart = () => { controls.autoRotate = false; clearTimeout(resumeTimer); };
+    const onDragEnd   = () => { resumeTimer = setTimeout(() => { controls.autoRotate = true; }, 2500); };
+    controls.addEventListener("start", onDragStart);
+    controls.addEventListener("end",   onDragEnd);
 
-    let timer;
-    const pause = () => { controls.autoRotate = false; clearTimeout(timer); };
-    const resume = () => { timer = setTimeout(() => { controls.autoRotate = true; }, 3000); };
-    controls.addEventListener("start", pause);
-    controls.addEventListener("end", resume);
-    return () => {
-      clearTimeout(timer);
-      controls.removeEventListener("start", pause);
-      controls.removeEventListener("end", resume);
+    cleanupRef.current = () => {
+      clearTimeout(resumeTimer);
+      controls.removeEventListener("start", onDragStart);
+      controls.removeEventListener("end",   onDragEnd);
     };
-  }, [globeReady]);
+  }, []);
 
-  const flyTo = (lat, lng) => {
-  if (!globeRef.current) return;
-  const gl = globeRef.current;
-  const controls = gl.controls();
+  useEffect(() => () => { cleanupRef.current?.(); }, []);
 
-  // Pause auto-rotate while flying
-  controls.autoRotate = false;
+  // ── Arc styling (all routes always amber) ───────────────────────
+  const arcColor  = useCallback((d) =>
+    d._glow
+      ? ["rgba(210,165,45,0)", "rgba(210,165,45,0.20)", "rgba(210,165,45,0)"]
+      : ["rgba(210,165,45,0)", "rgba(210,165,45,0.92)", "rgba(210,165,45,0)"],
+  []);
+  const arcStroke = useCallback((d) => (d._glow ? 7 : 1.9), []);
 
-  gl.pointOfView(
-    { lat, lng, altitude: 2.0 },
-    1200 // animation duration ms
-  );
-
-  // Resume auto-rotate after fly completes
-  setTimeout(() => {
-    controls.autoRotate = true;
-  }, 1800);
-};
-
-  // ── Arc color ─────────────────────────────────────────────────
-  const arcColor = (d) => {
-  const isHov = hoveredRoute && d.from === hoveredRoute.from && d.to === hoveredRoute.to;
-  return isHov
-    ? ["rgba(0,0,0,0)", "rgba(0,0,0,0.95)", "rgba(0,0,0,0)"]
-    : ["rgba(0,0,0,0)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0)"];   // was 0.35 → 0.6
-};
-
-  const arcStroke = (d) => {
-  const isHov = hoveredRoute && d.from === hoveredRoute.from && d.to === hoveredRoute.to;
-  return isHov ? 1.8 : 0.9;   // was 1.2 / 0.5
-};
+  const htmlElement    = useCallback(makeLabelEl, []);
+  const htmlVisibility = useCallback((el, isVis) => { el.style.opacity = isVis ? "1" : "0"; }, []);
 
   return (
-    <section className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3">
+    <section ref={sectionRef} className="relative bg-[#f5f4f0] font-sans flex flex-col lg:flex-row lg:h-screen p-5 sm:p-6 gap-5 lg:overflow-hidden">
 
-      {/* ── HEADER CARD ── */}
+      {/* ── LEFT: STATIC CONTENT ── */}
       <div
-        ref={headerRef}
-        className="relative rounded-2xl overflow-hidden min-h-[180px] sm:min-h-[200px]"
+        className="flex flex-col lg:w-[40%] shrink-0 justify-center lg:pr-10 py-8 lg:py-0"
         style={{
-          opacity: visible ? 1 : 0,
-          transform: visible ? "translateY(0)" : "translateY(16px)",
-          transition: "opacity 0.7s ease, transform 0.7s ease",
+          opacity:    sectionIn ? 1 : 0,
+          transform:  sectionIn ? "translateX(0)" : "translateX(-100px)",
+          transition: sectionIn
+            ? "opacity 0.9s cubic-bezier(0.16,1,0.3,1) 0.05s, transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.05s"
+            : "none",
         }}
       >
-        <img
-          src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2070"
-          alt="Global network"
-          className="w-full h-full object-cover absolute inset-0"
-        />
-        <div className="absolute inset-0 bg-black/45" />
 
-        {/* TOP LEFT */}
-        <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-7 sm:py-5 rounded-br-2xl z-10">
-          <span className="text-[10px] sm:text-xs font-medium tracking-[0.12em] uppercase text-neutral-400">
-            Our Network
+        <p className="text-[10px] sm:text-[11px] font-semibold tracking-[0.26em] uppercase text-neutral-400 mb-3">
+          — Global Network
+        </p>
+
+        <h2
+          className="font-black tracking-[-0.035em] leading-[1.05] mb-4"
+          style={{ fontSize: "clamp(2rem, 4.5vw, 3.8rem)" }}
+        >
+          <span className="block text-neutral-900">30 countries.</span>
+          <span className="block" style={{ color: "rgba(0,0,0,0.22)" }}>One home port.</span>
+        </h2>
+
+        <p className="text-sm sm:text-[15px] text-neutral-500 leading-[1.85] max-w-[400px] mb-6">
+          From Tuticorin — India's southernmost major port — Canaan has built
+          a freight network spanning four continents. Every route originates
+          here, tracked end-to-end with precision.
+        </p>
+
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          {STATS.map(({ num, label }) => (
+            <div key={label}>
+              <div
+                className="font-black tracking-[-0.04em] text-neutral-900 leading-none"
+                style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)" }}
+              >
+                {num}
+              </div>
+              <div className="text-[10px] font-medium tracking-[0.22em] uppercase text-neutral-400 mt-1.5">
+                {label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── RIGHT: GLOBE CARD ── */}
+      <div
+        className="relative flex-1 rounded-2xl overflow-hidden border border-black/[0.08]"
+        style={{
+          minHeight: 440,
+          touchAction: "none",
+          background: "linear-gradient(150deg, #f0f4ff 0%, #ffffff 45%, #f9f8f5 100%)",
+        }}
+      >
+        {/* Top-left chip */}
+        <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-br-2xl z-10">
+          <span className="text-[10px] font-medium tracking-[0.12em] uppercase text-neutral-400">
+            Live Routes
           </span>
         </div>
 
-        {/* TOP RIGHT */}
-        <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-7 sm:py-5 rounded-bl-2xl z-10 flex items-center gap-2">
+        {/* Top-right chip */}
+        <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-bl-2xl z-10 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          <span className="text-[11px] sm:text-sm font-medium text-neutral-900 tracking-tight">
+          <span className="text-[11px] font-medium text-neutral-900 tracking-tight">
             {ROUTES.length} active routes
           </span>
         </div>
 
-        {/* BOTTOM LEFT */}
-        <div className="absolute bottom-0 left-0 right-0 sm:right-auto bg-white/90 backdrop-blur-sm px-5 py-5 sm:px-7 sm:py-6 rounded-tr-2xl z-10">
-          <h2 className="text-2xl sm:text-3xl lg:text-[2.4rem] font-bold tracking-[-0.03em] leading-[1.18] text-neutral-900">
-            A global network,<br className="hidden sm:block" />
-            <span className="text-neutral-400"> built from Tuticorin.</span>
-          </h2>
+        {/* Globe — hidden via opacity until init animation finishes */}
+        <div style={{
+          position: "absolute", inset: 0,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          opacity: globeVisible ? 1 : 0, transition: "opacity 0.45s ease",
+        }}>
+          <Globe
+            ref={(el) => { globeRef.current = el; }}
+            onGlobeReady={handleGlobeReady}
+            animateIn={false}
+            waitForGlobeReady={false}
+            width={700}
+            height={700}
+            globeImageUrl="//unpkg.com/three-globe@2.33.0/example/img/earth-blue-marble.jpg"
+            bumpImageUrl="//unpkg.com/three-globe@2.33.0/example/img/earth-topology.png"
+            backgroundImageUrl=""
+            backgroundColor="rgba(0,0,0,0)"
+            atmosphereColor="rgba(120,185,255,0.28)"
+            atmosphereAltitude={0.22}
+            arcsData={ARCS_DATA}
+            arcStartLat="startLat"
+            arcStartLng="startLng"
+            arcEndLat="endLat"
+            arcEndLng="endLng"
+            arcColor={arcColor}
+            arcDashLength={0.07}
+            arcDashGap={0.015}
+            arcDashAnimateTime={(d) => d.animMs}
+            arcStroke={arcStroke}
+            arcAltitudeAutoScale={0.45}
+            htmlElementsData={LABEL_POINTS}
+            htmlLat={(d) => d.lat}
+            htmlLng={(d) => d.lng}
+            htmlAltitude={(d) => d.isHub ? 0.01 : 0.005}
+            htmlElement={htmlElement}
+            htmlTransitionDuration={0}
+            htmlElementVisibilityModifier={htmlVisibility}
+          />
+        </div>
+
+        {/* Bottom-left chip */}
+        <div className="absolute bottom-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-tr-2xl z-10">
+          <p className="text-[9px] font-medium tracking-[0.1em] uppercase text-neutral-400 mb-0.5">Hub</p>
+          <p className="text-xs font-bold text-neutral-900 tracking-tight">Tuticorin, India</p>
+        </div>
+
+        {/* Bottom-right chip */}
+        <div className="absolute bottom-0 right-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-tl-2xl z-10">
+          <p className="text-[9px] font-medium tracking-[0.1em] uppercase text-neutral-400 mb-0.5">Coverage</p>
+          <p className="text-xs font-bold text-neutral-900 tracking-tight">4 Continents</p>
         </div>
       </div>
-
-      {/* ── MAIN CARD — globe + stats ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-3">
-
-        {/* Globe card */}
-        <div
-          className="relative rounded-2xl overflow-hidden bg-white/70 border border-black/10"
-          style={{
-            minHeight: 480,
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(24px)",
-            transition: "opacity 0.9s ease 0.15s, transform 0.9s ease 0.15s",
-          }}
-          onMouseLeave={() => setHoveredRoute(null)}
-        >
-          {/* TOP LEFT */}
-          <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-br-2xl z-10">
-            <span className="text-[10px] font-medium tracking-[0.12em] uppercase text-neutral-400">
-              Live routes
-            </span>
-          </div>
-
-          {/* TOP RIGHT — hover tooltip */}
-          <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-bl-2xl z-10">
-            {hoveredRoute ? (
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-semibold text-neutral-900 tracking-tight">
-                  {hoveredRoute.from}
-                </span>
-                <ArrowRight size={10} className="text-neutral-400" />
-                <span className="text-[11px] font-semibold text-neutral-900 tracking-tight">
-                  {hoveredRoute.to}
-                </span>
-              </div>
-            ) : (
-              <span className="text-[10px] font-medium text-neutral-400 tracking-tight">
-                Hover a route
-              </span>
-            )}
-          </div>
-
-          {/* Globe */}
-          <div
-            ref={containerRef}
-            className="w-full h-full"
-            style={{ minHeight: 480 }}
-          >
-            <Globe
-              ref={(el) => {
-                globeRef.current = el;
-                if (el && !globeReady) setGlobeReady(true);
-              }}
-              width={dims.w}
-              height={dims.h}
-              globeImageUrl="//unpkg.com/three-globe@2.33.0/example/img/earth-day.jpg"
-              backgroundImageUrl=""
-              backgroundColor="rgba(0,0,0,0)"
-              atmosphereColor="rgba(180,200,220,0.6)"
-              atmosphereAltitude={0.15}
-              waitForGlobeReady={false}
-              arcsData={ROUTES}
-              arcStartLat="startLat"
-              arcStartLng="startLng"
-              arcEndLat="endLat"
-              arcEndLng="endLng"
-              arcColor={arcColor}
-              arcDashLength={0.04}       // longer dash = more visible streak
-              arcDashGap={0.03}
-              arcDashAnimateTime={(d) => d.animMs}
-              arcStroke={arcStroke}
-              arcAltitudeAutoScale={0.45}
-              onArcHover={(arc) =>
-                setHoveredRoute(
-                  arc ? ROUTES.find((x) => x.from === arc.from && x.to === arc.to) ?? null : null
-                )
-              }
-              
-              htmlElementsData={LABEL_POINTS}
-              htmlLat={(d) => d.lat}
-              htmlLng={(d) => d.lng}
-              htmlAltitude={(d) => d.isHub ? 0.04 : 0.03}
-              htmlElement={makeLabelEl}
-              htmlTransitionDuration={0}
-              htmlElementVisibilityModifier={(el, isVisible) => {
-                el.style.opacity = isVisible ? "1" : "0";
-                el.style.transform = isVisible ? "scale(1)" : "scale(0.85)";
-                el.style.transition = "opacity 0.4s ease, transform 0.4s ease";
-              }}
-            />
-          </div>
-
-          {/* HQ label */}
-          <div className="absolute bottom-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-tr-2xl z-10">
-            <p className="text-[9px] font-medium tracking-[0.1em] uppercase text-neutral-400 mb-0.5">
-              Hub
-            </p>
-            <p className="text-xs font-bold text-neutral-900 tracking-tight">
-              Tuticorin, India
-            </p>
-          </div>
-        </div>
-
-        {/* ── RIGHT COLUMN ── */}
-        <div
-          className="flex flex-col gap-3"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(24px)",
-            transition: "opacity 0.9s ease 0.25s, transform 0.9s ease 0.25s",
-          }}
-        >
-          {/* Stats 2×2 */}
-          <div className="grid grid-cols-2 gap-3">
-            {STATS.map(({ num, label }) => (
-              <div
-                key={label}
-                className="bg-white/80 border border-black/10 rounded-2xl px-4 py-5 flex flex-col justify-between min-h-[100px]"
-              >
-                <Globe2 size={13} className="text-neutral-300" />
-                <div>
-                  <p className="text-2xl font-bold tracking-[-0.04em] text-neutral-900 leading-none">
-                    {num}
-                  </p>
-                  <p className="text-[10px] font-medium tracking-[0.08em] uppercase text-neutral-400 mt-1">
-                    {label}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Routes list card */}
-<div className="relative flex-1 bg-white/80 border border-black/10 rounded-2xl overflow-hidden">
-
-  {/* TOP LEFT */}
-  <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 rounded-br-2xl z-10">
-    <span className="text-[10px] font-medium tracking-[0.12em] uppercase text-neutral-400">
-      Destinations
-    </span>
-  </div>
-
-  {/* TOP RIGHT — selected indicator */}
-  {selectedDest && (
-    <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-bl-2xl z-10">
-      <span className="text-[9px] font-medium text-neutral-500 tracking-tight">
-        → {selectedDest}
-      </span>
-    </div>
-  )}
-
-  <div className="flex flex-col pt-12 pb-3 px-4">
-    {ROUTES.map((r) => {
-      // Find matching label point for coordinates
-      const point = LABEL_POINTS.find((p) => p.label === r.to);
-      const isSelected = selectedDest === r.to;
-      const isHovered  = hoveredRoute?.to === r.to;
-
-      return (
-        <div
-          key={r.to}
-          onMouseEnter={() => setHoveredRoute(r)}
-          onMouseLeave={() => setHoveredRoute(null)}
-          onClick={() => {
-            if (!point) return;
-            setSelectedDest(r.to);
-            flyTo(point.lat, point.lng);
-          }}
-          className={`flex items-center justify-between py-2.5 border-b border-black/5 last:border-0 cursor-pointer transition-all duration-200 ${
-            isSelected || isHovered ? "opacity-100" : "opacity-55 hover:opacity-100"
-          }`}
-        >
-          <div className="flex items-center gap-2.5">
-            <div
-              className="w-1.5 h-1.5 rounded-full transition-colors duration-200"
-              style={{
-                background: isSelected
-                  ? "#1a1916"
-                  : isHovered
-                  ? "rgba(26,25,22,0.5)"
-                  : "#d4d0ca",
-                transform: isSelected ? "scale(1.4)" : "scale(1)",
-                transition: "background 0.2s, transform 0.2s",
-              }}
-            />
-            <span
-              className="text-xs tracking-tight transition-all duration-200"
-              style={{
-                fontWeight: isSelected ? 700 : 500,
-                color: isSelected ? "#1a1916" : "#374151",
-              }}
-            >
-              {r.to}
-            </span>
-          </div>
-
-          <div
-            className="w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-200"
-            style={{
-              background:   isSelected ? "#1a1916" : "transparent",
-              borderColor:  isSelected ? "#1a1916" : "rgba(0,0,0,0.1)",
-            }}
-          >
-            <ArrowRight
-              size={9}
-              style={{ color: isSelected ? "#f5f4f0" : "#c8c5be" }}
-            />
-          </div>
-        </div>
-      );
-    })}
-  </div>
-</div>
-        </div>
-      </div>
-
-      {/* ── BOTTOM STRIP ── */}
-      
-
     </section>
   );
 }

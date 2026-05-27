@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Anchor } from "lucide-react";
 
@@ -16,8 +16,77 @@ function LogoPlaceholder() {
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState("Home");
+  const [slider, setSlider] = useState({ left: 0, width: 0, opacity: 0 });
+  const navRef = useRef(null);
+  const btnRefs = useRef({});
   const pathname = usePathname();
   const router = useRouter();
+
+  const routeToNavItem = (path) => {
+    if (!path) return "Home";
+    if (path === "/about" || path.startsWith("/about/")) return "About";
+    if (path === "/canaan-shipping-services" || path.startsWith("/canaan-shipping-services/")) return "Service";
+    return "Home";
+  };
+
+  const syncSliderTo = (item) => {
+    const nav = navRef.current;
+    const btn = btnRefs.current[item];
+    if (!nav || !btn) return;
+    const navRect = nav.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+    setSlider({
+      left: Math.round(btnRect.left - navRect.left),
+      width: Math.round(btnRect.width),
+      opacity: 1,
+    });
+  };
+
+  useEffect(() => {
+    setActiveItem(routeToNavItem(pathname));
+  }, [pathname]);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => syncSliderTo(activeItem));
+    return () => cancelAnimationFrame(raf);
+  }, [activeItem]);
+
+  useEffect(() => {
+    const onResize = () => syncSliderTo(activeItem);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [activeItem]);
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const onScroll = () => {
+      const sections = Array.from(document.querySelectorAll("[data-nav-item]"));
+      if (!sections.length) return;
+
+      const scrollY = window.scrollY;
+      const firstTop = sections[0].getBoundingClientRect().top + scrollY;
+      if (scrollY + 20 < firstTop) {
+        setActiveItem((prev) => (prev === "Home" ? prev : "Home"));
+        return;
+      }
+
+      const probeY = scrollY + window.innerHeight * 0.35;
+      let current = "Home";
+
+      for (const el of sections) {
+        const top = el.getBoundingClientRect().top + scrollY;
+        if (probeY >= top - 40) current = el.getAttribute("data-nav-item") || current;
+      }
+
+      setActiveItem((prev) => (prev === current ? prev : current));
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [pathname]);
 
   async function handleLogoClick() {
     if (pathname !== "/") {
@@ -28,6 +97,7 @@ export default function Navbar() {
   }
 
   async function navigateTo(item) {
+    setActiveItem(item);
     const id = item.toLowerCase();
 
     if (item === "Home") {
@@ -71,7 +141,7 @@ export default function Navbar() {
       {/* ── TOP LEFT — logo + company name ── */}
       <div 
         onClick={handleLogoClick}
-        className="fixed cursor-pointer z-50 top-0 left-0 bg-[#f5f4f0] backdrop-blur-sm px-5 py-4 sm:px-6 sm:py-4 rounded-br-2xl flex items-center gap-3 animate-fade-in"
+        className="fixed cursor-pointer z-50 top-0 left-0 bg-[#f5f4f0] px-5 py-4 sm:px-6 sm:py-4 rounded-br-2xl flex items-center gap-3 animate-fade-in"
       >
         {/* Logo */}
         <LogoPlaceholder />
@@ -94,15 +164,30 @@ export default function Navbar() {
       </div>
 
       {/* ── TOP RIGHT — nav (desktop) + hamburger (mobile) ── */}
-      <div className="fixed z-50 top-0 right-0 bg-[#f5f4f0] backdrop-blur-sm px-5 py-4 sm:px-7 sm:py-5 rounded-bl-2xl flex items-center gap-3 z-50">
+      <div className="fixed z-50 top-0 right-0 bg-[#f5f4f0] px-5 py-4 sm:px-7 sm:py-5 rounded-bl-2xl flex items-center gap-3">
 
         {/* Desktop nav pill */}
-        <nav className="hidden sm:flex items-center bg-black/[0.07] border border-black/10 rounded-full pl-4 pr-1.5 h-11 gap-0">
+        <nav
+          ref={navRef}
+          className="hidden sm:flex relative items-center bg-black/[0.07] border border-black/10 rounded-full pl-4 pr-1.5 h-11 gap-0 overflow-hidden"
+        >
+          <span
+            aria-hidden
+            className="absolute top-1.5 h-8 rounded-full border border-white/60 bg-white/42 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.82),0_6px_16px_rgba(0,0,0,0.10)] transition-all duration-300 ease-out"
+            style={{
+              left: slider.left,
+              width: slider.width,
+              opacity: slider.opacity,
+            }}
+          />
           {NAV_ITEMS.map((item) => (
             <button
               key={item}
+              ref={(el) => { btnRefs.current[item] = el; }}
               onClick={() => navigateTo(item)}
-              className="bg-transparent border-none text-neutral-900 font-medium text-[13.5px] tracking-tight px-3 cursor-pointer hover:text-neutral-500 transition-colors"
+              className={`relative z-10 bg-transparent border-none font-medium text-[13.5px] tracking-tight px-3 h-8 rounded-full cursor-pointer transition-colors ${
+                activeItem === item ? "text-neutral-950" : "text-neutral-900 hover:text-neutral-500"
+              }`}
             >
               {item}
             </button>

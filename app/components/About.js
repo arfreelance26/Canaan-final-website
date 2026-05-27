@@ -43,14 +43,14 @@ export default function AboutSection() {
         <div className="absolute inset-0 bg-black/35 group-hover:bg-black/40 transition-colors duration-500" />
 
         {/* ── TOP LEFT — label ── */}
-        <div className="absolute top-0 left-0 bg-[#f5f4f0] backdrop-blur-sm px-4 py-3 sm:px-7 sm:py-5 rounded-br-2xl z-10">
+        <div className="absolute top-0 left-0 bg-[#f5f4f0] px-4 py-3 sm:px-7 sm:py-5 rounded-br-2xl z-10">
           <span className="text-[10px] sm:text-xs font-medium tracking-[0.12em] uppercase text-neutral-400">
             Who we are
           </span>
         </div>
 
         {/* ── TOP RIGHT — Est. badge ── */}
-        <div className="absolute top-0 right-0 bg-[#f5f4f0] backdrop-blur-sm px-4 py-3 sm:px-7 sm:py-5 rounded-bl-2xl z-10 flex items-center gap-2">
+        <div className="absolute top-0 right-0 bg-[#f5f4f0] px-4 py-3 sm:px-7 sm:py-5 rounded-bl-2xl z-10 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
           <span className="text-[11px] sm:text-sm font-medium text-neutral-900 tracking-tight">
             Est. 2009
@@ -59,7 +59,7 @@ export default function AboutSection() {
         </div>
 
         {/* ── MOBILE LAYOUT — full bottom overlay ── */}
-        <div className="sm:hidden absolute bottom-0 left-0 right-0 bg-[#f5f4f0] backdrop-blur-sm px-5 py-6 z-10 rounded-t-2xl flex flex-col gap-4">
+<div className="sm:hidden absolute bottom-0 left-0 right-0 bg-[#f5f4f0] px-5 py-6 z-10 rounded-t-2xl flex flex-col gap-4">
 
           <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-neutral-400">
             Canaan Global International
@@ -101,7 +101,7 @@ export default function AboutSection() {
         </div>
 
         {/* ── DESKTOP BOTTOM LEFT — heading + bio + pillars + CTA ── */}
-        <div className="hidden sm:flex absolute bottom-0 left-0 sm:right-[36%] bg-[#f5f4f0] backdrop-blur-sm px-7 py-8 rounded-tr-2xl z-10 flex-col gap-4">
+<div className="hidden sm:flex absolute bottom-0 left-0 sm:right-[36%] bg-[#f5f4f0] px-7 py-8 rounded-tr-2xl z-10 flex-col gap-4">
 
           <p className="text-xs font-medium tracking-[0.12em] uppercase text-neutral-400">
             Canaan Global International
@@ -139,7 +139,7 @@ export default function AboutSection() {
         </div>
 
         {/* ── DESKTOP BOTTOM RIGHT — stats ── */}
-        <div className="hidden sm:flex absolute bottom-0 right-0 bg-[#f5f4f0] backdrop-blur-sm px-7 py-8 rounded-tl-2xl z-10 flex-col gap-7">
+          <div className="hidden sm:flex absolute bottom-0 right-0 bg-[#f5f4f0] px-7 py-8 rounded-tl-2xl z-10 flex-col gap-7">
           {STATS.map(({ num, label }, i) => (
             <div
               key={label}

@@ -1,31 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { ArrowRight, Mail, Phone, MapPin, Clock } from "lucide-react";
+import useFadeIn from "../hooks/useFadeIn";
 
 const CONTACT_INFO = [
   { icon: Mail, label: "Email us", value: "info@canaanglobal.com" },
-  { icon: Phone, label: "Call us", value: "+1 (800) 000-0000" },
-  { icon: MapPin, label: "Head office", value: "Dubai, UAE" },
+  { icon: Phone, label: "Call us", value: "+91 90470 12891" },
+  { icon: MapPin, label: "Head office", value: "Tuticorin, India" },
   { icon: Clock, label: "Working hours", value: "Mon–Sat, 8am–6pm" },
 ];
-
-function useFadeIn(ref, threshold = 0.05) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        setVisible(e.isIntersecting);
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [ref, threshold]);
-  return visible;
-}
 
 export default function ContactSection() {
   const sectionRef = useRef(null);
@@ -52,32 +36,42 @@ export default function ContactSection() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 overflow-hidden"
+      className="relative bg-[#f5f4f0] font-sans flex flex-col h-screen p-4 sm:p-5 gap-2 overflow-hidden"
     >
 
-      {/* ── HEADER CARD ── */}
-      <p className={`text-[22px] sm:text-[40px] text-center font-medium tracking-[0.12em] uppercase text-neutral-500 shrink-0 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}>
-        Contact Us
-      </p>
+      {/* ── HEADER ── */}
+      <div className={`text-center shrink-0 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+        <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-amber-700/60 mb-1">
+          — Get in Touch
+        </p>
+        <p className="text-[18px] sm:text-[26px] font-medium tracking-[0.08em] uppercase text-neutral-500">
+          Contact Us
+        </p>
+      </div>
 
       {/* ── MAIN CONTENT GRID ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-2 flex-1 min-h-0">
 
         {/* ── LEFT — Contact info cards ── */}
-        <div className="lg:col-span-2 grid grid-cols-2 sm:grid-cols-2 gap-3">
+        <div className="lg:col-span-2 flex flex-col gap-2 min-h-0">
+          <div className="grid grid-cols-2 gap-2 shrink-0">
           {CONTACT_INFO.map(({ icon: Icon, label, value }, i) => (
             <div
               key={label}
               style={{
-                transitionDelay: isVisible ? `${i * 60}ms` : "0ms"
+                borderLeft: "2px solid rgba(210,165,45,0.35)",
+                transitionProperty: "opacity, transform",
+                transitionDuration: "0.75s, 0.75s",
+                transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1), cubic-bezier(0.34, 1.56, 0.64, 1)",
+                transitionDelay: isVisible ? `${i * 110}ms` : "0ms",
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? "translateX(0px)" : "translateX(-60px)",
               }}
-              className={`group relative rounded-2xl overflow-hidden bg-white/80 border border-black/10 px-4 py-5 sm:px-5 sm:py-6 flex flex-col justify-between min-h-[130px] sm:min-h-[150px] bento-card transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-                }`}
+              className="group relative rounded-2xl overflow-hidden bg-white border border-black/[0.08] px-4 py-4 flex flex-col justify-between bento-card"
             >
               {/* Top icon */}
-              <div className="w-9 h-9 rounded-full border border-black/10 flex items-center justify-center mb-3 group-hover:bg-[#1a1916] group-hover:text-[#f5f4f0] transition-colors duration-300">
-                <Icon size={15} className="text-neutral-500 group-hover:text-white transition-colors" />
+              <div className="w-9 h-9 rounded-full bg-neutral-50 border border-black/[0.08] flex items-center justify-center mb-3 group-hover:bg-[#1a1916] transition-colors duration-300">
+                <Icon size={15} className="text-neutral-400 group-hover:text-white transition-colors" />
               </div>
 
               <div>
@@ -91,11 +85,19 @@ export default function ContactSection() {
             </div>
           ))}
 
+          </div>
           {/* Map card */}
           <div
-            style={{ transitionDelay: isVisible ? "240ms" : "0ms" }}
-            className={`col-span-2 relative rounded-2xl overflow-hidden min-h-[200px] sm:min-h-[220px] group bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-              }`}
+            style={{
+              transitionProperty: "opacity, transform, filter",
+              transitionDuration: "1.1s, 1.1s, 1.1s",
+              transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1)",
+              transitionDelay: isVisible ? "480ms" : "0ms",
+              opacity: isVisible ? 1 : 0,
+              transform: isVisible ? "translateY(0px) scale(1)" : "translateY(36px) scale(0.93)",
+              filter: isVisible ? "blur(0px)" : "blur(12px)",
+            }}
+            className="flex-1 min-h-0 relative rounded-2xl overflow-hidden group bento-card"
           >
             {/* Google Maps iframe */}
             <iframe
@@ -107,7 +109,6 @@ export default function ContactSection() {
                 inset: 0,
                 border: 0,
                 filter: "grayscale(20%) contrast(1.05)",
-                minHeight: 220,
               }}
               allowFullScreen=""
               loading="lazy"
@@ -149,17 +150,24 @@ export default function ContactSection() {
         {/* ── RIGHT — Form card ── */}
         <div
           style={{
-            transitionDelay: isVisible ? "150ms" : "0ms"
+            transitionProperty: "opacity, transform",
+            transitionDuration: "0.9s, 0.9s",
+            transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1)",
+            transitionDelay: isVisible ? "80ms" : "0ms",
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? "translateX(0px)" : "translateX(70px)",
           }}
-          className={`lg:col-span-3 relative rounded-2xl overflow-hidden bg-white/80 border border-black/10 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
+          className="lg:col-span-3 flex flex-col rounded-2xl overflow-hidden bg-white border border-black/[0.08] min-h-0"
         >
 
-          {/* TOP LEFT — label */}
-          <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-br-2xl z-10">
-            <span className="text-[10px] font-medium tracking-[0.12em] uppercase text-neutral-400">
-              Send a message
-            </span>
+          {/* Form card header */}
+          <div className="px-5 sm:px-6 pt-4 pb-3 border-b border-black/[0.06] shrink-0">
+            <p className="text-[9px] font-semibold tracking-[0.18em] uppercase text-amber-700/60 mb-1">
+              — Direct inquiry
+            </p>
+            <p className="text-[15px] font-semibold tracking-[-0.01em] text-neutral-900">
+              Tell us what you need — we handle the rest.
+            </p>
           </div>
 
           {submitted ? (
@@ -184,10 +192,10 @@ export default function ContactSection() {
             </div>
           ) : (
             // ── Form ──
-            <div className="flex flex-col gap-0 pt-16 sm:pt-20 pb-6 px-5 sm:px-6">
+            <div className="flex flex-col flex-1 min-h-0 px-5 sm:px-6 pt-4 pb-4">
 
               {/* Name + Email row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                 <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
@@ -217,7 +225,7 @@ export default function ContactSection() {
               </div>
 
               {/* Phone + Service row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                 <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
@@ -256,7 +264,7 @@ export default function ContactSection() {
               </div>
 
               {/* Message */}
-              <div className={`flex flex-col gap-1.5 mb-5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              <div className={`flex flex-col gap-1.5 mb-3 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`} style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}>
                 <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                   Your message
@@ -265,7 +273,7 @@ export default function ContactSection() {
                   name="message"
                   value={form.message}
                   onChange={handleChange}
-                  rows={4}
+                  rows={3}
                   placeholder="Tell us about your shipment requirements..."
                   className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300 resize-none"
                 />
@@ -274,21 +282,27 @@ export default function ContactSection() {
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                className="group flex items-center justify-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-3 rounded-full hover:bg-neutral-800 transition-all duration-300 w-full active:scale-98"
+                className="group flex items-center justify-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl hover:bg-neutral-800 transition-all duration-300 w-full active:scale-[0.98] mt-1"
               >
                 Send message <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </button>
 
-              <p className="text-[10px] text-neutral-300 text-center mt-3 tracking-tight">
-                By submitting, you agree to our privacy policy. No spam, ever.
-              </p>
+              {/* Trust row */}
+              <div className="flex items-center gap-6 pt-3 mt-2 border-t border-black/[0.06]">
+                {[["\u003c 4 hrs", "Avg. response"], ["30+", "Countries"], ["50K+", "Shipments"]].map(([num, label]) => (
+                  <div key={label}>
+                    <p className="text-[13px] font-bold text-neutral-900 tracking-tight">{num}</p>
+                    <p className="text-[10px] text-neutral-400 tracking-tight">{label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
       </div>
 
       {/* ── BOTTOM STRIP ── */}
-      <div className={`flex flex-wrap gap-2 px-1 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      <div className={`flex flex-wrap gap-1.5 px-1 shrink-0 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
         }`} style={{ transitionDelay: isVisible ? "350ms" : "0ms" }}>
         {[
           "Freight Forwarding", "Customs Clearance", "Warehousing",

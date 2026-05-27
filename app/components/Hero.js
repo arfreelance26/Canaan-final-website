@@ -117,8 +117,11 @@ export default function DavidHazHero() {
         {/* Background image */}
         <img
           ref={imgRef}
-          src="https://plus.unsplash.com/premium_photo-1661884720911-91cd3f823298?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FyZ28lMjBib2F0fGVufDB8fDB8fHww"
+          src="https://plus.unsplash.com/premium_photo-1661884720911-91cd3f823298?fm=jpg&q=60&w=1600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FyZ28lMjBib2F0fGVufDB8fDB8fHww"
           alt="Canaan Global International — cargo vessel at sea"
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
           className="w-full h-full object-cover absolute inset-0"
           style={{ objectPosition: "center 60%", transform: "scale(1.06)", willChange: "transform" }}
         />
@@ -210,7 +213,7 @@ export default function DavidHazHero() {
         </div>
 
         {/* ── BOTTOM RIGHT — scroll indicator ── */}
-        <div className="absolute bottom-0 right-0 z-10 bg-[#f5f4f0] backdrop-blur-sm px-5 py-4 sm:px-7 sm:py-5 rounded-tl-2xl flex items-center gap-2.5">
+        <div className="absolute bottom-0 right-0 z-10 bg-[#f5f4f0] px-5 py-4 sm:px-7 sm:py-5 rounded-tl-2xl flex items-center gap-2.5">
           <span className="hidden sm:inline text-[11px] font-medium text-neutral-400 tracking-[0.1em] uppercase">
             Scroll
           </span>

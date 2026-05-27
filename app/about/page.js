@@ -1,24 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
 import { ArrowRight, Globe, Award, Users, TrendingUp, Quote } from "lucide-react";
-
-function useFadeIn(ref, threshold = 0.05) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        setVisible(e.isIntersecting);
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [ref, threshold]);
-  return visible;
-}
+import useFadeIn from "../hooks/useFadeIn";
 
 // ── FOUNDER SECTION ──────────────────────────────────────────
 function FounderSection() {

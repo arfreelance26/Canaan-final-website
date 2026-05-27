@@ -12,14 +12,15 @@ const COMPANIES = [
 // Performance rule: ONLY `hovered` is React state (fires 2× per interaction).
 // Tilt + spotlight are written directly to DOM refs inside rAF — zero React
 // re-renders during continuous mouse movement.
-function Card({ co, i, phase }) {
+function Card({ co, i, phase, dir }) {
   const cardRef      = useRef(null);   // direct style writes for tilt
   const spotlightRef = useRef(null);   // direct style writes for spotlight
   const rafRef       = useRef(null);
   const tiltRef      = useRef({ rx: 0, ry: 0 }); // mutable; read by React on re-render
   const [hovered, setHovered] = useState(false);
 
-  const delay = 0.1 + i * 0.12;
+  // Stagger: left entrance → card 0 first; right entrance → card 3 first
+  const delay = 0.05 + (dir === "right" ? (3 - i) : i) * 0.1;
 
   // ── Mouse handlers ──────────────────────────────────────────────────────────
   const handleMouseMove = useCallback((e) => {
@@ -62,12 +63,12 @@ function Card({ co, i, phase }) {
   // Entrance (hidden → reveal): React controls transform via inline style
   const entranceTransform =
     phase === "hidden"
-      ? "perspective(900px) rotateX(10deg) translateY(52px)"
-      : "perspective(900px) rotateX(0deg) translateY(0px)";
+      ? `perspective(900px) translateX(${dir === "left" ? "-110vw" : "110vw"}) rotateY(${dir === "left" ? "5deg" : "-5deg"})`
+      : "perspective(900px) translateX(0px) rotateY(0deg) translateY(0px)";
 
   // Idle: React reads tiltRef so re-renders (from setHovered) write correct values
   const idleTransform =
-    `perspective(900px) rotateX(${tiltRef.current.rx}deg) rotateY(${tiltRef.current.ry}deg) translateY(${hovered ? -6 : 0}px)`;
+    `perspective(900px) translateX(0px) rotateX(${tiltRef.current.rx}deg) rotateY(${tiltRef.current.ry}deg) translateY(${hovered ? -6 : 0}px)`;
 
   const transform = phase === "idle" ? idleTransform : entranceTransform;
 
@@ -75,7 +76,7 @@ function Card({ co, i, phase }) {
   // Spring-back when leaving (hovered just became false) or on entrance
   const transition =
     phase === "reveal"
-      ? `opacity 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}s`
+      ? `opacity 0.55s cubic-bezier(0.25,1,0.5,1) ${delay}s, transform 0.7s cubic-bezier(0.25,1,0.5,1) ${delay}s`
       : phase === "idle" && !hovered
       ? "transform 0.65s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease"
       : "box-shadow 0.35s ease";
@@ -96,10 +97,10 @@ function Card({ co, i, phase }) {
         cursor: "default",
         display: "flex",
         flexDirection: "column",
+        height: "100%",
         opacity: phase === "hidden" ? 0 : 1,
         transform,
         transition,
-        transformStyle: "preserve-3d",
         willChange: "transform",
         boxShadow: hovered
           ? "inset 3px 0 0 rgba(210,165,45,0.85), 0 24px 60px rgba(0,0,0,0.13)"
@@ -171,7 +172,8 @@ function Card({ co, i, phase }) {
           overflow: "hidden",
           background: "#f5f4f0",
           border: "1px solid rgba(0,0,0,0.06)",
-          aspectRatio: "9 / 16",
+          flex: 1,
+          minHeight: 0,
           width: "100%",
           display: "flex",
           alignItems: "center",
@@ -192,6 +194,8 @@ function Card({ co, i, phase }) {
 export default function GroupSection() {
   const sectionRef = useRef(null);
   const [phase, setPhase] = useState("hidden");
+  const [dir, setDir] = useState("left");
+  const revealTimer = useRef(null);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -199,15 +203,26 @@ export default function GroupSection() {
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          // entering from bottom = scrolling down → cards slide from left
+          // entering from top    = scrolling up   → cards slide from right
+          const fromBottom = entry.boundingClientRect.top > 0;
+          setDir(fromBottom ? "left" : "right");
           setPhase("reveal");
-          obs.disconnect();
-          setTimeout(() => setPhase("idle"), 1400);
+          if (revealTimer.current) clearTimeout(revealTimer.current);
+          revealTimer.current = setTimeout(() => setPhase("idle"), 1400);
+        } else {
+          // section left viewport — reset so next entry re-animates
+          setPhase("hidden");
+          if (revealTimer.current) clearTimeout(revealTimer.current);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.15 }
     );
     obs.observe(el);
-    return () => obs.disconnect();
+    return () => {
+      obs.disconnect();
+      if (revealTimer.current) clearTimeout(revealTimer.current);
+    };
   }, []);
 
   return (
@@ -217,20 +232,25 @@ export default function GroupSection() {
         background: "#f5f4f0",
         borderRadius: "20px 20px 0 0",
         boxShadow: "0 -20px 60px rgba(0,0,0,0.10)",
+        height: "100vh",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
       }}
-      className="px-6 sm:px-12 lg:px-20 py-20 sm:py-28"
+      className="px-6 sm:px-12 lg:px-20 py-8 sm:py-10"
     >
 
       {/* ── Header ── */}
       <div
-        className="mb-14"
+        className="mb-6"
         style={{
           opacity: phase === "hidden" ? 0 : 1,
           transform: phase === "hidden" ? "translateY(20px)" : "translateY(0)",
           transition: "opacity 0.7s ease, transform 0.7s ease",
+          flexShrink: 0,
         }}
       >
-        <div className="flex items-center gap-3 mb-5">
+        <div className="flex items-center gap-3 mb-3">
           <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "rgba(210,165,45,0.85)" }} />
           <span style={{ fontSize: "11px", letterSpacing: "0.22em", color: "rgba(210,165,45,0.75)", fontWeight: 500 }} className="uppercase">
             The Canaan Group
@@ -243,9 +263,9 @@ export default function GroupSection() {
       </div>
 
       {/* ── Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" style={{ flex: 1, minHeight: 0 }}>
         {COMPANIES.map((co, i) => (
-          <Card key={i} co={co} i={i} phase={phase} />
+          <Card key={i} co={co} i={i} phase={phase} dir={dir} />
         ))}
       </div>
     </section>

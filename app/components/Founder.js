@@ -12,7 +12,7 @@ export default function FounderSection() {
         <div className="relative min-h-[320px] sm:min-h-0">
           <img
             src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800"
-            alt="John Doe, Founder of Canaan Global International"
+            alt="Arun Sam Alfred, Founder of Canaan Global International"
             className="w-full h-full object-cover object-top absolute inset-0"
           />
           {/* Subtle right-edge fade into content panel */}
@@ -51,7 +51,7 @@ export default function FounderSection() {
 
             <p className="text-[14px] text-neutral-500 leading-relaxed">
               With over two decades of experience in international trade and freight
-              forwarding, John founded Canaan Global International with a single
+              forwarding, Arun founded Canaan Global International with a single
               conviction — that moving goods across borders should feel effortless
               for businesses of any size.
             </p>

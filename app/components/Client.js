@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
+import useFadeIn from "../hooks/useFadeIn";
 
 const CLIENTS = [
   { name: "Amazon",    domain: "amazon.com" },
@@ -19,24 +20,6 @@ const CLIENTS = [
   { name: "3M",       domain: "3m.com" },
   { name: "Honeywell",domain: "honeywell.com" },
 ];
-
-function useFadeIn(ref, threshold = 0.05) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        // Keeps triggering every time it enters/leaves the viewport!
-        setVisible(e.isIntersecting);
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [ref, threshold]);
-  return visible;
-}
 
 export default function ClientsSection() {
   const sectionRef = useRef(null);
@@ -93,6 +76,8 @@ export default function ClientsSection() {
             <img
               src={`https://img.logo.dev/${domain}?token=pk_TCYqoFGsRJK7RG3c9IqeQQ&size=128`}
               alt={`${name} logo`}
+              loading="lazy"
+              decoding="async"
               className="max-h-8 sm:max-h-10 w-auto object-contain opacity-60 group-hover:opacity-0 transition-opacity duration-300 filter grayscale group-hover:scale-95 duration-500"
               onError={(e) => {
                 e.target.style.display = "none";
@@ -112,6 +97,8 @@ export default function ClientsSection() {
               <img
                 src={`https://img.logo.dev/${domain}?token=pk_TCYqoFGsRJK7RG3c9IqeQQ&size=128`}
                 alt={`${name} logo`}
+                loading="lazy"
+                decoding="async"
                 className="max-h-7 sm:max-h-9 w-auto object-contain brightness-0 invert"
               />
               <span className="text-[9px] font-medium tracking-[0.15em] uppercase text-neutral-400">

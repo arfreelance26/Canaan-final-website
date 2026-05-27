@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Globe, ArrowRight, TrendingUp, Package } from "lucide-react";
+import useFadeIn from "../hooks/useFadeIn";
 import dynamic from "next/dynamic";
 
 const WorldMap = dynamic(() => import("react-svg-worldmap"), { ssr: false });
@@ -37,26 +38,6 @@ const REGIONS = [
   { label: "Africa", countries: "Nigeria, Kenya, South Africa", shipments: "900+" },
 ];
 
-function useFadeIn(ref, threshold = 0.1) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVisible(true);
-          obs.disconnect();
-        }
-      },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [ref, threshold]);
-  return visible;
-}
-
 export default function WorldNetworkSection() {
   const [activeRegion, setActiveRegion] = useState(null);
   const sectionRef = useRef(null);
@@ -74,8 +55,10 @@ export default function WorldNetworkSection() {
         isVisible ? "animate-fade-in-up" : "opacity-0 translate-y-6"
       }`}>
         <img
-          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2070"
+          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200"
           alt="World Network"
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover absolute inset-0 transition-transform duration-[1.2s] group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-black/45 group-hover:bg-black/50 transition-colors duration-500" />
@@ -104,7 +87,7 @@ export default function WorldNetworkSection() {
 
         {/* BOTTOM RIGHT — stat (desktop) */}
         <div className="hidden sm:flex absolute bottom-0 right-0 bg-white/90 backdrop-blur-sm px-7 py-6 rounded-tl-2xl z-10 items-center gap-3">
-          <Globe size={16} className="text-neutral-400 animate-spin-slow" />
+          <Globe size={16} className="text-neutral-400" />
           <div>
             <p className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
               Total shipments

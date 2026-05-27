@@ -7,6 +7,13 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata = {
   title: "Canaan Global International",
   description:

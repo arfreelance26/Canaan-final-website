@@ -7,42 +7,42 @@ const FLEET = [
     name: "Flatbed Truck",
     type: "Heavy Freight",
     capacity: "30 Tons",
-    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=70&w=900",
     tag: "Most Popular",
   },
   {
     name: "Semi Trailer",
     type: "Long Haul",
     capacity: "40 Tons",
-    image: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=70&w=900",
     tag: "Long Distance",
   },
   {
     name: "Box Truck",
     type: "Enclosed Cargo",
     capacity: "10 Tons",
-    image: "https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?q=70&w=900",
     tag: "City Delivery",
   },
   {
     name: "Tanker Truck",
     type: "Liquid Freight",
     capacity: "25 Tons",
-    image: "https://images.unsplash.com/photo-1545459720-aac8509eb02c?q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1545459720-aac8509eb02c?q=70&w=900",
     tag: "Specialized",
   },
   {
     name: "Refrigerated Truck",
     type: "Cold Chain",
     capacity: "15 Tons",
-    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=70&w=900",
     tag: "Temperature Controlled",
   },
   {
     name: "Heavy Hauler",
     type: "Oversized Load",
     capacity: "60 Tons",
-    image: "https://images.unsplash.com/photo-1504222490345-c075b7b7b10b?q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1504222490345-c075b7b7b10b?q=70&w=900",
     tag: "Heavy Duty",
   },
 ];
@@ -58,23 +58,30 @@ export default function FleetSection() {
     const track = trackRef.current;
     if (!section || !sticky || !track) return;
 
+    let rafId = null;
     const onScroll = () => {
-      const sectionTop = section.getBoundingClientRect().top;
-      const sectionHeight = section.offsetHeight;
-      const viewportHeight = window.innerHeight;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const sectionTop = section.getBoundingClientRect().top;
+        const sectionHeight = section.offsetHeight;
+        const viewportHeight = window.innerHeight;
 
-      // How far we've scrolled into the section (0 → sectionHeight - viewportHeight)
-      const scrolled = Math.max(0, -sectionTop);
-      const maxScroll = sectionHeight - viewportHeight;
-      const progress = Math.min(scrolled / maxScroll, 1);
+        // How far we've scrolled into the section (0 → sectionHeight - viewportHeight)
+        const scrolled = Math.max(0, -sectionTop);
+        const maxScroll = sectionHeight - viewportHeight;
+        const progress = Math.min(scrolled / maxScroll, 1);
 
-      // Total scrollable width of the track minus viewport width
-      const trackWidth = track.scrollWidth - sticky.offsetWidth;
-      track.style.transform = `translateX(-${progress * trackWidth}px)`;
+        // Total scrollable width of the track minus viewport width
+        const trackWidth = track.scrollWidth - sticky.offsetWidth;
+        track.style.transform = `translateX(-${progress * trackWidth}px)`;
+      });
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   // Section height = viewport height + extra scroll distance (one card width * cards)
@@ -114,7 +121,7 @@ export default function FleetSection() {
           <div
             ref={trackRef}
             className="flex gap-3 will-change-transform"
-            style={{ transition: "transform 0.05s linear" }}
+            style={{ transition: "none" }}
           >
             {FLEET.map((vehicle) => (
               <div
@@ -126,6 +133,8 @@ export default function FleetSection() {
                 <img
                   src={vehicle.image}
                   alt={vehicle.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300" />
