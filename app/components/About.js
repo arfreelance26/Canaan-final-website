@@ -28,15 +28,21 @@ export default function AboutSection() {
     >
 
       {/* ── MAIN CARD ── */}
-      <div className={`group relative rounded-2xl overflow-hidden min-h-[600px] sm:min-h-[640px] lg:min-h-[700px] transition-all duration-700 ease-out transform ${
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-      }`}>
+      <div
+        className="group relative rounded-2xl overflow-hidden min-h-[600px] sm:min-h-[640px] lg:min-h-[700px]"
+        style={{
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? "translateY(0)" : "translateY(40px)",
+          transition: "opacity 0.7s ease-out, transform 0.7s ease-out",
+        }}
+      >
 
         {/* Background image */}
         <img
           src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070"
           alt="Canaan Global International logistics"
           className="w-full h-full object-cover absolute inset-0 transition-transform duration-[1.2s] group-hover:scale-105"
+          style={{ willChange: "transform" }}
         />
 
         {/* Dark scrim */}
@@ -123,7 +129,7 @@ export default function AboutSection() {
               <li
                 key={text}
                 style={{ transitionDelay: isVisible ? `${idx * 80}ms` : "0ms" }}
-                className={`flex items-center gap-2.5 text-sm text-neutral-700 transition-all duration-500 ease-out transform ${
+                className={`flex items-center gap-2.5 text-sm text-neutral-700 transition-[opacity,transform] duration-500 ease-out ${
                   isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                 }`}
               >
@@ -133,7 +139,7 @@ export default function AboutSection() {
             ))}
           </ul>
 
-          <button className="group flex items-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-neutral-800 transition-all duration-300 self-start active:scale-95">
+          <button className="group flex items-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-neutral-800 transition-colors self-start active:scale-95">
             Our services <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
           </button>
         </div>
@@ -144,7 +150,7 @@ export default function AboutSection() {
             <div
               key={label}
               style={{ transitionDelay: isVisible ? `${200 + i * 80}ms` : "0ms" }}
-              className={`flex flex-col gap-0.5 transition-all duration-700 ease-out transform ${
+              className={`flex flex-col gap-0.5 transition-[opacity,transform] duration-700 ease-out ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
               }`}
             >

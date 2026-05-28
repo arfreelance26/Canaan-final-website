@@ -40,7 +40,7 @@ export default function ContactSection() {
     >
 
       {/* ── HEADER ── */}
-      <div className={`text-center shrink-0 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+      <div className={`text-center shrink-0 transition-[opacity,transform] duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
         <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-amber-700/60 mb-1">
           — Get in Touch
         </p>
@@ -89,13 +89,12 @@ export default function ContactSection() {
           {/* Map card */}
           <div
             style={{
-              transitionProperty: "opacity, transform, filter",
-              transitionDuration: "1.1s, 1.1s, 1.1s",
-              transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1)",
+              transitionProperty: "opacity, transform",
+              transitionDuration: "1.1s, 1.1s",
+              transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1)",
               transitionDelay: isVisible ? "480ms" : "0ms",
               opacity: isVisible ? 1 : 0,
               transform: isVisible ? "translateY(0px) scale(1)" : "translateY(36px) scale(0.93)",
-              filter: isVisible ? "blur(0px)" : "blur(12px)",
             }}
             className="flex-1 min-h-0 relative rounded-2xl overflow-hidden group bento-card"
           >
@@ -139,7 +138,7 @@ export default function ContactSection() {
                 href="https://maps.google.com/?q=Tuticorin,Tamil+Nadu+628103"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full border border-black/20 flex items-center justify-center shrink-0 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all duration-300 pointer-events-auto"
+                className="w-8 h-8 rounded-full border border-black/20 flex items-center justify-center shrink-0 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-[background-color,border-color,color] duration-300 pointer-events-auto"
               >
                 <ArrowRight size={13} className="text-neutral-600 hover:text-white transition-colors" />
               </a>
@@ -185,7 +184,7 @@ export default function ContactSection() {
               </p>
               <button
                 onClick={() => { setSubmitted(false); setForm({ name: "", email: "", phone: "", service: "", message: "" }); }}
-                className="mt-2 flex items-center gap-2 border border-black/15 text-neutral-700 text-sm font-medium px-5 py-2.5 rounded-full hover:bg-black hover:text-white hover:border-black transition-all duration-300 active:scale-95"
+                className="mt-2 flex items-center gap-2 border border-black/15 text-neutral-700 text-sm font-medium px-5 py-2.5 rounded-full hover:bg-black hover:text-white hover:border-black transition-[background-color,color,border-color] duration-300 active:scale-95"
               >
                 Send another message
               </button>
@@ -196,7 +195,7 @@ export default function ContactSection() {
 
               {/* Name + Email row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                     Full name
@@ -206,10 +205,10 @@ export default function ContactSection() {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="John Smith"
-                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300"
+                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
                   />
                 </div>
-                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                     Email address
@@ -219,14 +218,14 @@ export default function ContactSection() {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="john@company.com"
-                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300"
+                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
                   />
                 </div>
               </div>
 
               {/* Phone + Service row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                     Phone number
@@ -236,10 +235,10 @@ export default function ContactSection() {
                     value={form.phone}
                     onChange={handleChange}
                     placeholder="+1 (000) 000-0000"
-                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300"
+                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
                   />
                 </div>
-                <div className={`flex flex-col gap-1.5 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                     Service needed
@@ -248,7 +247,7 @@ export default function ContactSection() {
                     name="service"
                     value={form.service}
                     onChange={handleChange}
-                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300 appearance-none cursor-pointer"
+                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 appearance-none cursor-pointer"
                   >
                     <option value="" disabled>Select a service</option>
                     <option>Freight Forwarding</option>
@@ -264,7 +263,7 @@ export default function ContactSection() {
               </div>
 
               {/* Message */}
-              <div className={`flex flex-col gap-1.5 mb-3 transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              <div className={`flex flex-col gap-1.5 mb-3 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`} style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}>
                 <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                   Your message
@@ -275,14 +274,14 @@ export default function ContactSection() {
                   onChange={handleChange}
                   rows={3}
                   placeholder="Tell us about your shipment requirements..."
-                  className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300 resize-none"
+                  className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 resize-none"
                 />
               </div>
 
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                className="group flex items-center justify-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl hover:bg-neutral-800 transition-all duration-300 w-full active:scale-[0.98] mt-1"
+                className="group flex items-center justify-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl hover:bg-neutral-800 transition-colors duration-300 w-full active:scale-[0.98] mt-1"
               >
                 Send message <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </button>
@@ -302,7 +301,7 @@ export default function ContactSection() {
       </div>
 
       {/* ── BOTTOM STRIP ── */}
-      <div className={`flex flex-wrap gap-1.5 px-1 shrink-0 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      <div className={`flex flex-wrap gap-1.5 px-1 shrink-0 transition-[opacity,transform] duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
         }`} style={{ transitionDelay: isVisible ? "350ms" : "0ms" }}>
         {[
           "Freight Forwarding", "Customs Clearance", "Warehousing",
@@ -311,7 +310,7 @@ export default function ContactSection() {
         ].map((tag) => (
           <span
             key={tag}
-            className="bg-white/80 border border-black/10 text-neutral-700 text-xs font-medium px-4 py-2 rounded-full tracking-tight hover:bg-[#1a1916] hover:text-[#f5f4f0] hover:border-[#1a1916] transition-all duration-300 cursor-pointer"
+            className="bg-white/80 border border-black/10 text-neutral-700 text-xs font-medium px-4 py-2 rounded-full tracking-tight hover:bg-[#1a1916] hover:text-[#f5f4f0] hover:border-[#1a1916] transition-[background-color,color,border-color] duration-300 cursor-pointer"
           >
             {tag}
           </span>

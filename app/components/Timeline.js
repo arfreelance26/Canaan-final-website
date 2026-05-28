@@ -150,7 +150,7 @@ function Panel({ m, isActive }) {
           transition: isActive
             ? "transform 1.7s cubic-bezier(.25,.46,.45,.94)"
             : "none",
-          willChange: "transform",
+          willChange: isActive ? "transform" : "auto",
         }}
       />
 

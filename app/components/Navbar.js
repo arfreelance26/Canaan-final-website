@@ -19,6 +19,7 @@ export default function Navbar() {
   const [activeItem, setActiveItem] = useState("Home");
   const [slider, setSlider] = useState({ left: 0, width: 0, opacity: 0 });
   const [isHidden, setIsHidden] = useState(false);
+  const [isLogoVisible, setIsLogoVisible] = useState(true);
   const navRef = useRef(null);
   const btnRefs = useRef({});
   const pathname = usePathname();
@@ -68,6 +69,23 @@ export default function Navbar() {
       setIsHidden(false);
     };
   }, [pathname]);
+
+  useEffect(() => {
+    let rafId = null;
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        setIsLogoVisible(window.scrollY < window.innerHeight * 0.5);
+        rafId = null;
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => syncSliderTo(activeItem));
@@ -163,8 +181,8 @@ export default function Navbar() {
       {/* ── TOP LEFT — logo + company name ── */}
       <div 
         onClick={handleLogoClick}
-        className={`fixed cursor-pointer z-50 top-0 left-0 bg-white/80 backdrop-blur-xl border-b border-r border-black/[0.06] px-5 py-4 sm:px-6 sm:py-4 rounded-br-2xl flex items-center gap-3 animate-fade-in transition-transform duration-500 ease-in-out ${
-          isHidden ? "-translate-y-full" : "translate-y-0"
+        className={`fixed cursor-pointer z-50 top-0 left-0 bg-white/80 backdrop-blur-xl border-b border-r border-black/[0.06] px-5 py-4 sm:px-6 sm:py-4 rounded-br-2xl flex items-center gap-3 animate-fade-in transition-[opacity,transform] duration-500 ease-in-out ${
+          isHidden || !isLogoVisible ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
         }`}
       >
         {/* Logo */}
