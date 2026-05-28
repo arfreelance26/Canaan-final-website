@@ -4,7 +4,6 @@ import DavidHazHero from "./components/Hero";
 import CustomerGlobeSection from "./components/CustomerGlobe";
 import FleetSection from "./components/Fleet";
 import ClientsSection from "./components/Client";
-import TestimonialsSection from "./components/Testimonial";
 import TimelineSection from "./components/Timeline";
 import ContactSection from "./components/Contact";
 import WorldNetworkSection from "./components/World";
@@ -15,10 +14,9 @@ const SECTIONS = [
   GroupSection,
   CustomerGlobeSection,
   TimelineSection,
-  FleetSection,
   WorldNetworkSection,
+  FleetSection,
   ClientsSection,
-  TestimonialsSection,
   ContactSection,
 ];
 
@@ -26,9 +24,8 @@ const SECTION_NAV_ITEMS = [
   "About",
   "About",
   "About",
-  "Fleet",
   "Service",
-  "Clients",
+  "Fleet",
   "Clients",
   "Contact",
 ];
@@ -227,6 +224,7 @@ export default function Home() {
             key={i}
             ref={(el) => { wrapRefs.current[i] = el; }}
             data-nav-item={SECTION_NAV_ITEMS[i]}
+            {...(i === 2 || i === 4 ? { "data-hide-navbar": "true" } : {})}
           >
             <Section />
           </div>

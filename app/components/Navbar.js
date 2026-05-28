@@ -18,6 +18,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("Home");
   const [slider, setSlider] = useState({ left: 0, width: 0, opacity: 0 });
+  const [isHidden, setIsHidden] = useState(false);
   const navRef = useRef(null);
   const btnRefs = useRef({});
   const pathname = usePathname();
@@ -45,6 +46,27 @@ export default function Navbar() {
 
   useEffect(() => {
     setActiveItem(routeToNavItem(pathname));
+  }, [pathname]);
+
+  // Auto-hide when inside scroll-heavy sections
+  useEffect(() => {
+    let observer;
+    const timer = setTimeout(() => {
+      const targets = document.querySelectorAll("[data-hide-navbar]");
+      if (!targets.length) return;
+      observer = new IntersectionObserver(
+        (entries) => {
+          setIsHidden(entries.some((e) => e.isIntersecting));
+        },
+        { threshold: 0.12 }
+      );
+      targets.forEach((el) => observer.observe(el));
+    }, 60);
+    return () => {
+      clearTimeout(timer);
+      observer?.disconnect();
+      setIsHidden(false);
+    };
   }, [pathname]);
 
   useEffect(() => {
@@ -141,7 +163,9 @@ export default function Navbar() {
       {/* ── TOP LEFT — logo + company name ── */}
       <div 
         onClick={handleLogoClick}
-        className="fixed cursor-pointer z-50 top-0 left-0 bg-[#f5f4f0] px-5 py-4 sm:px-6 sm:py-4 rounded-br-2xl flex items-center gap-3 animate-fade-in"
+        className={`fixed cursor-pointer z-50 top-0 left-0 bg-white/80 backdrop-blur-xl border-b border-r border-black/[0.06] px-5 py-4 sm:px-6 sm:py-4 rounded-br-2xl flex items-center gap-3 animate-fade-in transition-transform duration-500 ease-in-out ${
+          isHidden ? "-translate-y-full" : "translate-y-0"
+        }`}
       >
         {/* Logo */}
         <LogoPlaceholder />
@@ -164,7 +188,9 @@ export default function Navbar() {
       </div>
 
       {/* ── TOP RIGHT — nav (desktop) + hamburger (mobile) ── */}
-      <div className="fixed z-50 top-0 right-0 bg-[#f5f4f0] px-5 py-4 sm:px-7 sm:py-5 rounded-bl-2xl flex items-center gap-3">
+      <div className={`fixed z-50 top-0 right-0 bg-white/80 backdrop-blur-xl border-b border-l border-black/[0.06] px-5 py-4 sm:px-7 sm:py-5 rounded-bl-2xl flex items-center gap-3 transition-transform duration-500 ease-in-out ${
+        isHidden ? "-translate-y-full" : "translate-y-0"
+      }`}>
 
         {/* Desktop nav pill */}
         <nav

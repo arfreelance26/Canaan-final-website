@@ -143,7 +143,7 @@ export default function DavidHazHero() {
             style={{
               letterSpacing: "0.18em",
               marginBottom: "1.1rem",
-              animation: "heroRevealRight 0.75s cubic-bezier(0.16,1,0.3,1) 0.1s both",
+              animation: "heroRevealLeft 0.8s cubic-bezier(0.16,1,0.3,1) 0.15s both",
             }}
             className="text-[10px] sm:text-[11px] font-medium uppercase text-white/55"
           >
@@ -163,7 +163,7 @@ export default function DavidHazHero() {
                 paddingLeft: "0.045em",
                 textTransform: "uppercase",
                 textShadow: "0 4px 40px rgba(0,0,0,0.3)",
-                animation: "heroRevealRight 1.05s cubic-bezier(0.16,1,0.3,1) 0.2s both",
+                animation: "heroRevealLeft 1.0s cubic-bezier(0.16,1,0.3,1) 0.35s both",
               }}
             >
               Canaan
@@ -179,7 +179,7 @@ export default function DavidHazHero() {
                 paddingLeft: "0.045em",
                 marginTop: "0.04em",
                 textTransform: "uppercase",
-                animation: "heroRevealRight 1.05s cubic-bezier(0.16,1,0.3,1) 0.36s both",
+                animation: "heroRevealLeft 1.0s cubic-bezier(0.16,1,0.3,1) 0.58s both",
               }}
             >
               Global
@@ -193,7 +193,7 @@ export default function DavidHazHero() {
             background: "rgba(210,165,45,0.85)",
             margin: "1.2rem 0 1rem",
             transformOrigin: "left center",
-            animation: "goldBarDraw 0.55s cubic-bezier(0.16,1,0.3,1) 0.55s both",
+            animation: "goldBarDraw 0.55s cubic-bezier(0.16,1,0.3,1) 0.78s both",
           }} />
 
           {/* Tagline — each word slides in one by one */}
@@ -203,7 +203,7 @@ export default function DavidHazHero() {
                 key={i}
                 style={{
                   display: "inline-block",
-                  animation: `heroRevealRight 0.55s cubic-bezier(0.16,1,0.3,1) ${0.68 + i * 0.1}s both`,
+                  animation: `heroRevealLeft 0.6s cubic-bezier(0.16,1,0.3,1) ${0.92 + i * 0.07}s both`,
                 }}
               >
                 {word}

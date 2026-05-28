@@ -113,6 +113,12 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Slide-from-left entrance — used by hero text elements */
+@keyframes heroRevealLeft {
+  from { opacity: 0; transform: translateX(-72px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 @keyframes goldBarDraw {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
