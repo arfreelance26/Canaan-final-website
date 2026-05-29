@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
+import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
 const Globe = dynamic(() => import("react-globe.gl"), { ssr: false });
@@ -94,6 +96,7 @@ function makeLabelEl(d) {
 }
 
 export default function CustomerGlobeSection() {
+  const router       = useRouter();
   const globeRef     = useRef(null);
   const cleanupRef   = useRef(null);
   const sectionRef   = useRef(null);
@@ -242,9 +245,99 @@ export default function CustomerGlobeSection() {
             </div>
           ))}
         </div>
-      </div>
 
-      {/* ── RIGHT: GLOBE CARD ── */}
+        {/* Founder teaser card — Option A hook */}
+        <div
+          onClick={() => router.push("/about")}
+          style={{
+            marginTop: 28,
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            padding: "14px 16px",
+            borderRadius: 14,
+            background: "rgba(26,25,22,0.04)",
+            border: "1px solid rgba(0,0,0,0.07)",
+            cursor: "pointer",
+            transition: "background 0.25s ease, border-color 0.25s ease, transform 0.25s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(26,25,22,0.07)";
+            e.currentTarget.style.borderColor = "rgba(0,0,0,0.13)";
+            e.currentTarget.style.transform = "translateY(-2px)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(26,25,22,0.04)";
+            e.currentTarget.style.borderColor = "rgba(0,0,0,0.07)";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}
+        >
+          {/* Avatar circle */}
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #2b4560 0%, #1e3a2f 100%)",
+              border: "2px solid rgba(210,165,45,0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              fontSize: 14,
+              fontWeight: 800,
+              color: "rgba(210,165,45,0.85)",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            A
+          </div>
+
+          {/* Name + title */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 700,
+                color: "#111111",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.2,
+              }}
+            >
+              Arun Sam Alfred
+            </div>
+            <div
+              style={{
+                fontSize: 10,
+                color: "#999999",
+                letterSpacing: "0.06em",
+                marginTop: 2,
+              }}
+            >
+              Founder &amp; CEO
+            </div>
+          </div>
+
+          {/* Arrow */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "#bbbbbb",
+              flexShrink: 0,
+              transition: "color 0.2s ease",
+            }}
+          >
+            Meet the team
+            <ArrowRight size={11} />
+          </div>
+        </div>
+      </div>
       <div
         className="relative flex-1 rounded-2xl overflow-hidden border border-black/[0.08]"
         style={{

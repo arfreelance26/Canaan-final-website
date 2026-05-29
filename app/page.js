@@ -2,6 +2,7 @@
 import { useRef, useEffect } from "react";
 import DavidHazHero from "./components/Hero";
 import CustomerGlobeSection from "./components/CustomerGlobe";
+import AboutTeaserSection from "./components/AboutTeaser";
 import FleetSection from "./components/Fleet";
 import ClientsSection from "./components/Client";
 import TimelineSection from "./components/Timeline";
@@ -9,22 +10,24 @@ import ContactSection from "./components/Contact";
 import WorldNetworkSection from "./components/World";
 import GroupSection from "./components/Group";
 
-// Section order — Group is index 0 (no D; is the C target for index 1)
+// Section order
 const SECTIONS = [
-  GroupSection,
-  CustomerGlobeSection,
-  TimelineSection,
-  WorldNetworkSection,
-  FleetSection,
-  ClientsSection,
-  ContactSection,
+  GroupSection,          // 0 — Home
+  CustomerGlobeSection,  // 1 — Home
+  TimelineSection,       // 2 — Home
+  WorldNetworkSection,   // 3 — Service
+  AboutTeaserSection,    // 4 — About (teaser → links to /about)
+  FleetSection,          // 5 — Fleet
+  ClientsSection,        // 6 — Clients
+  ContactSection,        // 7 — Contact
 ];
 
 const SECTION_NAV_ITEMS = [
-  "About",
-  "About",
-  "About",
+  "Home",
+  "Home",
+  "Home",
   "Service",
+  "About",
   "Fleet",
   "Clients",
   "Contact",
@@ -44,7 +47,7 @@ export default function Home() {
       const { top, bottom } = el.getBoundingClientRect();
       if (!(top < window.innerHeight && bottom > 0)) {
         el.style.opacity    = "0";
-        el.style.transform  = "translateY(40px)";
+        el.style.transform  = "scale(0.97)";
         el.style.willChange = "transform, opacity";
       }
     });
@@ -53,9 +56,9 @@ export default function Home() {
     const fallback = setTimeout(() => {
       wraps.forEach((el) => {
         if (el.style.opacity === "0") {
-          el.style.transition = "transform 0.6s ease, opacity 0.6s ease";
+          el.style.transition = "transform 0.8s cubic-bezier(0.16,1,0.3,1), opacity 0.7s ease";
           el.style.opacity    = "1";
-          el.style.transform  = "translateY(0)";
+          el.style.transform  = "scale(1)";
           el.style.willChange = "auto";
         }
       });
@@ -64,21 +67,21 @@ export default function Home() {
     const observers = [];
 
     wraps.forEach((el, i) => {
-      // ── D: one-shot entrance — section rises into view ──────────────────
+      // ── D: one-shot entrance — section fades + scales into view ─────────
       if (i > 0) {
         const dObs = new IntersectionObserver(
           ([entry]) => {
             if (!entry.isIntersecting) return;
             el.style.transition =
-              "transform 0.95s cubic-bezier(0.16,1,0.3,1), opacity 0.8s ease";
+              "transform 1.1s cubic-bezier(0.16,1,0.3,1), opacity 0.85s ease";
             el.style.opacity   = "1";
-            el.style.transform = "translateY(0)";
+            el.style.transform = "scale(1)";
             el.addEventListener("transitionend", () => {
               el.style.willChange = "auto";
             }, { once: true });
             dObs.disconnect();
           },
-          { threshold: 0.1 }
+          { threshold: 0.08 }
         );
         dObs.observe(el);
         observers.push(dObs);
@@ -91,24 +94,26 @@ export default function Home() {
             const prev = wraps[i - 1];
             if (!prev) return;
             if (entry.isIntersecting) {
-              // Push previous section back.
+              // Push previous section back with scale + blur.
               // Skip opacity on i===1 (GroupSection covers sticky hero — fading it
               // to <1 lets the hero bleed through behind it).
               const fadeOpacity = i > 1;
               prev.style.transition = fadeOpacity
-                ? "transform 0.7s cubic-bezier(0.4,0,0.2,1), opacity 0.7s ease"
-                : "transform 0.7s cubic-bezier(0.4,0,0.2,1)";
-              prev.style.transform = "scale(0.96) translateY(-12px)";
-              if (fadeOpacity) prev.style.opacity = "0.78";
+                ? "transform 0.85s cubic-bezier(0.4,0,0.2,1), opacity 0.75s ease, filter 0.75s ease"
+                : "transform 0.85s cubic-bezier(0.4,0,0.2,1), filter 0.75s ease";
+              prev.style.transform = "scale(0.93)";
+              prev.style.filter    = "blur(2px)";
+              if (fadeOpacity) prev.style.opacity = "0.55";
             } else if (entry.boundingClientRect.top > 0) {
               // User scrolled back up — restore previous section
               prev.style.transition =
-                "transform 0.55s ease, opacity 0.55s ease";
-              prev.style.transform = "scale(1) translateY(0)";
+                "transform 0.65s cubic-bezier(0.16,1,0.3,1), opacity 0.6s ease, filter 0.55s ease";
+              prev.style.transform = "scale(1)";
+              prev.style.filter    = "blur(0px)";
               prev.style.opacity   = "1";
             }
           },
-          { threshold: 0.1 }
+          { threshold: 0.18 }
         );
         cObs.observe(el);
         observers.push(cObs);
@@ -224,7 +229,8 @@ export default function Home() {
             key={i}
             ref={(el) => { wrapRefs.current[i] = el; }}
             data-nav-item={SECTION_NAV_ITEMS[i]}
-            {...(i === 2 || i === 4 ? { "data-hide-navbar": "true" } : {})}
+            {...(i === 4 ? { id: "about" } : {})}
+            {...(i === 2 || i === 5 ? { "data-hide-navbar": "true" } : {})}
           >
             <Section />
           </div>

@@ -1,31 +1,52 @@
 ﻿"use client";
 import { useRef, useEffect, useState, useCallback } from "react";
-import { Anchor, Globe, Ship, Package, ArrowRight } from "lucide-react";
+import { Anchor, Globe, Ship, Package, ArrowRight, X } from "lucide-react";
+
 
 const COMPANIES = [
   {
     name: "Canaan Global Logistics",
+    abbr: "CGL",
     category: "Freight",
     Icon: Anchor,
     tagline: "Where cargo, oceans, and infrastructure move in synchronized rhythm.",
+    role: "The operational backbone of the network.",
+    body: "From freight movement to cargo coordination, CGL orchestrates the complex mechanics behind global transportation — whether cargo moves by land, sea, or through interconnected transit systems.",
+    ops: ["Freight Forwarding", "Multimodal Transportation", "Vessel Operations", "NVOCC Services", "Cargo Consolidation"],
+    abstract: "Where cargo movement becomes synchronized precision.",
   },
   {
     name: "Canaan Global Shipping Services",
+    abbr: "CGSS",
     category: "Trade",
     Icon: Globe,
     tagline: "Behind every successful shipment lies precision invisible to the eye.",
+    role: "The regulatory and clearance arm.",
+    body: "CGSS operates at the intersection of compliance and movement — managing customs procedures, import/export clearances, and documentation flow required to keep cargo crossing borders without friction.",
+    ops: ["Customs Brokerage", "Import Handling", "Export Processing", "Trade Documentation", "Port Clearance Coordination"],
+    abstract: "Navigating borders before cargo even reaches them.",
   },
   {
     name: "Canaan Global International",
+    abbr: "CGI",
     category: "Sea Freight",
     Icon: Ship,
     tagline: "The operational nerve center connecting commerce, coordination, and execution.",
+    role: "The commercial intelligence layer.",
+    body: "CGI manages the financial, nomination, and coordination infrastructure supporting the wider Canaan network — connecting operational execution with administrative control.",
+    ops: ["Nominations & Coordination", "Billing Infrastructure", "Invoice Processing", "Transport Commercial Management", "Internal Operational Integration"],
+    abstract: "Connecting operations with commercial flow.",
   },
   {
     name: "Rehoboth Transports",
+    abbr: "RT",
     category: "Port Services",
     Icon: Package,
     tagline: "The final momentum behind the supply chain.",
+    role: "The ground-movement engine.",
+    body: "Rehoboth handles transport execution for both internal logistics operations and external clients — designed for flexibility across raw material movement, customer logistics support, and multi-channel coordination.",
+    ops: ["Cargo Transportation", "Fleet Coordination", "External Logistics Support", "Raw Material Movement", "Integrated Transport Handling"],
+    abstract: "Keeping industries moving beyond the port.",
   },
 ];
 
@@ -39,8 +60,8 @@ const PILLS = [
   "Port Services",
 ];
 
-// â”€â”€â”€ Individual card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function Card({ co, i, phase, dir }) {
+// ─── Individual card ──────────────────────────────────────────────────────────
+function Card({ co, i, phase, dir, isActive, onToggle }) {
   const cardRef = useRef(null);
   const spotlightRef = useRef(null);
   const rafRef = useRef(null);
@@ -50,7 +71,7 @@ function Card({ co, i, phase, dir }) {
   const delay = 0.05 + (dir === "right" ? (3 - i) : i) * 0.1;
 
   const handleMouseMove = useCallback((e) => {
-    if (phase !== "idle") return;
+    if (phase !== "idle" || isActive) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const cx = e.clientX - rect.left;
     const cy = e.clientY - rect.top;
@@ -71,29 +92,46 @@ function Card({ co, i, phase, dir }) {
         spotlightRef.current.style.opacity = "1";
       }
     });
-  }, [phase]);
+  }, [phase, isActive]);
 
-  const handleMouseEnter = useCallback(() => setHovered(true), []);
+  const handleMouseEnter = useCallback(() => {
+    if (!isActive) setHovered(true);
+  }, [isActive]);
+
   const handleMouseLeave = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     tiltRef.current = { rx: 0, ry: 0 };
     setHovered(false);
+    if (cardRef.current && !isActive) {
+      cardRef.current.style.transform =
+        "perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0px)";
+    }
     if (spotlightRef.current) spotlightRef.current.style.opacity = "0";
-  }, []);
+  }, [isActive]);
+
+  // Reset tilt immediately when card becomes active
+  useEffect(() => {
+    if (isActive && cardRef.current) {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      cardRef.current.style.transform = "none";
+    }
+  }, [isActive]);
 
   const entranceTransform =
     phase === "hidden"
       ? `perspective(900px) translateX(${dir === "left" ? "-110vw" : "110vw"}) rotateY(${dir === "left" ? "5deg" : "-5deg"})`
       : "perspective(900px) translateX(0px) rotateY(0deg)";
-  const idleTransform =
-    `perspective(900px) rotateX(${tiltRef.current.rx}deg) rotateY(${tiltRef.current.ry}deg) translateY(${hovered ? -5 : 0}px)`;
+  const idleTransform = isActive
+    ? "none"
+    : `perspective(900px) translateY(${hovered ? -5 : 0}px)`;
   const transform = phase === "idle" ? idleTransform : entranceTransform;
-  const transition =
-    phase === "reveal"
-      ? `opacity 0.55s cubic-bezier(0.25,1,0.5,1) ${delay}s, transform 0.7s cubic-bezier(0.25,1,0.5,1) ${delay}s`
-      : phase === "idle" && !hovered
-      ? "transform 0.65s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease"
-      : "box-shadow 0.3s ease";
+  const transition = isActive
+    ? "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.4s ease"
+    : phase === "reveal"
+    ? `opacity 0.55s cubic-bezier(0.25,1,0.5,1) ${delay}s, transform 0.7s cubic-bezier(0.25,1,0.5,1) ${delay}s`
+    : phase === "idle" && !hovered
+    ? "transform 0.65s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease"
+    : "box-shadow 0.3s ease";
 
   return (
     <div
@@ -101,79 +139,220 @@ function Card({ co, i, phase, dir }) {
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={() => onToggle(i)}
       style={{
         position: "relative",
         background: "#ffffff",
-        border: "1px solid rgba(0,0,0,0.07)",
+        border: isActive ? "1px solid rgba(210,165,45,0.30)" : "1px solid rgba(0,0,0,0.07)",
         borderRadius: 16,
-        display: "flex",
-        flexDirection: "column",
         overflow: "hidden",
         height: "100%",
         opacity: phase === "hidden" ? 0 : 1,
         transform,
         transition,
         willChange: "transform",
-        boxShadow: hovered
+        boxShadow: isActive
+          ? "inset 3px 0 0 rgba(210,165,45,0.85), 0 24px 56px rgba(0,0,0,0.13)"
+          : hovered
           ? "inset 3px 0 0 rgba(210,165,45,0.85), 0 20px 50px rgba(0,0,0,0.12)"
           : "0 2px 12px rgba(0,0,0,0.05)",
-        cursor: "default",
+        cursor: "pointer",
       }}
     >
-      {/* Spotlight */}
-      <div ref={spotlightRef} style={{ position: "absolute", inset: 0, opacity: 0, transition: "opacity 0.4s ease", pointerEvents: "none", zIndex: 0 }} />
-
       {/* Gold top hairline */}
       <div style={{
         position: "absolute", top: 0, left: 0, right: 0, height: 2,
         background: "linear-gradient(to right, rgba(210,165,45,0.95), rgba(210,165,45,0.3), transparent)",
-        transform: hovered ? "scaleX(1)" : "scaleX(0)",
+        transform: (isActive || hovered) ? "scaleX(1)" : "scaleX(0)",
         transformOrigin: "left center",
         transition: "transform 0.4s cubic-bezier(0.16,1,0.3,1)",
-        zIndex: 1,
+        zIndex: 2,
       }} />
 
-      {/* â”€â”€ Top row: category + icon â”€â”€ */}
-      <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px 8px", flexShrink: 0 }}>
-        <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#aaaaaa" }}>
-          {co.category}
-        </span>
-        <div style={{ width: 30, height: 30, borderRadius: 8, border: "1.5px solid #eeeeee", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <co.Icon size={14} color="#c0bdb6" />
+      {/* ── INACTIVE LAYOUT — always in DOM, fades out when active ── */}
+      <div style={{
+        position: "absolute", inset: 0,
+        display: "flex", flexDirection: "column",
+        opacity: isActive ? 0 : 1,
+        transition: isActive
+          ? "opacity 0.18s ease"
+          : "opacity 0.28s ease 0.22s",
+        pointerEvents: isActive ? "none" : "auto",
+      }}>
+        {/* Spotlight */}
+        <div ref={spotlightRef} style={{ position: "absolute", inset: 0, opacity: 0, transition: "opacity 0.4s ease", pointerEvents: "none", zIndex: 0 }} />
+
+        {/* Top row */}
+        <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px 8px", flexShrink: 0 }}>
+          <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#aaaaaa" }}>
+            {co.category}
+          </span>
+          <div style={{ width: 30, height: 30, borderRadius: 8, border: "1.5px solid #eeeeee", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <co.Icon size={14} color="#c0bdb6" />
+          </div>
+        </div>
+
+        {/* Image placeholder */}
+        <div style={{
+          position: "relative", zIndex: 1,
+          flex: 1, minHeight: 0,
+          background: "#f5f4f0",
+          margin: "0 12px",
+          borderRadius: 12,
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8,
+        }}>
+          <co.Icon size={40} color="rgba(0,0,0,0.07)" />
+          <span style={{ fontSize: 10, color: "rgba(0,0,0,0.18)", letterSpacing: "0.12em", textTransform: "uppercase" }}>Image</span>
+        </div>
+
+        {/* Bottom content */}
+        <div style={{ position: "relative", zIndex: 1, padding: "12px 14px 14px", flexShrink: 0 }}>
+          <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#111111", letterSpacing: "-0.02em", lineHeight: 1.2, margin: "0 0 4px" }}>
+            {co.name}
+          </h3>
+          <p style={{
+            fontSize: "11.5px", color: "#999999", lineHeight: 1.5, margin: "0 0 10px",
+            display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+          }}>
+            {co.tagline}
+          </p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#c0bdb6" }}>
+              Learn More
+            </span>
+            <ArrowRight size={13} color="#c0bdb6" />
+          </div>
         </div>
       </div>
 
-      {/* â”€â”€ Image area â”€â”€ */}
+      {/* ── ACTIVE LAYOUT — always in DOM, fades in when active ── */}
       <div style={{
-        position: "relative", zIndex: 1,
-        flex: 1, minHeight: 0,
-        background: "#f5f4f0",
-        margin: "0 12px",
-        borderRadius: 12,
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8,
+        position: "absolute", inset: 0,
+        display: "flex", flexDirection: "row",
+        opacity: isActive ? 1 : 0,
+        transition: isActive
+          ? "opacity 0.32s ease 0.26s"
+          : "opacity 0.16s ease",
+        pointerEvents: isActive ? "auto" : "none",
+        overflow: "hidden",
       }}>
-        <co.Icon size={40} color="rgba(0,0,0,0.07)" />
-        <span style={{ fontSize: 10, color: "rgba(0,0,0,0.18)", letterSpacing: "0.12em", textTransform: "uppercase" }}>
-          Image
-        </span>
-      </div>
 
-      {/* â”€â”€ Bottom content â”€â”€ */}
-      <div style={{ position: "relative", zIndex: 1, padding: "12px 14px 14px", flexShrink: 0 }}>
-        <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#111111", letterSpacing: "-0.02em", lineHeight: 1.2, margin: "0 0 4px" }}>
-          {co.name}
-        </h3>
-        <p style={{
-          fontSize: "11.5px", color: "#999999", lineHeight: 1.5, margin: "0 0 10px",
-          display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+        {/* LEFT SPINE */}
+        <div style={{
+          width: "36%",
+          flexShrink: 0,
+          display: "flex",
+          flexDirection: "column",
+          padding: "14px 12px 14px 14px",
+          borderRight: "1px solid rgba(0,0,0,0.05)",
+          background: "#fafafa",
         }}>
-          {co.tagline}
-        </p>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#c0bdb6" }}>
-            Learn More
-          </span>
-          <ArrowRight size={13} color="#c0bdb6" />
+          {/* Category + icon */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#bbbbbb" }}>
+              {co.category}
+            </span>
+            <div style={{ width: 26, height: 26, borderRadius: 7, border: "1.5px solid #eeeeee", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <co.Icon size={12} color="#c0bdb6" />
+            </div>
+          </div>
+
+          {/* Large watermark abbr */}
+          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{
+              fontSize: "clamp(2rem, 3vw, 3.2rem)",
+              fontWeight: 900,
+              color: "rgba(0,0,0,0.045)",
+              letterSpacing: "-0.04em",
+              lineHeight: 1,
+              textAlign: "center",
+              userSelect: "none",
+            }}>
+              {co.abbr}
+            </span>
+          </div>
+
+          {/* Name + close */}
+          <div>
+            <h3 style={{ fontSize: "0.78rem", fontWeight: 700, color: "#111", letterSpacing: "-0.02em", lineHeight: 1.25, margin: "0 0 10px" }}>
+              {co.name}
+            </h3>
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggle(i); }}
+              style={{
+                display: "flex", alignItems: "center", gap: 4,
+                fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase",
+                color: "#bbbbbb",
+                background: "none", border: "none", padding: 0, cursor: "pointer",
+                transition: "color 0.2s ease",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "#555"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "#bbbbbb"; }}
+            >
+              <X size={9} strokeWidth={2.5} />
+              Close
+            </button>
+          </div>
+        </div>
+
+        {/* RIGHT DETAIL */}
+        <div style={{
+          flex: 1,
+          padding: "16px 14px 16px 16px",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+        }}>
+          {/* Role */}
+          <div>
+            <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(210,165,45,0.75)", margin: "0 0 3px" }}>
+              Role
+            </p>
+            <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "#111", letterSpacing: "-0.025em", lineHeight: 1.2, margin: 0 }}>
+              {co.role}
+            </p>
+          </div>
+
+          {/* Divider */}
+          <div style={{ height: 1, background: "rgba(0,0,0,0.05)", flexShrink: 0 }} />
+
+          {/* Body */}
+          <p style={{ fontSize: "11px", color: "#777", lineHeight: 1.75, margin: 0 }}>
+            {co.body}
+          </p>
+
+          {/* Core Operations */}
+          <div style={{ flex: 1, minHeight: 0 }}>
+            <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#bbbbbb", margin: "0 0 7px" }}>
+              Core Operations
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {co.ops.map((op) => (
+                <div key={op} style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <div style={{
+                    width: 3, height: 3, borderRadius: "50%",
+                    background: "rgba(210,165,45,0.65)", flexShrink: 0,
+                  }} />
+                  <span style={{ fontSize: "11px", color: "#555", fontWeight: 500, lineHeight: 1.4 }}>{op}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Abstract */}
+          <div style={{ paddingTop: 8, borderTop: "1px solid rgba(0,0,0,0.05)", flexShrink: 0 }}>
+            <p style={{
+              fontSize: "11px",
+              fontStyle: "italic",
+              color: "rgba(210,165,45,0.9)",
+              lineHeight: 1.5,
+              margin: 0,
+              letterSpacing: "0.005em",
+            }}>
+              &ldquo;{co.abstract}&rdquo;
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -181,13 +360,18 @@ function Card({ co, i, phase, dir }) {
 }
 
 
-// â”€â”€â”€ Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Section ──────────────────────────────────────────────────────────────────
 export default function GroupSection() {
   const sectionRef = useRef(null);
   const [phase, setPhase] = useState("hidden");
   const [dir, setDir] = useState("left");
   const [activePill, setActivePill] = useState(0);
+  const [activeCard, setActiveCard] = useState(null);
   const revealTimer = useRef(null);
+
+  const handleToggle = useCallback((idx) => {
+    setActiveCard((prev) => (prev === idx ? null : idx));
+  }, []);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -202,6 +386,7 @@ export default function GroupSection() {
           revealTimer.current = setTimeout(() => setPhase("idle"), 1400);
         } else {
           setPhase("hidden");
+          setActiveCard(null);
           if (revealTimer.current) clearTimeout(revealTimer.current);
         }
       },
@@ -214,6 +399,11 @@ export default function GroupSection() {
     };
   }, []);
 
+  const gridTemplate =
+    activeCard === null
+      ? "repeat(4, 1fr)"
+      : [0, 1, 2, 3].map((i) => (i === activeCard ? "2.5fr" : "0.83fr")).join(" ");
+
   return (
     <>
       <style>{`
@@ -223,6 +413,10 @@ export default function GroupSection() {
           50%  { transform: translate(calc(-50% + 44vw), -50%) scale(1);    }
           75%  { transform: translate(-50%, calc(-50% + 24vh)) scale(0.93); }
           100% { transform: translate(calc(-50% - 44vw), -50%) scale(1);    }
+        }
+        @keyframes detailFadeIn {
+          from { opacity: 0; transform: translateX(10px); }
+          to   { opacity: 1; transform: translateX(0); }
         }
         .pill-btn { transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease; }
         .pill-wrap { scrollbar-width: none; }
@@ -242,7 +436,7 @@ export default function GroupSection() {
           padding: 16,
         }}
       >
-        {/* â”€â”€ Banner â”€â”€ */}
+        {/* ── Banner ── */}
         <div style={{
           position: "relative",
           flexShrink: 0,
@@ -253,21 +447,16 @@ export default function GroupSection() {
           transform: phase === "hidden" ? "translateY(16px)" : "translateY(0)",
           transition: "opacity 0.6s ease, transform 0.6s ease",
         }}>
-          {/* Dark maritime background */}
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(125deg, #1c2b3a 0%, #2b4560 50%, #1e3a2f 100%)" }} />
-          {/* Subtle grid texture */}
           <div style={{
             position: "absolute", inset: 0,
             backgroundImage: "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }} />
-          {/* Gold accent line at bottom */}
           <div style={{
             position: "absolute", bottom: 0, left: 0, right: 0, height: 2,
             background: "linear-gradient(90deg, transparent, rgba(210,165,45,0.65) 25%, rgba(210,165,45,0.65) 75%, transparent)",
           }} />
-
-          {/* Heading card â€” top left */}
           <div style={{
             position: "absolute", top: 14, left: 14,
             background: "rgba(255,255,255,0.97)",
@@ -281,8 +470,6 @@ export default function GroupSection() {
               <span style={{ color: "rgba(0,0,0,0.28)" }}>one mission.</span>
             </h2>
           </div>
-
-          {/* Top-right glass label */}
           <div style={{
             position: "absolute", top: 14, right: 14,
             background: "rgba(255,255,255,0.10)",
@@ -296,7 +483,7 @@ export default function GroupSection() {
           </div>
         </div>
 
-        {/* â”€â”€ Cards â”€â”€ */}
+        {/* ── Cards ── */}
         <div style={{ position: "relative", flex: 1, minHeight: 0 }}>
           {/* Orbiting gold glow */}
           <div style={{
@@ -310,14 +497,29 @@ export default function GroupSection() {
             willChange: "transform",
             filter: "blur(2px)",
           }} />
-          <div style={{ position: "relative", zIndex: 1, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, height: "100%" }}>
+          <div style={{
+            position: "relative", zIndex: 1,
+            display: "grid",
+            gridTemplateColumns: gridTemplate,
+            gap: 12,
+            height: "100%",
+            transition: "grid-template-columns 0.48s cubic-bezier(0.16,1,0.3,1)",
+          }}>
             {COMPANIES.map((co, i) => (
-              <Card key={i} co={co} i={i} phase={phase} dir={dir} />
+              <Card
+                key={i}
+                co={co}
+                i={i}
+                phase={phase}
+                dir={dir}
+                isActive={activeCard === i}
+                onToggle={handleToggle}
+              />
             ))}
           </div>
         </div>
 
-        {/* â”€â”€ Pills â”€â”€ */}
+        {/* ── Pills ── */}
         <div
           className="pill-wrap"
           style={{
@@ -358,4 +560,3 @@ export default function GroupSection() {
     </>
   );
 }
-

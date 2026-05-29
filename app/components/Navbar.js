@@ -20,6 +20,7 @@ export default function Navbar() {
   const [slider, setSlider] = useState({ left: 0, width: 0, opacity: 0 });
   const [isHidden, setIsHidden] = useState(false);
   const [isLogoVisible, setIsLogoVisible] = useState(true);
+  const [curtain, setCurtain] = useState("idle"); // "idle" | "in" | "out"
   const navRef = useRef(null);
   const btnRefs = useRef({});
   const pathname = usePathname();
@@ -151,10 +152,17 @@ export default function Navbar() {
     }
 
     if (item === "About") {
-      if (pathname !== "/about") {
-        await router.push("/about");
-      } else {
+      if (pathname === "/about") {
+        // Already on the About page — scroll to top
         window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        // Curtain sweep then navigate to /about
+        setCurtain("in");
+        setTimeout(() => {
+          router.push("/about");
+          setCurtain("out");
+        }, 230);
+        setTimeout(() => setCurtain("idle"), 470);
       }
       setMobileOpen(false);
       return;
@@ -178,6 +186,19 @@ export default function Navbar() {
 
   return (
     <>
+      {/* ── CURTAIN OVERLAY (Layer D — view transition) ── */}
+      {curtain !== "idle" && (
+        <div
+          className="fixed inset-0 z-[300] pointer-events-none"
+          style={{
+            background: "#1a1916",
+            animation: curtain === "in"
+              ? "curtainIn 0.23s cubic-bezier(0.76,0,0.24,1) forwards"
+              : "curtainOut 0.24s cubic-bezier(0.76,0,0.24,1) forwards",
+          }}
+        />
+      )}
+
       {/* ── TOP LEFT — logo + company name ── */}
       <div 
         onClick={handleLogoClick}

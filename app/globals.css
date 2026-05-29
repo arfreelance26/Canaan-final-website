@@ -26,6 +26,17 @@ body {
 }
 
 /* ── PREMIUM ANIMATIONS SYSTEM ── */
+
+/* About curtain transition (Layer D) */
+@keyframes curtainIn {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes curtainOut {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
