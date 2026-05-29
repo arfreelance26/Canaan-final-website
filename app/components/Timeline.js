@@ -1,537 +1,335 @@
 ﻿"use client";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import {
+  Anchor, Globe, Truck, MapPin, Award, ArrowRight,
+} from "lucide-react";
 
-/* ─── Milestone data ─────────────────────────────────────────── */
-const MILESTONES = [
+// ─── Data ─────────────────────────────────────────────────────────────────────
+
+const CHAPTERS = [
   {
+    id: "origin",
+    chapter: "01",
+    total: "05",
     year: "2009",
-    tag: "ORIGIN",
-    title: "Founded in Chennai",
-    description:
-      "A single trade lane between India and Europe. One vision — make international freight honest, fast, and reliable.",
-    statNum: 1,
-    statSuffix: " trade lane",
-    statSub: "The first of many.",
-    image:
-      "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1600&q=80",
-    rgb: "18,12,6",
-    alpha: 0.72,
+    label: "FOUNDING",
+    heading: "One idea.\nOne truck.\nOne route.",
+    body: "Founded in Tuticorin, Tamil Nadu — a humble port city with global ambitions. Canaan Global International began with a single cargo truck and an unshakeable commitment to reliable freight.",
+    photo: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2000",
+    stat: { num: "2009", label: "Year founded" },
+    accent: "#1A5276",
+    icon: Anchor,
   },
   {
-    year: "2012",
-    tag: "EXPANSION",
-    title: "First Intercontinental Route",
-    description:
-      "Chennai to Hamburg. Weekly sailings. The beginning of a network that would span continents and connect industries.",
-    statNum: 6,
-    statSuffix: " countries",
-    statSub: "Connected.",
-    image:
-      "https://images.unsplash.com/photo-1605745341112-85968b19335b?auto=format&fit=crop&w=1600&q=80",
-    rgb: "12,9,4",
-    alpha: 0.58,
+    id: "growth-early",
+    chapter: "02",
+    total: "05",
+    year: "2010 – 2013",
+    label: "EARLY GROWTH",
+    heading: "Building the\nfoundation.",
+    body: "The fleet grew. The routes expanded. Word spread that Canaan delivered on time, every time. South India's industrial corridors became our home territory.",
+    photo: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2000",
+    stat: { num: "12", label: "Trucks by 2013" },
+    accent: "#1E8449",
+    icon: Truck,
   },
   {
-    year: "2016",
-    tag: "INFRASTRUCTURE",
-    title: "Warehouse & Operations at Scale",
-    description:
-      "An in-house customs desk. Dedicated warehousing. The infrastructure of a serious logistics company taking shape.",
-    statNum: 85,
-    statSuffix: "+ team",
-    statSub: "Logistics professionals.",
-    image:
-      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80",
-    rgb: "8,6,2",
-    alpha: 0.44,
+    id: "accel",
+    chapter: "03",
+    total: "05",
+    year: "2014 – 2017",
+    label: "ACCELERATION",
+    heading: "Scaling across\nIndia.",
+    body: "Port-to-port. City-to-city. Warehouse to warehouse. Our network stretched from Chennai to Mumbai, connecting manufacturers with ports and global supply chains.",
+    photo: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=80&w=2000",
+    stat: { num: "4", label: "Major ports served" },
+    accent: "#6C3483",
+    icon: MapPin,
   },
   {
-    year: "2020",
-    tag: "GLOBAL",
-    title: "The World Opens Up",
-    description:
-      "Southeast Asia. The Middle East. North America. Canaan becomes a truly global freight network with no limits.",
-    statNum: 50000,
-    statSuffix: "+",
-    statSub: "Shipments delivered.",
-    image:
-      "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1600&q=80",
-    rgb: "6,4,1",
-    alpha: 0.28,
+    id: "global",
+    chapter: "04",
+    total: "05",
+    year: "2018 – 2020",
+    label: "GOING GLOBAL",
+    heading: "Beyond borders.\nBeyond limits.",
+    body: "Freight forwarding, customs clearance, and international shipping. Canaan became a full-service global logistics partner — moving goods across continents with precision.",
+    photo: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2000",
+    stat: { num: "30+", label: "Countries served" },
+    accent: "#D4A017",
+    icon: Globe,
   },
   {
-    year: "2025",
-    tag: "LEGACY",
-    title: "Best Freight Forwarder — Asia",
-    description:
-      "Recognised at the Asia Freight & Logistics Awards. Thirty countries. Fifty thousand shipments. One promise kept.",
-    statNum: 30,
-    statSuffix: " countries",
-    statSub: "One home port.",
-    image:
-      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80",
-    rgb: "245,244,240",
-    alpha: 0.90,
-    bright: true,
+    id: "today",
+    chapter: "05",
+    total: "05",
+    year: "2021 – Today",
+    label: "TODAY",
+    heading: "A legacy of\nmovement.",
+    body: "Four divisions. Over 50,000 shipments. 42 vehicles strong. Canaan Global continues to redefine logistics — connecting India to the world, one shipment at a time.",
+    photo: "https://images.unsplash.com/photo-1494412651409-8963ce7935a7?q=80&w=2000",
+    stat: { num: "50K+", label: "Shipments delivered" },
+    accent: "#C0392B",
+    icon: Award,
   },
 ];
 
-/* ─── Count-up hook ──────────────────────────────────────────── */
-function useCountUp(target, active) {
-  const [count, setCount] = useState(0);
-  const rafRef = useRef(null);
+// ─── Hooks ────────────────────────────────────────────────────────────────────
 
+function useReveal(threshold = 0.1) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    if (!active) {
-      setCount(0);
-      return;
-    }
-    const duration = target > 9999 ? 1500 : target > 99 ? 1000 : 650;
-    const t0 = performance.now();
-    const tick = (now) => {
-      const t = Math.min((now - t0) / duration, 1);
-      setCount(Math.round((1 - Math.pow(1 - t, 3)) * target));
-      if (t < 1) rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [active, target]);
-
-  return count;
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { setVisible(entry.isIntersecting); },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, visible];
 }
 
-/* ─── Single milestone panel ─────────────────────────────────── */
-function Panel({ m, isActive }) {
-  const count = useCountUp(m.statNum, isActive);
-  const dark = !m.bright;
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
-  const T = dark ? "#f5f1e8" : "#0a0908";
-  const S = dark ? "rgba(245,241,232,0.50)" : "rgba(10,9,8,0.46)";
-  const A = dark ? "#c8a84b" : "#8a6f24";
-
-  /* Staggered appear — resets instantly when inactive so it replays on re-entry */
-  const ap = (d) => ({
-    opacity: isActive ? 1 : 0,
-    transform: isActive ? "translateY(0px)" : "translateY(26px)",
-    transition: isActive
-      ? `opacity .85s cubic-bezier(.22,1,.36,1) ${d}s, transform .85s cubic-bezier(.22,1,.36,1) ${d}s`
-      : "none",
-  });
-
-  const fmt = (n) => (n >= 1000 ? n.toLocaleString("en-IN") : String(n));
+function ChapterCard({ chapter, index }) {
+  const [ref, visible] = useReveal(0.08);
+  const isEven = index % 2 === 0;
+  const Icon = chapter.icon;
 
   return (
     <div
+      ref={ref}
       style={{
-        width: "100vw",
-        height: "100%",
-        position: "relative",
-        flexShrink: 0,
-        overflow: "hidden",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(48px)",
+        transition: "opacity 0.85s ease-out, transform 0.85s ease-out",
       }}
     >
-      {/* Background image with Ken Burns zoom */}
-      <img
-        src={m.image}
-        alt=""
-        aria-hidden="true"
-        decoding="async"
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "center 35%",
-          transform: isActive ? "scale(1)" : "scale(1.07)",
-          transition: isActive
-            ? "transform 1.7s cubic-bezier(.25,.46,.45,.94)"
-            : "none",
-          willChange: isActive ? "transform" : "auto",
-        }}
-      />
+      <div className="rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 min-h-[480px]">
 
-      {/* Directional gradient overlay: opaque left to transparent right */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 1,
-          background:
-            "linear-gradient(to right," +
-            "rgba(" + m.rgb + "," + m.alpha + ") 0%," +
-            "rgba(" + m.rgb + "," + (m.alpha * 0.95) + ") 30%," +
-            "rgba(" + m.rgb + "," + (m.alpha * 0.45) + ") 60%," +
-            "rgba(" + m.rgb + ",0) 82%)",
-        }}
-      />
+        {/* Photo side */}
+        <div className={`relative min-h-[280px] lg:min-h-0 ${!isEven ? "lg:order-2" : ""}`}>
+          <Image
+            src={chapter.photo}
+            alt={chapter.heading.replace(/\n/g, " ")}
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/10" />
 
-      {/* Giant ghost year watermark */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "3%",
-          left: "1.5%",
-          zIndex: 2,
-          fontSize: "clamp(6.5rem,19vw,17rem)",
-          fontWeight: 900,
-          letterSpacing: "-.07em",
-          lineHeight: 1,
-          color: dark ? "rgba(255,255,255,.055)" : "rgba(10,9,8,.038)",
-          userSelect: "none",
-          pointerEvents: "none",
-          ...ap(0),
-        }}
-      >
-        {m.year}
-      </div>
+          {/* Chapter number watermark */}
+          <div
+            className="absolute bottom-0 right-0 font-black select-none pointer-events-none"
+            style={{
+              fontSize: "clamp(100px, 18vw, 200px)",
+              color: "rgba(255,255,255,0.06)",
+              lineHeight: 0.82,
+            }}
+          >
+            {chapter.chapter}
+          </div>
 
-      {/* Text content */}
-      <div className="tl-panel-content" style={{ zIndex: 3 }}>
+          {/* Year + counter badge */}
+          <div className="absolute top-5 left-5 flex items-center gap-2.5">
+            <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">
+              {chapter.chapter} / {chapter.total}
+            </span>
+            <span className="w-px h-3 bg-white/20" />
+            <span className="text-[13px] font-medium text-white/80">{chapter.year}</span>
+          </div>
+        </div>
 
-        {/* Tag line */}
+        {/* Content side */}
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: 20,
-            ...ap(0.04),
-          }}
+          className={`bg-white px-7 py-9 sm:px-10 sm:py-11 flex flex-col justify-center gap-5 overflow-hidden ${!isEven ? "lg:order-1" : ""}`}
         >
-          <div style={{ width: 26, height: 1.5, background: A, flexShrink: 0 }} />
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: ".2em",
-              textTransform: "uppercase",
-              color: A,
-            }}
-          >
-            {m.tag}
-          </span>
-        </div>
-
-        {/* Title */}
-        <h2
-          style={{
-            fontSize: "clamp(1.85rem,4vw,3.4rem)",
-            fontWeight: 800,
-            letterSpacing: "-.04em",
-            lineHeight: 1.07,
-            color: T,
-            margin: "0 0 18px",
-            ...ap(0.12),
-          }}
-        >
-          {m.title}
-        </h2>
-
-        {/* Description */}
-        <p
-          style={{
-            fontSize: "clamp(.8rem,1.15vw,.93rem)",
-            color: S,
-            lineHeight: 1.82,
-            margin: "0 0 30px",
-            maxWidth: 400,
-            ...ap(0.20),
-          }}
-        >
-          {m.description}
-        </p>
-
-        {/* Animated stat */}
-        <div style={{ ...ap(0.28) }}>
+          {/* Accent bar + label */}
           <div
+            className="flex items-center gap-3"
             style={{
-              display: "flex",
-              alignItems: "baseline",
-              gap: 3,
-              marginBottom: 6,
+              opacity: visible ? 1 : 0,
+              transform: visible ? "translateX(0)" : `translateX(${isEven ? "56px" : "-56px"})`,
+              transition: "opacity 0.6s ease-out 0.1s, transform 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s",
             }}
           >
-            <span
-              style={{
-                fontSize: "clamp(2.5rem,5vw,4.2rem)",
-                fontWeight: 900,
-                letterSpacing: "-.05em",
-                lineHeight: 1,
-                color: A,
-              }}
-            >
-              {fmt(count)}
-            </span>
-            <span
-              style={{
-                fontSize: "clamp(.9rem,1.8vw,1.35rem)",
-                fontWeight: 700,
-                color: A,
-                letterSpacing: "-.02em",
-              }}
-            >
-              {m.statSuffix}
+            <div className="w-[3px] h-7 rounded-full shrink-0" style={{ background: chapter.accent }} />
+            <span className="text-[11px] font-bold tracking-[0.15em] uppercase text-neutral-400">
+              {chapter.label}
             </span>
           </div>
-          <div
+
+          {/* Heading */}
+          <h3
+            className="font-bold tracking-[-0.03em] leading-[1.12] text-neutral-900 whitespace-pre-line"
             style={{
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: ".18em",
-              textTransform: "uppercase",
-              color: S,
+              fontSize: "clamp(1.75rem, 4vw, 2.6rem)",
+              opacity: visible ? 1 : 0,
+              transform: visible ? "translateX(0)" : `translateX(${isEven ? "56px" : "-56px"})`,
+              transition: "opacity 0.65s ease-out 0.22s, transform 0.65s cubic-bezier(0.16,1,0.3,1) 0.22s",
             }}
           >
-            {m.statSub}
+            {chapter.heading}
+          </h3>
+
+          {/* Body */}
+          <p
+            className="text-neutral-500 text-[15px] leading-[1.72]"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "translateX(0)" : `translateX(${isEven ? "56px" : "-56px"})`,
+              transition: "opacity 0.65s ease-out 0.34s, transform 0.65s cubic-bezier(0.16,1,0.3,1) 0.34s",
+            }}
+          >
+            {chapter.body}
+          </p>
+
+          {/* Stat chip */}
+          <div
+            className="flex items-center gap-3 pt-1"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "translateX(0)" : `translateX(${isEven ? "56px" : "-56px"})`,
+              transition: "opacity 0.65s ease-out 0.46s, transform 0.65s cubic-bezier(0.16,1,0.3,1) 0.46s",
+            }}
+          >
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: chapter.accent + "18" }}
+            >
+              <Icon size={17} style={{ color: chapter.accent }} />
+            </div>
+            <div>
+              <div className="text-xl font-bold tracking-[-0.02em] text-neutral-900 leading-none">
+                {chapter.stat.num}
+              </div>
+              <div className="text-xs text-neutral-400 mt-0.5">{chapter.stat.label}</div>
+            </div>
           </div>
         </div>
+
       </div>
     </div>
   );
 }
 
-/* ─── Section shell ──────────────────────────────────────────── */
+// ─── Main export ──────────────────────────────────────────────────────────────
+
 export default function TimelineSection() {
-  const sectionRef = useRef(null);
-  const trackRef   = useRef(null);
-  const barRef     = useRef(null);
-
-  const [active, setActive] = useState(0);
-  const [live,   setLive]   = useState(false);
-  const activeRef = useRef(0);
-  const N = MILESTONES.length;
-
-  /* Only fire panel animations while section is in viewport */
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => setLive(e.isIntersecting),
-      { threshold: 0 }
-    );
-    const el = sectionRef.current;
-    if (el) obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  /* Scroll -> horizontal translate driver */
-  useEffect(() => {
-    let raf = null;
-    const onScroll = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const s = sectionRef.current;
-        if (!s) return;
-        const r = s.getBoundingClientRect();
-        const scrollable = r.height - window.innerHeight;
-        if (scrollable <= 0) return;
-        const p = Math.max(0, Math.min(1, -r.top / scrollable));
-
-        if (trackRef.current) {
-          trackRef.current.style.transform =
-            "translateX(" + (-p * (N - 1) * 100) + "vw)";
-        }
-        if (barRef.current) {
-          barRef.current.style.width = (p * 100) + "%";
-        }
-
-        const idx = Math.min(N - 1, Math.round(p * (N - 1)));
-        if (idx !== activeRef.current) {
-          activeRef.current = idx;
-          setActive(idx);
-        }
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [N]);
-
-  const bright  = !!MILESTONES[active].bright;
-  const gold    = "#c8a84b";
-  const dotDim  = bright ? "rgba(10,9,8,.12)"  : "rgba(255,255,255,.14)";
-  const lineDim = bright ? "rgba(10,9,8,.09)"  : "rgba(255,255,255,.10)";
-  const lbDim   = bright ? "rgba(10,9,8,.32)"  : "rgba(255,255,255,.22)";
+  const [headerRef, headerVisible] = useReveal(0.08);
+  const [outroRef,  outroVisible]  = useReveal(0.15);
 
   return (
-    <>
-      <style>{`
-        .tl-panel-content {
-          position: absolute;
-          bottom: clamp(88px, 18vh, 130px);
-          left:   clamp(20px, 5vw,  32px);
-          right:  clamp(20px, 5vw,  32px);
-        }
-        @media (min-width: 768px) {
-          .tl-panel-content {
-            top:       50%;
-            bottom:    auto;
-            left:      clamp(40px, 6vw, 88px);
-            right:     auto;
-            transform: translateY(-54%);
-            max-width: min(500px, 46vw);
-          }
-        }
-      `}</style>
+    <section className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 sm:gap-4 overflow-hidden">
 
-      <section
-        ref={sectionRef}
-        style={{ height: (N * 100) + "vh", position: "relative" }}
-        className="font-sans"
+      {/* HEADER CARD */}
+      <div
+        ref={headerRef}
+        className="rounded-2xl overflow-hidden relative min-h-[380px] sm:min-h-[460px]"
+        style={{
+          opacity: headerVisible ? 1 : 0,
+          transform: headerVisible ? "translateY(0)" : "translateY(32px)",
+          transition: "opacity 0.85s ease-out, transform 0.85s ease-out",
+        }}
       >
-        <div
-          style={{
-            position: "sticky",
-            top: 0,
-            height: "100vh",
-            overflow: "hidden",
-          }}
-        >
-          {/* Horizontal panel track */}
-          <div
-            ref={trackRef}
-            style={{
-              display: "flex",
-              width: (N * 100) + "vw",
-              height: "100%",
-              willChange: "transform",
-            }}
-          >
-            {MILESTONES.map((mi, i) => (
-              <Panel key={i} m={mi} isActive={live && active === i} />
-            ))}
-          </div>
+        <Image
+          src="https://images.unsplash.com/photo-1530533718754-001d2668365a?q=80&w=2000"
+          alt="Canaan Global — 15 years of logistics"
+          fill
+          className="object-cover"
+          sizes="100vw"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/55" />
 
-          {/* Persistent top bar */}
-          <div
-            style={{
-              position: "absolute",
-              top: "clamp(20px, 3.2vh, 34px)",
-              left: "clamp(20px, 5vw, 88px)",
-              right: "clamp(20px, 5vw, 88px)",
-              zIndex: 20,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              pointerEvents: "none",
-            }}
-          >
-            <span
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: ".22em",
-                textTransform: "uppercase",
-                color: bright ? "#8a6f24" : "rgba(200,168,75,.75)",
-                transition: "color .5s ease",
-              }}
-            >
-              Built on Trust Since 2009
-            </span>
-
-            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-              {MILESTONES.map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    height: 6,
-                    width: i === active ? 22 : 6,
-                    borderRadius: 3,
-                    background: i === active ? gold : dotDim,
-                    transition:
-                      "width .45s cubic-bezier(.34,1.2,.64,1), background .4s ease",
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom scrubber */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: "clamp(18px, 3.5vh, 34px)",
-              left: "clamp(20px, 5vw, 88px)",
-              right: "clamp(20px, 5vw, 88px)",
-              zIndex: 20,
-              pointerEvents: "none",
-            }}
-          >
-            {/* Year labels */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: 9,
-              }}
-            >
-              {MILESTONES.map((mi, i) => (
-                <span
-                  key={i}
-                  style={{
-                    fontSize: 11,
-                    fontWeight: i === active ? 700 : 500,
-                    letterSpacing: ".1em",
-                    color: i === active ? gold : lbDim,
-                    transition: "color .4s ease",
-                  }}
-                >
-                  {mi.year}
-                </span>
-              ))}
-            </div>
-
-            {/* Gold fill line + milestone dots */}
-            <div
-              style={{
-                position: "relative",
-                height: 2,
-                background: lineDim,
-                borderRadius: 2,
-                transition: "background .5s ease",
-              }}
-            >
-              <div
-                ref={barRef}
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  height: "100%",
-                  width: "0%",
-                  background: "linear-gradient(to right, #c8a84b, #d4af37)",
-                  borderRadius: 2,
-                }}
-              />
-              {MILESTONES.map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: ((i / (N - 1)) * 100) + "%",
-                    transform: "translate(-50%, -50%)",
-                    width: i === active ? 11 : 7,
-                    height: i === active ? 11 : 7,
-                    borderRadius: "50%",
-                    background: i <= active ? gold : dotDim,
-                    boxShadow:
-                      i === active ? "0 0 0 2.5px rgba(200,168,75,.30)" : "none",
-                    transition: "all .4s cubic-bezier(.34,1.2,.64,1)",
-                    zIndex: 2,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+        <div className="absolute top-0 left-0 bg-[#f5f4f0] px-5 py-3.5 sm:px-7 sm:py-5 rounded-br-2xl z-10">
+          <span className="text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase text-neutral-400">
+            Our Story
+          </span>
         </div>
-      </section>
-    </>
+
+        <div className="relative z-10 h-full min-h-[380px] sm:min-h-[460px] flex flex-col justify-end p-7 sm:p-12">
+          <p
+            style={{
+              opacity: headerVisible ? 1 : 0,
+              transform: headerVisible ? "translateX(0)" : "translateX(-48px)",
+              transition: "opacity 0.7s ease-out 0.2s, transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s",
+            }}
+            className="text-white/50 text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase mb-3"
+          >
+            Canaan Global International · Est. 2009
+          </p>
+          <h2
+            className="text-white font-bold tracking-[-0.03em] leading-[1.08] max-w-2xl"
+            style={{
+              fontSize: "clamp(2rem, 5.5vw, 3.75rem)",
+              opacity: headerVisible ? 1 : 0,
+              transform: headerVisible ? "translateX(0)" : "translateX(-56px)",
+              transition: "opacity 0.75s ease-out 0.35s, transform 0.75s cubic-bezier(0.16,1,0.3,1) 0.35s",
+            }}
+          >
+            15 years of moving<br />the world forward.
+          </h2>
+          <p
+            style={{
+              opacity: headerVisible ? 1 : 0,
+              transform: headerVisible ? "translateX(0)" : "translateX(-48px)",
+              transition: "opacity 0.7s ease-out 0.5s, transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.5s",
+            }}
+            className="text-white/60 text-[15px] sm:text-lg mt-4 max-w-xl leading-relaxed"
+          >
+            From a single truck in Tuticorin to a global logistics network spanning 30+ countries — this is our story.
+          </p>
+        </div>
+      </div>
+
+      {/* CHAPTER CARDS */}
+      {CHAPTERS.map((chapter, i) => (
+        <ChapterCard key={chapter.id} chapter={chapter} index={i} />
+      ))}
+
+      {/* OUTRO */}
+      <div
+        ref={outroRef}
+        className="rounded-2xl overflow-hidden relative min-h-[300px] sm:min-h-[380px]"
+        style={{
+          opacity: outroVisible ? 1 : 0,
+          transform: outroVisible ? "translateY(0)" : "translateY(32px)",
+          transition: "opacity 0.9s ease-out, transform 0.9s ease-out",
+        }}
+      >
+        <Image
+          src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2000"
+          alt="The journey continues"
+          fill
+          className="object-cover"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 h-full min-h-[300px] sm:min-h-[380px] flex flex-col justify-center items-center text-center px-8 py-14">
+          <p className="text-white/40 text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase mb-4">
+            The journey continues
+          </p>
+          <h3
+            className="text-white font-bold tracking-[-0.03em] leading-[1.1] max-w-2xl"
+            style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
+          >
+            Ready to move your cargo<br />with confidence?
+          </h3>
+          <p className="text-white/60 mt-4 text-[15px] max-w-md leading-relaxed">
+            Partner with a logistics team that has spent 15 years earning trust — one shipment at a time.
+          </p>
+          <button className="mt-8 flex items-center gap-2 bg-white text-neutral-900 text-sm font-semibold px-6 py-3 rounded-full hover:bg-neutral-100 active:scale-95 transition-all group">
+            Get in touch
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+      </div>
+
+    </section>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Anchor } from "lucide-react";
 
@@ -17,12 +17,9 @@ function LogoPlaceholder() {
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("Home");
-  const [slider, setSlider] = useState({ left: 0, width: 0, opacity: 0 });
   const [isHidden, setIsHidden] = useState(false);
   const [isLogoVisible, setIsLogoVisible] = useState(true);
-  const [curtain, setCurtain] = useState("idle"); // "idle" | "in" | "out"
-  const navRef = useRef(null);
-  const btnRefs = useRef({});
+  const [transitioning, setTransitioning] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -31,19 +28,6 @@ export default function Navbar() {
     if (path === "/about" || path.startsWith("/about/")) return "About";
     if (path === "/canaan-shipping-services" || path.startsWith("/canaan-shipping-services/")) return "Service";
     return "Home";
-  };
-
-  const syncSliderTo = (item) => {
-    const nav = navRef.current;
-    const btn = btnRefs.current[item];
-    if (!nav || !btn) return;
-    const navRect = nav.getBoundingClientRect();
-    const btnRect = btn.getBoundingClientRect();
-    setSlider({
-      left: Math.round(btnRect.left - navRect.left),
-      width: Math.round(btnRect.width),
-      opacity: 1,
-    });
   };
 
   useEffect(() => {
@@ -89,17 +73,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const raf = requestAnimationFrame(() => syncSliderTo(activeItem));
-    return () => cancelAnimationFrame(raf);
-  }, [activeItem]);
-
-  useEffect(() => {
-    const onResize = () => syncSliderTo(activeItem);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [activeItem]);
-
-  useEffect(() => {
     if (pathname !== "/") return;
 
     const onScroll = () => {
@@ -131,7 +104,11 @@ export default function Navbar() {
 
   async function handleLogoClick() {
     if (pathname !== "/") {
-      await router.push("/");
+      setTransitioning(true);
+      setTimeout(() => {
+        router.push("/");
+        setTimeout(() => setTransitioning(false), 400);
+      }, 180);
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -143,7 +120,11 @@ export default function Navbar() {
 
     if (item === "Home") {
       if (pathname !== "/") {
-        await router.push("/");
+        setTransitioning(true);
+        setTimeout(() => {
+          router.push("/");
+          setTimeout(() => setTransitioning(false), 400);
+        }, 180);
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -153,16 +134,13 @@ export default function Navbar() {
 
     if (item === "About") {
       if (pathname === "/about") {
-        // Already on the About page — scroll to top
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
-        // Curtain sweep then navigate to /about
-        setCurtain("in");
+        setTransitioning(true);
         setTimeout(() => {
           router.push("/about");
-          setCurtain("out");
-        }, 230);
-        setTimeout(() => setCurtain("idle"), 470);
+          setTimeout(() => setTransitioning(false), 400);
+        }, 180);
       }
       setMobileOpen(false);
       return;
@@ -186,18 +164,16 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── CURTAIN OVERLAY (Layer D — view transition) ── */}
-      {curtain !== "idle" && (
-        <div
-          className="fixed inset-0 z-[300] pointer-events-none"
-          style={{
-            background: "#1a1916",
-            animation: curtain === "in"
-              ? "curtainIn 0.23s cubic-bezier(0.76,0,0.24,1) forwards"
-              : "curtainOut 0.24s cubic-bezier(0.76,0,0.24,1) forwards",
-          }}
-        />
-      )}
+      {/* ── PAGE TRANSITION OVERLAY ── */}
+      <div
+        className="fixed inset-0 z-[200] pointer-events-none bg-[#f5f4f0]"
+        style={{
+          opacity: transitioning ? 1 : 0,
+          transition: transitioning
+            ? "opacity 0.18s ease-in"
+            : "opacity 0.35s ease-out",
+        }}
+      />
 
       {/* ── TOP LEFT — logo + company name ── */}
       <div 
@@ -232,26 +208,15 @@ export default function Navbar() {
       }`}>
 
         {/* Desktop nav pill */}
-        <nav
-          ref={navRef}
-          className="hidden sm:flex relative items-center bg-black/[0.07] border border-black/10 rounded-full pl-4 pr-1.5 h-11 gap-0 overflow-hidden"
-        >
-          <span
-            aria-hidden
-            className="absolute top-1.5 h-8 rounded-full border border-white/60 bg-white/42 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.82),0_6px_16px_rgba(0,0,0,0.10)] transition-all duration-300 ease-out"
-            style={{
-              left: slider.left,
-              width: slider.width,
-              opacity: slider.opacity,
-            }}
-          />
+        <nav className="hidden sm:flex items-center bg-black/[0.07] border border-black/10 rounded-full px-1.5 h-11 gap-0.5">
           {NAV_ITEMS.map((item) => (
             <button
               key={item}
-              ref={(el) => { btnRefs.current[item] = el; }}
               onClick={() => navigateTo(item)}
-              className={`relative z-10 bg-transparent border-none font-medium text-[13.5px] tracking-tight px-3 h-8 rounded-full cursor-pointer transition-colors ${
-                activeItem === item ? "text-neutral-950" : "text-neutral-900 hover:text-neutral-500"
+              className={`bg-transparent border-none font-medium text-[13.5px] tracking-tight px-3 h-8 rounded-full cursor-pointer transition-colors ${
+                activeItem === item
+                  ? "text-neutral-950 font-semibold"
+                  : "text-neutral-600 hover:text-neutral-900"
               }`}
             >
               {item}

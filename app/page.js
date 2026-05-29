@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import DavidHazHero from "./components/Hero";
 import CustomerGlobeSection from "./components/CustomerGlobe";
 import AboutTeaserSection from "./components/AboutTeaser";
@@ -36,6 +36,12 @@ const SECTION_NAV_ITEMS = [
 export default function Home() {
   const wrapRefs = useRef([]);
   const snapRef  = useRef({ cooldown: false, delta: 0, ticks: 0, lastTime: 0, quietTimer: null });
+  const [pageVisible, setPageVisible] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setPageVisible(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     const wraps = wrapRefs.current.filter(Boolean);
@@ -221,7 +227,13 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        opacity: pageVisible ? 1 : 0,
+        transform: pageVisible ? "translateY(0)" : "translateY(16px)",
+        transition: "opacity 0.45s ease-out 0.15s, transform 0.45s ease-out 0.15s",
+      }}
+    >
       <DavidHazHero />
       <div style={{ position: "relative", zIndex: 2, background: "#f5f4f0" }}>
         {SECTIONS.map((Section, i) => (
