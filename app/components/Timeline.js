@@ -1,6 +1,13 @@
-﻿"use client";
+"use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import timeline1 from "../../company photos/timeline1.png";
+import timeline2 from "../../company photos/timeline2.png";
+import timeline3a from "../../company photos/timeline 3a.png";
+import timeline3b from "../../company photos/timeline 3b.png";
+import timeline3c from "../../company photos/timeline 3c.png";
+import timeline4 from "../../company photos/timeline 4.png";
+import trucks1 from "../../company photos/trucks1.png";
 import {
   Anchor, Globe, Truck, MapPin, Award, ArrowRight,
 } from "lucide-react";
@@ -14,9 +21,11 @@ const CHAPTERS = [
     total: "05",
     year: "2009",
     label: "FOUNDING",
-    heading: "One idea.\nOne truck.\nOne route.",
-    body: "Founded in Tuticorin, Tamil Nadu — a humble port city with global ambitions. Canaan Global International began with a single cargo truck and an unshakeable commitment to reliable freight.",
-    photo: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2000",
+    heading: "One idea.\nOne Promise.",
+    body: "Founded in Tuticorin, Tamil Nadu — a humble port city with global ambitions. Canaan Global International began with few trucks and an unshakeable commitment to reliable freight.",
+    scripture: "Remember the Lord your God, for it is He who gives you the ability to produce wealth...",
+    scriptureRef: "Deuteronomy 8:18",
+    photo: timeline1.src,
     stat: { num: "2009", label: "Year founded" },
     accent: "#1A5276",
     icon: Anchor,
@@ -29,7 +38,7 @@ const CHAPTERS = [
     label: "EARLY GROWTH",
     heading: "Building the\nfoundation.",
     body: "The fleet grew. The routes expanded. Word spread that Canaan delivered on time, every time. South India's industrial corridors became our home territory.",
-    photo: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=80&w=2000",
+    photo: timeline2.src,
     stat: { num: "12", label: "Trucks by 2013" },
     accent: "#1E8449",
     icon: Truck,
@@ -43,6 +52,7 @@ const CHAPTERS = [
     heading: "Scaling across\nIndia.",
     body: "Port-to-port. City-to-city. Warehouse to warehouse. Our network stretched from Chennai to Mumbai, connecting manufacturers with ports and global supply chains.",
     photo: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=80&w=2000",
+    carouselImages: [timeline3a.src, timeline3b.src, timeline3c.src],
     stat: { num: "4", label: "Major ports served" },
     accent: "#6C3483",
     icon: MapPin,
@@ -55,7 +65,7 @@ const CHAPTERS = [
     label: "GOING GLOBAL",
     heading: "Beyond borders.\nBeyond limits.",
     body: "Freight forwarding, customs clearance, and international shipping. Canaan became a full-service global logistics partner — moving goods across continents with precision.",
-    photo: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2000",
+    photo: timeline4.src,
     stat: { num: "30+", label: "Countries served" },
     accent: "#D4A017",
     icon: Globe,
@@ -95,6 +105,81 @@ function useReveal(threshold = 0.1) {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
+function ImageCarousel({ images, alt }) {
+  const [index, setIndex] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef(null);
+  const startXRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const pausedRef = useRef(false);
+  const autoRef = useRef(null);
+
+  useEffect(() => {
+    autoRef.current = setInterval(() => {
+      if (!pausedRef.current) setIndex((i) => (i + 1) % images.length);
+    }, 3000);
+    return () => clearInterval(autoRef.current);
+  }, [images.length]);
+
+  const handlePointerDown = (e) => {
+    isDraggingRef.current = true;
+    setIsDragging(true);
+    startXRef.current = e.clientX;
+    setDragOffset(0);
+    pausedRef.current = true;
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDraggingRef.current) return;
+    const delta = e.clientX - startXRef.current;
+    setDragOffset(delta);
+  };
+
+  const endDrag = (e) => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+    setIsDragging(false);
+    const delta = e.clientX - startXRef.current;
+    setDragOffset(0);
+    if (Math.abs(delta) > 60) {
+      if (delta < 0) setIndex((i) => (i + 1) % images.length);
+      else setIndex((i) => (i - 1 + images.length) % images.length);
+    }
+    pausedRef.current = false;
+  };
+
+  return (
+    <div
+      className="absolute inset-0 overflow-hidden select-none"
+      ref={containerRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onPointerLeave={endDrag}
+      onMouseEnter={() => (pausedRef.current = true)}
+      onMouseLeave={() => (pausedRef.current = false)}
+      style={{ touchAction: "pan-y", cursor: "grab" }}
+    >
+      <div
+        className="h-full flex"
+        style={{
+          transform: `translateX(calc(${-index * 100}% + ${dragOffset}px))`,
+          transition: isDragging ? "none" : "transform 0.45s ease",
+        }}
+      >
+        {images.map((src, i) => (
+          <div key={i} className="relative w-full h-full flex-shrink-0">
+            <Image src={src} alt={`${alt} ${i + 1}`} fill className="object-cover" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ChapterCard({ chapter, index }) {
   const [ref, visible] = useReveal(0.08);
   const isEven = index % 2 === 0;
@@ -113,13 +198,25 @@ function ChapterCard({ chapter, index }) {
 
         {/* Photo side */}
         <div className={`relative min-h-[280px] lg:min-h-0 ${!isEven ? "lg:order-2" : ""}`}>
-          <Image
-            src={chapter.photo}
-            alt={chapter.heading.replace(/\n/g, " ")}
-            fill
-            className="object-cover"
-            sizes="(max-width: 1024px) 100vw, 50vw"
-          />
+          {Array.isArray(chapter.carouselImages) ? (
+            <ImageCarousel images={chapter.carouselImages} alt={chapter.heading.replace(/\n/g, " ")} />
+          ) : typeof chapter.photo === "string" ? (
+            <Image
+              src={chapter.photo}
+              alt={chapter.heading.replace(/\n/g, " ")}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          ) : (
+            <Image
+              src={chapter.photo && chapter.photo.src ? chapter.photo.src : chapter.photo}
+              alt={chapter.heading.replace(/\n/g, " ")}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/10" />
 
           {/* Chapter number watermark */}
@@ -188,6 +285,23 @@ function ChapterCard({ chapter, index }) {
             {chapter.body}
           </p>
 
+          {/* Scripture / founding reference (optional) */}
+          {chapter.scripture && (
+            <blockquote
+              className="mt-4 text-neutral-700 italic border-l-2 pl-4"
+              style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? "translateX(0)" : `translateX(${isEven ? "56px" : "-56px"})`,
+                transition: "opacity 0.65s ease-out 0.34s, transform 0.65s cubic-bezier(0.16,1,0.3,1) 0.34s",
+              }}
+            >
+              <p className="text-[15px]">{chapter.scripture}</p>
+              {chapter.scriptureRef && (
+                <div className="mt-2 text-xs text-neutral-500 font-medium">{chapter.scriptureRef}</div>
+              )}
+            </blockquote>
+          )}
+
           {/* Stat chip */}
           <div
             className="flex items-center gap-3 pt-1"
@@ -221,7 +335,7 @@ function ChapterCard({ chapter, index }) {
 
 export default function TimelineSection() {
   const [headerRef, headerVisible] = useReveal(0.08);
-  const [outroRef,  outroVisible]  = useReveal(0.15);
+  const [outroRef, outroVisible] = useReveal(0.15);
 
   return (
     <section className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 sm:gap-4 overflow-hidden">
@@ -237,14 +351,14 @@ export default function TimelineSection() {
         }}
       >
         <Image
-          src="https://images.unsplash.com/photo-1530533718754-001d2668365a?q=80&w=2000"
+          src={trucks1}
           alt="Canaan Global — 15 years of logistics"
           fill
-          className="object-cover"
+          className="object-cover object-center"
           sizes="100vw"
           priority
         />
-        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-black/75" />
 
         <div className="absolute top-0 left-0 bg-[#f5f4f0] px-5 py-3.5 sm:px-7 sm:py-5 rounded-br-2xl z-10">
           <span className="text-[10px] sm:text-xs font-bold tracking-[0.15em] uppercase text-neutral-400">

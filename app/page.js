@@ -15,7 +15,7 @@ const SECTIONS = [
   GroupSection,          // 0 — Home
   CustomerGlobeSection,  // 1 — Home
   TimelineSection,       // 2 — Home
-  WorldNetworkSection,   // 3 — Service
+  //WorldNetworkSection,   // 3 — Service
   AboutTeaserSection,    // 4 — About (teaser → links to /about)
   FleetSection,          // 5 — Fleet
   ClientsSection,        // 6 — Clients
@@ -23,14 +23,13 @@ const SECTIONS = [
 ];
 
 const SECTION_NAV_ITEMS = [
-  "Home",
-  "Home",
-  "Home",
-  "Service",
-  "About",
-  "Fleet",
-  "Clients",
-  "Contact",
+  "Home",    // 0 — GroupSection
+  "Home",    // 1 — CustomerGlobeSection
+  "Home",    // 2 — TimelineSection
+  "Home",    // 3 — AboutTeaserSection (part of Home scroll)
+  "Fleet",   // 4 — FleetSection
+  "Clients", // 5 — ClientsSection
+  "Contact", // 6 — ContactSection
 ];
 
 export default function Home() {
@@ -241,8 +240,8 @@ export default function Home() {
             key={i}
             ref={(el) => { wrapRefs.current[i] = el; }}
             data-nav-item={SECTION_NAV_ITEMS[i]}
-            {...(i === 4 ? { id: "about" } : {})}
-            {...(i === 2 || i === 5 ? { "data-hide-navbar": "true" } : {})}
+            {...(i === 3 ? { id: "about" } : {})}
+            {...(i === 2 || i === 4 ? { "data-hide-navbar": "true" } : {})}
           >
             <Section />
           </div>

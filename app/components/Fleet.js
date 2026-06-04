@@ -4,46 +4,60 @@ import { ArrowRight, Weight } from "lucide-react";
 
 const FLEET = [
   {
-    name: "Flatbed Truck",
-    type: "Heavy Freight",
-    capacity: "30 Tons",
+    name: "20 Feet Trailer",
+    type: "Standard Trailer",
+    capacity: "15 Tons",
     image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=70&w=900",
-    tag: "Most Popular",
+    tag: "Trailer",
   },
   {
-    name: "Semi Trailer",
-    type: "Long Haul",
-    capacity: "40 Tons",
+    name: "40 Feet Trailer",
+    type: "Standard Trailer",
+    capacity: "26 Tons",
     image: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=70&w=900",
-    tag: "Long Distance",
+    tag: "Trailer",
   },
   {
-    name: "Box Truck",
-    type: "Enclosed Cargo",
-    capacity: "10 Tons",
-    image: "https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?q=70&w=900",
-    tag: "City Delivery",
+    name: "45 Feet Trailer",
+    type: "Extended Trailer",
+    capacity: "30 Tons",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=70&w=900",
+    tag: "Trailer",
   },
   {
-    name: "Tanker Truck",
-    type: "Liquid Freight",
-    capacity: "25 Tons",
-    image: "https://images.unsplash.com/photo-1545459720-aac8509eb02c?q=70&w=900",
+    name: "Low Bed Trailer",
+    type: "Heavy & Oversized Load",
+    capacity: "60 Tons",
+    image: "https://images.unsplash.com/photo-1504222490345-c075b7b7b10b?q=70&w=900",
     tag: "Specialized",
   },
   {
-    name: "Refrigerated Truck",
-    type: "Cold Chain",
-    capacity: "15 Tons",
-    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=70&w=900",
-    tag: "Temperature Controlled",
+    name: "6x4 Truck",
+    type: "10 Wheeler",
+    capacity: "16 Tons",
+    image: "https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?q=70&w=900",
+    tag: "Truck",
   },
   {
-    name: "Heavy Hauler",
-    type: "Oversized Load",
-    capacity: "60 Tons",
-    image: "https://images.unsplash.com/photo-1504222490345-c075b7b7b10b?q=70&w=900",
-    tag: "Heavy Duty",
+    name: "8x4 Truck",
+    type: "12 Wheeler",
+    capacity: "20 Tons",
+    image: "https://images.unsplash.com/photo-1545459720-aac8509eb02c?q=70&w=900",
+    tag: "Truck",
+  },
+  {
+    name: "10x4 Truck",
+    type: "14 Wheeler",
+    capacity: "25 Tons",
+    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=70&w=900",
+    tag: "Truck",
+  },
+  {
+    name: "Tractor Head",
+    type: "4x2 & 6x4 Variants",
+    capacity: "Prime Mover",
+    image: "https://images.unsplash.com/photo-1556742031-c6961e8560b0?q=70&w=900",
+    tag: "Tractor",
   },
 ];
 
@@ -168,7 +182,7 @@ export default function FleetSection() {
 
         {/* Bottom tags strip */}
         <div className="flex flex-wrap gap-2 px-1 shrink-0">
-          {["Flatbed", "Semi Trailer", "Box Truck", "Tanker", "Refrigerated", "Heavy Hauler", "GPS Tracked", "24/7 Support"].map((tag) => (
+          {["20 Ft Trailer", "40 Ft Trailer", "45 Ft Trailer", "Low Bed", "6x4 Truck", "8x4 Truck", "10x4 Truck", "Tractor Head", "GPS Tracked", "24/7 Support"].map((tag) => (
             <span
               key={tag}
               className="bg-white/80 border border-black/10 text-neutral-700 text-xs font-medium px-4 py-2 rounded-full tracking-tight"

@@ -5,10 +5,10 @@ import { ArrowRight, Mail, Phone, MapPin, Clock } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
 
 const CONTACT_INFO = [
-  { icon: Mail, label: "Email us", value: "info@canaanglobal.com" },
+  { icon: Mail, label: "Email us", value: "canaanglobal@canaanglobal.com" },
   { icon: Phone, label: "Call us", value: "+91 90470 12891" },
   { icon: MapPin, label: "Head office", value: "Tuticorin, India" },
-  { icon: Clock, label: "Working hours", value: "Mon–Sat, 8am–6pm" },
+  { icon: Clock, label: "Working hours", value: "Mon–Sat, 9am–6pm" },
 ];
 
 export default function ContactSection() {
@@ -55,35 +55,35 @@ export default function ContactSection() {
         {/* ── LEFT — Contact info cards ── */}
         <div className="lg:col-span-2 flex flex-col gap-2 min-h-0">
           <div className="grid grid-cols-2 gap-2 shrink-0">
-          {CONTACT_INFO.map(({ icon: Icon, label, value }, i) => (
-            <div
-              key={label}
-              style={{
-                borderLeft: "2px solid rgba(210,165,45,0.35)",
-                transitionProperty: "opacity, transform",
-                transitionDuration: "0.75s, 0.75s",
-                transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1), cubic-bezier(0.34, 1.56, 0.64, 1)",
-                transitionDelay: isVisible ? `${i * 110}ms` : "0ms",
-                opacity: isVisible ? 1 : 0,
-                transform: isVisible ? "translateX(0px)" : "translateX(-60px)",
-              }}
-              className="group relative rounded-2xl overflow-hidden bg-white border border-black/[0.08] px-4 py-4 flex flex-col justify-between bento-card"
-            >
-              {/* Top icon */}
-              <div className="w-9 h-9 rounded-full bg-neutral-50 border border-black/[0.08] flex items-center justify-center mb-3 group-hover:bg-[#1a1916] transition-colors duration-300">
-                <Icon size={15} className="text-neutral-400 group-hover:text-white transition-colors" />
-              </div>
+            {CONTACT_INFO.map(({ icon: Icon, label, value }, i) => (
+              <div
+                key={label}
+                style={{
+                  borderLeft: "2px solid rgba(210,165,45,0.35)",
+                  transitionProperty: "opacity, transform",
+                  transitionDuration: "0.75s, 0.75s",
+                  transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1), cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  transitionDelay: isVisible ? `${i * 110}ms` : "0ms",
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? "translateX(0px)" : "translateX(-60px)",
+                }}
+                className="group relative rounded-2xl overflow-hidden bg-white border border-black/[0.08] px-4 py-4 flex flex-col justify-between bento-card"
+              >
+                {/* Top icon */}
+                <div className="w-9 h-9 rounded-full bg-neutral-50 border border-black/[0.08] flex items-center justify-center mb-3 group-hover:bg-[#1a1916] transition-colors duration-300">
+                  <Icon size={15} className="text-neutral-400 group-hover:text-white transition-colors" />
+                </div>
 
-              <div>
-                <p className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400 mb-0.5">
-                  {label}
-                </p>
-                <p className="text-sm font-semibold text-neutral-900 tracking-tight leading-snug">
-                  {value}
-                </p>
+                <div>
+                  <p className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400 mb-0.5">
+                    {label}
+                  </p>
+                  <p className="text-sm font-semibold text-neutral-900 tracking-tight leading-snug">
+                    {value}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
           </div>
           {/* Map card */}
@@ -100,7 +100,7 @@ export default function ContactSection() {
           >
             {/* Google Maps iframe */}
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3942.3!2d78.1338!3d8.7642!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b03ef3e59a63c97%3A0x8b1e0e1e1e1e1e1e!2sThoothukudi%2C%20Tamil%20Nadu%20628%20103!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3943.5562115789494!2d78.04090921090196!3d8.733620491280172!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b03efdb0585f415%3A0x236d4e35580fc822!2sCanaan%20Global%20International!5e0!3m2!1sen!2sin!4v1780553582286!5m2!1sen!2sin"
               width="100%"
               height="100%"
               style={{
@@ -119,7 +119,7 @@ export default function ContactSection() {
             <div className="absolute inset-0 bg-white/10 pointer-events-none" />
 
             {/* TOP LEFT */}
-            
+
 
             {/* BOTTOM */}
             <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm px-4 py-4 rounded-t-2xl z-10 flex items-center justify-between pointer-events-none">

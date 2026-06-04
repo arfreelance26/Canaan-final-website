@@ -1,8 +1,12 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
+import team2 from "../../company photos/team2.jpeg";
+import team3 from "../../company photos/team3.jpeg";
+import team4 from "../../company photos/team4.jpeg";
+import team5 from "../../company photos/team5.jpeg";
 
 const STATS = [
   { num: "100+", label: "Team members" },
@@ -15,6 +19,14 @@ export default function AboutTeaserSection() {
   const router = useRouter();
   const sectionRef = useRef(null);
   const isVisible = useFadeIn(sectionRef, 0.08);
+
+  // rotating background images
+  const images = [team2.src, team3.src, team4.src, team5.src];
+  const [bgIndex, setBgIndex] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setBgIndex((i) => (i + 1) % images.length), 3000);
+    return () => clearInterval(id);
+  }, [images.length]);
 
   return (
     <section
@@ -29,20 +41,27 @@ export default function AboutTeaserSection() {
         justifyContent: "flex-end",
       }}
     >
-      {/* ── Background image ── */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1400')",
-          backgroundSize: "cover",
-          backgroundPosition: "center 30%",
-          filter: "brightness(0.38) saturate(0.7)",
-          transform: isVisible ? "scale(1)" : "scale(1.04)",
-          transition: "transform 1.8s cubic-bezier(0.16,1,0.3,1)",
-        }}
-      />
+      {/* ── Rotating background images (auto-loop every 3s) ── */}
+      <div style={{ position: "absolute", inset: 0 }}>
+        {images.map((src, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `url('${src}')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center 30%",
+              /* increase image visibility: brighter and full saturation */
+              filter: "brightness(0.50) saturate(1)",
+              transform: isVisible ? "scale(1)" : "scale(1.04)",
+              transition: "opacity 0.9s ease, transform 1.8s cubic-bezier(0.16,1,0.3,1)",
+              opacity: i === bgIndex ? 1 : 0,
+              zIndex: 0,
+            }}
+          />
+        ))}
+      </div>
 
       {/* ── Gradient overlay ── */}
       <div
@@ -50,7 +69,7 @@ export default function AboutTeaserSection() {
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(to top, rgba(26,25,22,0.97) 0%, rgba(26,25,22,0.55) 55%, rgba(26,25,22,0.18) 100%)",
+            "linear-gradient(to top, rgba(26,25,22,0.75) 0%, rgba(26,25,22,0.35) 55%, rgba(26,25,22,0.08) 100%)",
         }}
       />
 
@@ -177,7 +196,7 @@ export default function AboutTeaserSection() {
                 color: "rgba(210,165,45,0.65)",
               }}
             >
-              — Arun Sam Alfred, Founder &amp; CEO
+              — Arun Samuel  Alfred, Founder &amp; CEO
             </span>
           </p>
         </div>

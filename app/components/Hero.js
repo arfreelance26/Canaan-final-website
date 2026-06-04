@@ -3,10 +3,10 @@ import { useRef, useCallback, useEffect } from "react";
 import { ArrowDown } from "lucide-react";
 
 export default function DavidHazHero() {
-  const imgRef    = useRef(null);
-  const cardRef   = useRef(null);
+  const imgRef = useRef(null);
+  const cardRef = useRef(null);
   const sectionRef = useRef(null);
-  const rafRef    = useRef(null);
+  const rafRef = useRef(null);
   const scrollRaf = useRef(null);
 
   // ── #2 Cursor micro-parallax ──────────────────────────────────
@@ -18,8 +18,8 @@ export default function DavidHazHero() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
       const { left, top, width, height } = card.getBoundingClientRect();
-      const x = ((clientX - left) / width  - 0.5) * 2;
-      const y = ((clientY - top)  / height - 0.5) * 2;
+      const x = ((clientX - left) / width - 0.5) * 2;
+      const y = ((clientY - top) / height - 0.5) * 2;
       if (imgRef.current) {
         imgRef.current.style.transform = `scale(1.06) translate(${x * -14}px, ${y * -10}px)`;
       }
@@ -30,7 +30,7 @@ export default function DavidHazHero() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     if (imgRef.current) {
       imgRef.current.style.transition = "transform 0.9s cubic-bezier(0.16,1,0.3,1)";
-      imgRef.current.style.transform  = "scale(1.06) translate(0px, 0px)";
+      imgRef.current.style.transform = "scale(1.06) translate(0px, 0px)";
       setTimeout(() => { if (imgRef.current) imgRef.current.style.transition = ""; }, 900);
     }
   }, []);
@@ -75,8 +75,8 @@ export default function DavidHazHero() {
       const sy = window.scrollY;
       const vh = window.innerHeight;
       if (isSnapping) { e.preventDefault(); return; }
-      if (sy < vh && e.deltaY > 0)          { e.preventDefault(); snapTo(vh); }
-      else if (sy > 0 && sy <= vh && e.deltaY < 0) { e.preventDefault(); snapTo(0);  }
+      if (sy < vh && e.deltaY > 0) { e.preventDefault(); snapTo(vh); }
+      else if (sy > 0 && sy <= vh && e.deltaY < 0) { e.preventDefault(); snapTo(0); }
     };
 
     const handleTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
@@ -84,31 +84,31 @@ export default function DavidHazHero() {
     const handleTouchEnd = (e) => {
       if (isSnapping) return;
       const diff = touchStartY - e.changedTouches[0].clientY;
-      const sy   = window.scrollY;
-      const vh   = window.innerHeight;
-      if      (sy < vh && diff > 30)           snapTo(vh);
+      const sy = window.scrollY;
+      const vh = window.innerHeight;
+      if (sy < vh && diff > 30) snapTo(vh);
       else if (sy > 0 && sy <= vh && diff < -30) snapTo(0);
     };
 
-    window.addEventListener("wheel",      handleWheel,      { passive: false });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true  });
-    window.addEventListener("touchend",   handleTouchEnd,   { passive: true  });
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
     return () => {
-      window.removeEventListener("wheel",      handleWheel);
+      window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend",   handleTouchEnd);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="sticky top-0 h-screen bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 z-[1]"
+      className="sticky top-0 h-screen bg-[#f5f4f0] font-sans flex flex-col gap-3 z-[1]"
     >
       {/* ── HERO IMAGE CARD ── */}
       <div
         ref={cardRef}
-        className="relative flex-1 rounded-2xl overflow-hidden min-h-[380px] sm:min-h-[460px] lg:min-h-[520px]"
+        className="relative flex-1 overflow-hidden min-h-[380px] sm:min-h-[460px] lg:min-h-[520px]"
         style={{ willChange: "opacity" }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -174,7 +174,7 @@ export default function DavidHazHero() {
                 fontSize: "clamp(1.5rem, 5.5vw, 3.8rem)",
                 fontWeight: 700,
                 letterSpacing: "-0.02em",
-                lineHeight: 1,
+                lineHeight: 1.15,
                 color: "rgba(255,255,255,0.70)",
                 paddingLeft: "0.045em",
                 marginTop: "0.04em",
@@ -182,7 +182,7 @@ export default function DavidHazHero() {
                 animation: "heroRevealLeft 1.0s cubic-bezier(0.16,1,0.3,1) 0.58s both",
               }}
             >
-              Global
+              Global International
             </span>
           </h1>
 
@@ -213,14 +213,7 @@ export default function DavidHazHero() {
         </div>
 
         {/* ── BOTTOM RIGHT — scroll indicator ── */}
-        <div className="absolute bottom-0 right-0 z-10 bg-[#f5f4f0] px-5 py-4 sm:px-7 sm:py-5 rounded-tl-2xl flex items-center gap-2.5">
-          <span className="hidden sm:inline text-[11px] font-medium text-neutral-400 tracking-[0.1em] uppercase">
-            Scroll
-          </span>
-          <div className="w-8 h-8 rounded-full border-2 border-neutral-300 flex items-center justify-center" style={{ animation: "heroPulseDown 2s cubic-bezier(0.45,0,0.55,1) infinite" }}>
-            <ArrowDown size={13} className="text-neutral-500" />
-          </div>
-        </div>
+
 
       </div>
 

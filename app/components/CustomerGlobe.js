@@ -3,6 +3,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import arun2 from "../../company photos/arun2.png";
 
 const Globe = dynamic(() => import("react-globe.gl"), { ssr: false });
 
@@ -193,7 +195,7 @@ export default function CustomerGlobeSection() {
   []);
   const arcStroke = useCallback((d) => (d._glow ? 7 : 1.9), []);
 
-  const htmlElement    = useCallback(makeLabelEl, []);
+  const htmlElement    = useCallback((d) => makeLabelEl(d), []);
   const htmlVisibility = useCallback((el, isVis) => { el.style.opacity = isVis ? "1" : "0"; }, []);
 
   return (
@@ -201,7 +203,7 @@ export default function CustomerGlobeSection() {
 
       {/* ── LEFT: STATIC CONTENT ── */}
       <div
-        className="flex flex-col lg:w-[40%] shrink-0 justify-center lg:pr-10 py-8 lg:py-0"
+        className="flex flex-col lg:w-[40%] shrink-0 justify-start lg:pr-10 py-8 lg:pt-12 lg:pb-0"
         style={{
           opacity:    sectionIn ? 1 : 0,
           transform:  sectionIn ? "translateX(0)" : "translateX(-100px)",
@@ -224,7 +226,7 @@ export default function CustomerGlobeSection() {
         </h2>
 
         <p className="text-sm sm:text-[15px] text-neutral-500 leading-[1.85] max-w-[400px] mb-6">
-          From Tuticorin — India's southernmost major port — Canaan has built
+          From Tuticorin — India&apos;s southernmost major port — Canaan has built
           a freight network spanning four continents. Every route originates
           here, tracked end-to-end with precision.
         </p>
@@ -246,7 +248,7 @@ export default function CustomerGlobeSection() {
           ))}
         </div>
 
-        {/* Founder teaser card — Option A hook */}
+        {/* Founder portrait + Meet the team button */}
         <div
           onClick={() => router.push("/about")}
           style={{
@@ -254,7 +256,7 @@ export default function CustomerGlobeSection() {
             display: "flex",
             alignItems: "center",
             gap: 14,
-            padding: "14px 16px",
+            padding: "12px 14px",
             borderRadius: 14,
             background: "rgba(26,25,22,0.04)",
             border: "1px solid rgba(0,0,0,0.07)",
@@ -272,69 +274,33 @@ export default function CustomerGlobeSection() {
             e.currentTarget.style.transform = "translateY(0)";
           }}
         >
-          {/* Avatar circle */}
-          <div
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #2b4560 0%, #1e3a2f 100%)",
-              border: "2px solid rgba(210,165,45,0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              fontSize: 14,
-              fontWeight: 800,
-              color: "rgba(210,165,45,0.85)",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            A
+          {/* Portrait */}
+          <div style={{ width: 120, height: 120, flexShrink: 0, position: "relative", borderRadius: 9999, overflow: "hidden", boxShadow: "0 8px 24px rgba(0,0,0,0.12)", border: "2px solid rgba(210,165,45,0.10)" }}>
+            <Image src={arun2} alt="Arun Sam Alfred" fill className="object-cover" />
           </div>
 
-          {/* Name + title */}
+          {/* Visually hidden name for accessibility */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div
-              style={{
-                fontSize: 13,
-                fontWeight: 700,
-                color: "#111111",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.2,
-              }}
-            >
-              Arun Sam Alfred
-            </div>
-            <div
-              style={{
-                fontSize: 10,
-                color: "#999999",
-                letterSpacing: "0.06em",
-                marginTop: 2,
-              }}
-            >
-              Founder &amp; CEO
-            </div>
+            <span style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>Arun Sam Alfred — Founder & CEO</span>
           </div>
 
-          {/* Arrow */}
+          {/* Arrow / button text */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 4,
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: "0.12em",
+              gap: 6,
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#bbbbbb",
+              color: "#555555",
               flexShrink: 0,
               transition: "color 0.2s ease",
             }}
           >
             Meet the team
-            <ArrowRight size={11} />
+            <ArrowRight size={13} />
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 export default function FounderSection() {
   return (
@@ -10,10 +10,11 @@ export default function FounderSection() {
 
         {/* ── LEFT — Photo ── */}
         <div className="relative min-h-[320px] sm:min-h-0">
-          <img
-            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800"
-            alt="Arun Sam Alfred, Founder of Canaan Global International"
-            className="w-full h-full object-cover object-top absolute inset-0"
+          <Image
+            src="/Arun.png"
+            alt="Arun Samuel Alfred, Founder of Canaan Global International"
+            fill
+            className="object-cover object-top"
           />
           {/* Subtle right-edge fade into content panel */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/10" />
@@ -39,7 +40,7 @@ export default function FounderSection() {
                 The person behind the mission
               </p>
               <h2 className="text-4xl font-bold tracking-[-0.03em] leading-[1.1] text-neutral-900">
-                Arun <span className="italic font-normal text-neutral-500">Sam Alfred</span>
+                Arun <span className="italic font-normal text-neutral-500">Samuel Alfred</span>
               </h2>
             </div>
 
@@ -65,9 +66,9 @@ export default function FounderSection() {
 
             {/* Pull quote */}
             <div className="bg-white rounded-xl px-5 py-4">
-              <span className="font-serif text-5xl leading-none text-neutral-200 float-left mr-2 mt-1">"</span>
+              <span className="font-serif text-5xl leading-none text-neutral-200 float-left mr-2 mt-1">&ldquo;</span>
               <p className="font-serif italic text-[15px] text-neutral-700 leading-relaxed">
-                Every shipment represents someone's livelihood. We treat it that way.
+                Every shipment represents someone&apos;s livelihood. We treat it that way.
               </p>
             </div>
 
