@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { getResponse } from "../lib/joshine-engine";
 
@@ -13,7 +14,13 @@ const INITIAL_MESSAGES = [
   },
 ];
 
+// Pages where the chatbot should not appear
+const HIDDEN_PATHS = ["/cargo"];
+
 export default function ChatbotWidget() {
+  const pathname = usePathname();
+  const isHidden = HIDDEN_PATHS.includes(pathname);
+
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [messages, setMessages] = useState(INITIAL_MESSAGES);
@@ -22,26 +29,83 @@ export default function ChatbotWidget() {
   const messagesEndRef = useRef(null);
 
   // ── Visibility / intro-pop state ──────────────────────────────
-  // visible: whether the widget is rendered at all (false in hero)
-  // popping: true during the one-time intro animation
-  // bubbleAuto: shows the tooltip automatically after the pop for 4s
   const [visible, setVisible] = useState(false);
   const [popping, setPopping] = useState(false);
   const [bubbleAuto, setBubbleAuto] = useState(false);
-  const hasPopped = useRef(false);   // guard so intro only fires once
-  const isVisibleRef = useRef(false); // mirrors `visible` without stale-closure risk
-  const ctxRef = useRef({});          // persists conversation context across messages
 
-  /* Auto-scroll on new message */
+  // All refs — must be before any conditional return
+  const hasPopped = useRef(false);
+  const isVisibleRef = useRef(false);
+  const ctxRef = useRef({});
+  const timerRef = useRef(null);
+
+  // ── Session Persistence (Load) ──
   useEffect(() => {
+    if (isHidden) return;
+    try {
+      const storedCtx = sessionStorage.getItem("joshine_ctx");
+      const storedMsgs = sessionStorage.getItem("joshine_messages");
+      if (storedCtx) ctxRef.current = JSON.parse(storedCtx);
+      if (storedMsgs) setMessages(JSON.parse(storedMsgs));
+    } catch (e) {
+      console.error("Failed to load chat session", e);
+    }
+  }, [isHidden]);
+
+  // ── Session Persistence (Save) ──
+  useEffect(() => {
+    if (isHidden) return;
+    try {
+      sessionStorage.setItem("joshine_ctx", JSON.stringify(ctxRef.current));
+      sessionStorage.setItem("joshine_messages", JSON.stringify(messages));
+    } catch (e) {
+      console.error("Failed to save chat session", e);
+    }
+  }, [messages, isHidden]);
+
+  // ── Inactivity Nudge ──
+  useEffect(() => {
+    if (isHidden || !open) {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      return;
+    }
+
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg?.isNudge || isTyping) return;
+
+    timerRef.current = setTimeout(() => {
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            from: "bot",
+            text: "Still exploring? 🤔 Feel free to ask me about our services or what cargo we carry!",
+            chips: ["What We Carry", "Our Services", "Get a Quote"],
+            isNudge: true,
+          }
+        ]);
+      }, 800);
+    }, 90000); // 90 seconds
+
+    return () => clearTimeout(timerRef.current);
+  }, [messages, open, isHidden, isTyping]);
+
+  /* Auto-scroll on new message — guarded so it's a no-op on hidden pages */
+  useEffect(() => {
+    if (isHidden) return;
     if (open) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, open]);
+  }, [messages, open, isHidden]);
 
-  /* ── Scroll listener: show/hide based on hero height ── */
+  /* ── Scroll listener — guarded so it's a no-op on hidden pages ── */
   useEffect(() => {
-    // Always reset the pop flag so it plays on every fresh page load
+    if (isHidden) return;
     sessionStorage.removeItem("chatbot_popped");
     hasPopped.current = false;
 
@@ -52,15 +116,12 @@ export default function ChatbotWidget() {
         isVisibleRef.current = true;
         setVisible(true);
 
-        // First time ever scrolling past hero → play the pop
         if (!hasPopped.current) {
           hasPopped.current = true;
           sessionStorage.setItem("chatbot_popped", "1");
 
-          // Short delay so the element is mounted before animating
           setTimeout(() => {
             setPopping(true);
-            // Pop animation lasts 1.2s, then show bubble for 4s, then fade
             setTimeout(() => {
               setPopping(false);
               setBubbleAuto(true);
@@ -71,15 +132,17 @@ export default function ChatbotWidget() {
       } else if (!pastHero && isVisibleRef.current) {
         isVisibleRef.current = false;
         setVisible(false);
-        setOpen(false); // close chat if user scrolls back to hero
+        setOpen(false);
       }
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    // Run once immediately in case of a hard reload mid-page
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isHidden]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Hide entirely on excluded pages — AFTER all hooks
+  if (isHidden) return null;
 
   function handleSend(e, chipText) {
     if (e) e.preventDefault();
@@ -94,7 +157,7 @@ export default function ChatbotWidget() {
     // Simulate a short thinking delay, then reply via the engine
     const delay = 600 + Math.random() * 500;
     setTimeout(() => {
-      const { text: botText, chips, ctx: newCtx, mapEmbed, contactEmbed } = getResponse(text, ctxRef.current);
+      const { text: botText, chips, ctx: newCtx, mapEmbed, contactEmbed, navLink } = getResponse(text, ctxRef.current);
       ctxRef.current = newCtx ?? {};
       setIsTyping(false);
       setMessages((prev) => [
@@ -106,6 +169,7 @@ export default function ChatbotWidget() {
           chips: chips ?? [],
           mapEmbed: !!mapEmbed,
           contactEmbed: !!contactEmbed,
+          navLink: navLink ?? null,
         },
       ]);
     }, delay);
@@ -368,6 +432,44 @@ export default function ChatbotWidget() {
                       Open in Email
                     </a>
                   </div>
+                )}
+
+                {/* Page navigation button */}
+                {msg.from === "bot" && msg.navLink && (
+                  <a
+                    href={msg.navLink.href}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "7px",
+                      padding: "9px 16px",
+                      borderRadius: "20px",
+                      background: "rgba(200,185,138,0.12)",
+                      border: "1px solid rgba(200,185,138,0.4)",
+                      color: "#c8b98a",
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                      letterSpacing: "0.02em",
+                      transition: "all 0.18s ease",
+                      width: "fit-content",
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.background = "rgba(200,185,138,0.22)";
+                      e.currentTarget.style.borderColor = "rgba(200,185,138,0.7)";
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = "rgba(200,185,138,0.12)";
+                      e.currentTarget.style.borderColor = "rgba(200,185,138,0.4)";
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c8b98a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/>
+                      <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    {msg.navLink.label}
+                  </a>
                 )}
 
                 {/* Quick-reply chips */}

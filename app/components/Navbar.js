@@ -3,14 +3,20 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Anchor } from "lucide-react";
+import Image from "next/image";
+import companylogo from "../../company photos/companylogo.png";
 
-const NAV_ITEMS = ["Home", "About", "Service", "Fleet", "Clients", "Contact"];
+const NAV_ITEMS = ["Home", "About", "Service", "Cargo", "Clients", "Contact"];
 
+// ── Hot reload for logo position tweak ──
 function LogoPlaceholder() {
   return (
-    <div className="w-10 h-10 rounded-lg bg-neutral-900 flex items-center justify-center shrink-0">
-      <Anchor size={18} className="text-white" strokeWidth={2} />
-    </div>
+    <Image 
+      src={companylogo} 
+      alt="Canaan Logo" 
+      className="h-14 sm:h-[68px] w-auto object-contain ml-2 sm:ml-3"
+      priority
+    />
   );
 }
 
@@ -27,6 +33,7 @@ export default function Navbar() {
     if (!path) return "Home";
     if (path === "/about" || path.startsWith("/about/")) return "About";
     if (path === "/canaan-shipping-services" || path.startsWith("/canaan-shipping-services/")) return "Service";
+    if (path === "/cargo" || path.startsWith("/cargo/")) return "Cargo";
     return "Home";
   };
 
@@ -146,6 +153,34 @@ export default function Navbar() {
       return;
     }
 
+    if (item === "Service") {
+      if (pathname === "/canaan-shipping-services") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setTransitioning(true);
+        setTimeout(() => {
+          router.push("/canaan-shipping-services");
+          setTimeout(() => setTransitioning(false), 400);
+        }, 180);
+      }
+      setMobileOpen(false);
+      return;
+    }
+
+    if (item === "Cargo") {
+      if (pathname === "/cargo") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setTransitioning(true);
+        setTimeout(() => {
+          router.push("/cargo");
+          setTimeout(() => setTransitioning(false), 400);
+        }, 180);
+      }
+      setMobileOpen(false);
+      return;
+    }
+
     // For in-page sections: if not on home, navigate home first then scroll
     if (pathname !== "/") {
       await router.push("/");
@@ -170,40 +205,24 @@ export default function Navbar() {
         style={{
           opacity: transitioning ? 1 : 0,
           transition: transitioning
-            ? "opacity 0.18s ease-in"
-            : "opacity 0.35s ease-out",
+            ? "opacity 0.22s ease-in"
+            : "opacity 0.28s ease-out",
         }}
       />
 
       {/* ── TOP LEFT — logo + company name ── */}
       <div 
         onClick={handleLogoClick}
-        className={`fixed cursor-pointer z-50 top-0 left-0 bg-white/80 backdrop-blur-xl border-b border-r border-black/[0.06] px-5 py-4 sm:px-6 sm:py-4 rounded-br-2xl flex items-center gap-3 animate-fade-in transition-[opacity,transform] duration-500 ease-in-out ${
+        className={`fixed cursor-pointer z-50 top-0 left-0 bg-white/80 backdrop-blur-xl border-b border-r border-black/[0.06] pl-5 pr-10 h-[76px] sm:h-[88px] sm:pl-6 sm:pr-12 rounded-br-2xl flex items-center animate-fade-in transition-[opacity,transform] duration-500 ease-in-out ${
           isHidden || !isLogoVisible ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
         }`}
       >
         {/* Logo */}
         <LogoPlaceholder />
-
-        {/* Company name */}
-        <div className="leading-tight">
-          <div
-            className="font-bold tracking-tight text-neutral-900"
-            style={{ fontSize: 15, letterSpacing: "-0.02em" }}
-          >
-            Canaan
-          </div>
-          <div
-            className="font-semibold tracking-tight text-neutral-500"
-            style={{ fontSize: 11, letterSpacing: "0.01em" }}
-          >
-            Global International
-          </div>
-        </div>
       </div>
 
       {/* ── TOP RIGHT — nav (desktop) + hamburger (mobile) ── */}
-      <div className={`fixed z-50 top-0 right-0 bg-white/80 backdrop-blur-xl border-b border-l border-black/[0.06] px-5 py-4 sm:px-7 sm:py-5 rounded-bl-2xl flex items-center gap-3 transition-transform duration-500 ease-in-out ${
+      <div className={`fixed z-50 top-0 right-0 bg-white/80 backdrop-blur-xl border-b border-l border-black/[0.06] px-5 sm:px-7 h-[76px] sm:h-[88px] rounded-bl-2xl flex items-center gap-3 transition-transform duration-500 ease-in-out ${
         isHidden ? "-translate-y-full" : "translate-y-0"
       }`}>
 

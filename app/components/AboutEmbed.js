@@ -17,9 +17,8 @@ function FounderSection() {
       className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 overflow-hidden"
     >
       <div
-        className={`group relative rounded-2xl overflow-hidden min-h-[180px] sm:min-h-[200px] transition-all duration-700 ease-out transform ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
+        className={`group relative rounded-2xl overflow-hidden min-h-[180px] sm:min-h-[200px] transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
       >
         <Image
           src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070"
@@ -39,9 +38,8 @@ function FounderSection() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
         <div
           style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
-          className={`lg:col-span-2 relative rounded-2xl overflow-hidden min-h-[360px] sm:min-h-[440px] group cursor-pointer bento-card transition-all duration-700 ease-out transform ${
-            isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-          }`}
+          className={`lg:col-span-2 relative rounded-2xl overflow-hidden min-h-[360px] sm:min-h-[440px] group cursor-pointer bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+            }`}
         >
           <Image
             src={arun}
@@ -59,10 +57,10 @@ function FounderSection() {
 
           <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
             <p className="text-white/60 text-xs font-medium tracking-[0.1em] uppercase mb-1">
-              Canaan Global International
+              CEO - Canaan Global International
             </p>
             <h2 className="text-white text-2xl sm:text-3xl font-bold tracking-[-0.03em] leading-tight">
-              Arun Sam<br />Alfred
+              Arun Samuel Alfred
             </h2>
           </div>
         </div>
@@ -70,9 +68,8 @@ function FounderSection() {
         <div className="lg:col-span-3 flex flex-col gap-3">
           <div
             style={{ transitionDelay: isVisible ? "180ms" : "0ms" }}
-            className={`group relative bg-neutral-900 rounded-2xl px-6 py-6 sm:px-8 sm:py-8 overflow-hidden bento-card transition-all duration-500 ease-out transform ${
-              isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-            }`}
+            className={`group relative bg-neutral-900 rounded-2xl px-6 py-6 sm:px-8 sm:py-8 overflow-hidden bento-card transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+              }`}
           >
             <Quote size={40} className="text-white/10 absolute top-4 right-4 group-hover:scale-110 transition-transform duration-500" />
             <p className="text-white text-lg sm:text-xl font-medium tracking-[-0.02em] leading-[1.5] relative z-10">
@@ -90,9 +87,8 @@ function FounderSection() {
 
           <div
             style={{ transitionDelay: isVisible ? "225ms" : "0ms" }}
-            className={`group relative bg-neutral-900 rounded-2xl px-6 py-6 sm:px-8 sm:py-8 overflow-hidden bento-card transition-all duration-500 ease-out transform ${
-              isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-            }`}
+            className={`group relative bg-neutral-900 rounded-2xl px-6 py-6 sm:px-8 sm:py-8 overflow-hidden bento-card transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+              }`}
           >
             <Quote size={40} className="text-white/10 absolute top-4 right-4 group-hover:scale-110 transition-transform duration-500" />
             <div className="relative z-10 flex flex-col gap-5">
@@ -121,9 +117,8 @@ function FounderSection() {
 
           <div
             style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}
-            className={`relative bg-white/80 border border-black/10 rounded-2xl px-5 py-5 sm:px-7 sm:py-6 overflow-hidden bento-card transition-all duration-500 ease-out transform ${
-              isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-            }`}
+            className={`relative bg-white/80 border border-black/10 rounded-2xl px-5 py-5 sm:px-7 sm:py-6 overflow-hidden bento-card transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+              }`}
           >
             <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-2.5 rounded-br-2xl z-10">
               <span className="text-[10px] font-medium tracking-[0.12em] uppercase text-neutral-400">
@@ -168,9 +163,8 @@ function FounderSection() {
               <div
                 key={label}
                 style={{ transitionDelay: isVisible ? `${320 + i * 60}ms` : "0ms" }}
-                className={`bg-white/80 border border-black/10 rounded-2xl px-4 py-5 flex flex-col justify-between min-h-[100px] sm:min-h-[110px] bento-card transition-all duration-500 ease-out transform ${
-                  isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
-                }`}
+                className={`bg-white/80 border border-black/10 rounded-2xl px-4 py-5 flex flex-col justify-between min-h-[100px] sm:min-h-[110px] bento-card transition-all duration-500 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+                  }`}
               >
                 <div className="w-8 h-8 rounded-full border border-black/10 flex items-center justify-center">
                   <Icon size={13} className="text-neutral-400" />
@@ -200,9 +194,8 @@ function TeamSection() {
       className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 overflow-hidden"
     >
       <div
-        className={`group relative rounded-2xl overflow-hidden min-h-[280px] sm:min-h-[400px] lg:min-h-[480px] transition-all duration-700 ease-out transform ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`}
+        className={`group relative rounded-2xl overflow-hidden min-h-[280px] sm:min-h-[400px] lg:min-h-[480px] transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
       >
         <Image
           src={team1}

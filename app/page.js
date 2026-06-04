@@ -27,7 +27,7 @@ const SECTION_NAV_ITEMS = [
   "Home",    // 1 — CustomerGlobeSection
   "Home",    // 2 — TimelineSection
   "Home",    // 3 — AboutTeaserSection (part of Home scroll)
-  "Fleet",   // 4 — FleetSection
+  "Cargo",   // 4 — FleetSection
   "Clients", // 5 — ClientsSection
   "Contact", // 6 — ContactSection
 ];
@@ -185,40 +185,45 @@ export default function Home() {
         armQuiet();
       };
 
-      // ── Panel snap inside tall sections (e.g. horizontal timeline) ──────
-      // A single scroll advances exactly one panel. At the edge panel we
-      // fall through so a multi-scroll can exit the section entirely.
-      const tallEl = wrapRefs.current.filter(Boolean).find((el) => {
-        if (el.offsetHeight <= vh * 1.5) return false;
-        const top    = Math.round(el.getBoundingClientRect().top + scrollY);
-        const bottom = top + el.offsetHeight;
-        return scrollY >= top && scrollY < bottom - vh;
+      // ── Find all resting boundaries ──
+      // A normal section has 1 boundary (top)
+      // A tall section has 2 boundaries (top, and bottom-vh)
+      let inTallFreeZone = false;
+      
+      const boundaries = [];
+      wrapRefs.current.filter(Boolean).forEach((el) => {
+        let t = 0, node = el;
+        while (node) { t += node.offsetTop; node = node.offsetParent; }
+        boundaries.push(t);
+
+        if (el.offsetHeight > vh * 1.5) {
+          const bottomBoundary = t + el.offsetHeight - vh;
+          boundaries.push(bottomBoundary);
+          
+          // Check if we are currently free-scrolling inside this tall element
+          if (scrollY >= t && scrollY <= bottomBoundary) {
+            // At top boundary moving up -> NOT free zone (should snap up)
+            if (scrollY < t + 20 && dir < 0) return;
+            // At bottom boundary moving down -> NOT free zone (should snap down)
+            if (scrollY > bottomBoundary - 20 && dir > 0) return;
+            
+            inTallFreeZone = true;
+          }
+        }
       });
 
-      if (tallEl) {
-        const sTop     = Math.round(tallEl.getBoundingClientRect().top + scrollY);
-        const scrollable = tallEl.offsetHeight - vh;
-        const N        = Math.round(tallEl.offsetHeight / vh);
-        const current  = Math.round(((scrollY - sTop) / scrollable) * (N - 1));
-        const next     = Math.max(0, Math.min(N - 1, current + dir));
-
-        if (next !== current) {
-          doSnap(sTop + (next / (N - 1)) * scrollable);
-          return;
-        }
-        // At edge panel — fall through to section snap
+      if (inTallFreeZone) {
+        return; // Let browser natively scroll through the horizontal content!
       }
 
-      // ── Section-level snap (multi-scroll only) ───────────────────────────
-      if (state.ticks < TICK_MIN && state.delta < DELTA_MIN) return;
-
-      const tops   = getSectionTops();
+      boundaries.sort((a, b) => a - b);
       const target = dir > 0
-        ? tops.find((t) => t > scrollY + 80)
-        : [...tops].reverse().find((t) => t < scrollY - 80);
+        ? boundaries.find((t) => t > scrollY + 80)
+        : [...boundaries].reverse().find((t) => t < scrollY - 80);
 
-      if (target === undefined) return;
-      doSnap(target);
+      if (target !== undefined) {
+        doSnap(target);
+      }
     };
 
     window.addEventListener("wheel", handleWheel, { passive: true });

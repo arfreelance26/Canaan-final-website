@@ -1,12 +1,18 @@
+// ── Hot reload trigger for new timeline images ──
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import timeline1 from "../../company photos/timeline1.png";
 import timeline2 from "../../company photos/timeline2.png";
 import timeline3a from "../../company photos/timeline 3a.png";
 import timeline3b from "../../company photos/timeline 3b.png";
 import timeline3c from "../../company photos/timeline 3c.png";
-import timeline4 from "../../company photos/timeline 4.png";
+import timeline4 from "../../company photos/timeline4.png";
+import timeline5a from "../../company photos/timeline5a.png";
+import timeline5b from "../../company photos/timeline5b.png";
+import timeline5c from "../../company photos/timeline5c.png";
+import timeline5d from "../../company photos/timeline5d.png";
 import trucks1 from "../../company photos/trucks1.png";
 import {
   Anchor, Globe, Truck, MapPin, Award, ArrowRight,
@@ -78,7 +84,7 @@ const CHAPTERS = [
     label: "TODAY",
     heading: "A legacy of\nmovement.",
     body: "Four divisions. Over 50,000 shipments. 42 vehicles strong. Canaan Global continues to redefine logistics — connecting India to the world, one shipment at a time.",
-    photo: "https://images.unsplash.com/photo-1494412651409-8963ce7935a7?q=80&w=2000",
+    carouselImages: [timeline5a.src, timeline5b.src, timeline5c.src, timeline5d.src],
     stat: { num: "50K+", label: "Shipments delivered" },
     accent: "#C0392B",
     icon: Award,
@@ -437,10 +443,13 @@ export default function TimelineSection() {
           <p className="text-white/60 mt-4 text-[15px] max-w-md leading-relaxed">
             Partner with a logistics team that has spent 15 years earning trust — one shipment at a time.
           </p>
-          <button className="mt-8 flex items-center gap-2 bg-white text-neutral-900 text-sm font-semibold px-6 py-3 rounded-full hover:bg-neutral-100 active:scale-95 transition-all group">
+          <Link
+            href="/#contact"
+            className="mt-8 flex items-center gap-2 bg-white text-neutral-900 text-sm font-semibold px-6 py-3 rounded-full hover:bg-neutral-100 active:scale-95 transition-all group w-fit"
+          >
             Get in touch
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </button>
+          </Link>
         </div>
       </div>
 

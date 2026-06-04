@@ -204,7 +204,7 @@ export default function ContactSection() {
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    placeholder="John Smith"
+                    placeholder="Your name"
                     className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
                   />
                 </div>
@@ -217,7 +217,7 @@ export default function ContactSection() {
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    placeholder="john@company.com"
+                    placeholder="Your Email"
                     className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
                   />
                 </div>
@@ -234,7 +234,7 @@ export default function ContactSection() {
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
-                    placeholder="+1 (000) 000-0000"
+                    placeholder="Your Phone Number"
                     className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
                   />
                 </div>
@@ -250,14 +250,12 @@ export default function ContactSection() {
                     className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 appearance-none cursor-pointer"
                   >
                     <option value="" disabled>Select a service</option>
-                    <option>Freight Forwarding</option>
-                    <option>Customs Clearance</option>
+                    <option>Transportation Services</option>
+                    <option>Cargo Management</option>
                     <option>Warehousing</option>
-                    <option>Air Cargo</option>
-                    <option>Sea Freight</option>
-                    <option>Road Transport</option>
-                    <option>Supply Chain</option>
-                    <option>Last-Mile Delivery</option>
+                    <option>Documentation & Compliance</option>
+                    <option>Lashing & Fumigation Services</option>
+                    <option>Other</option>
                   </select>
                 </div>
               </div>
@@ -285,38 +283,10 @@ export default function ContactSection() {
               >
                 Send message <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </button>
-
-              {/* Trust row */}
-              <div className="flex items-center gap-6 pt-3 mt-2 border-t border-black/[0.06]">
-                {[["\u003c 4 hrs", "Avg. response"], ["30+", "Countries"], ["50K+", "Shipments"]].map(([num, label]) => (
-                  <div key={label}>
-                    <p className="text-[13px] font-bold text-neutral-900 tracking-tight">{num}</p>
-                    <p className="text-[10px] text-neutral-400 tracking-tight">{label}</p>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </div>
       </div>
-
-      {/* ── BOTTOM STRIP ── */}
-      <div className={`flex flex-wrap gap-1.5 px-1 shrink-0 transition-[opacity,transform] duration-700 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-        }`} style={{ transitionDelay: isVisible ? "350ms" : "0ms" }}>
-        {[
-          "Freight Forwarding", "Customs Clearance", "Warehousing",
-          "Air Cargo", "Sea Freight", "Road Transport",
-          "24/7 Support", "30+ Countries",
-        ].map((tag) => (
-          <span
-            key={tag}
-            className="bg-white/80 border border-black/10 text-neutral-700 text-xs font-medium px-4 py-2 rounded-full tracking-tight hover:bg-[#1a1916] hover:text-[#f5f4f0] hover:border-[#1a1916] transition-[background-color,color,border-color] duration-300 cursor-pointer"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
     </section>
   );
 }

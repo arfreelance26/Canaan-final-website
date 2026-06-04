@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useRef, useEffect, useState, useCallback } from "react";
 import { Anchor, Globe, Ship, Package, ArrowRight, X } from "lucide-react";
 
@@ -7,8 +7,8 @@ const COMPANIES = [
   {
     name: "Canaan Global Logistics",
     abbr: "CGL",
-    category: "Freight",
     Icon: Anchor,
+    images: ["/company/logistics1b.png", "/company/logistics2.png", "/company/logistics3.png"],
     tagline: "Where cargo, oceans, and infrastructure move in synchronized rhythm.",
     role: "The operational backbone of the network.",
     body: "From freight movement to cargo coordination, CGL orchestrates the complex mechanics behind global transportation — whether cargo moves by land, sea, or through interconnected transit systems.",
@@ -18,8 +18,8 @@ const COMPANIES = [
   {
     name: "Canaan Global Shipping Services",
     abbr: "CGSS",
-    category: "Trade",
     Icon: Globe,
+    images: ["/company/shipping1b.png", "/company/shipping2.png", "/company/shipping3.png"],
     tagline: "Behind every successful shipment lies precision invisible to the eye.",
     role: "The regulatory and clearance arm.",
     body: "CGSS operates at the intersection of compliance and movement — managing customs procedures, import/export clearances, and documentation flow required to keep cargo crossing borders without friction.",
@@ -29,8 +29,8 @@ const COMPANIES = [
   {
     name: "Canaan Global International",
     abbr: "CGI",
-    category: "Sea Freight",
     Icon: Ship,
+    images: ["/company/cgi1b.png", "/company/cgi2.png", "/company/cgi3b.png"],
     tagline: "The operational nerve center connecting commerce, coordination, and execution.",
     role: "The commercial intelligence layer.",
     body: "CGI manages the financial, nomination, and coordination infrastructure supporting the wider Canaan network — connecting operational execution with administrative control.",
@@ -40,24 +40,14 @@ const COMPANIES = [
   {
     name: "Rehoboth Transports",
     abbr: "RT",
-    category: "Port Services",
     Icon: Package,
+    images: ["/company/rehoboth1.png", "/company/rehoboth2b.png", "/company/rehoboth3b.png"],
     tagline: "The final momentum behind the supply chain.",
     role: "The ground-movement engine.",
     body: "Rehoboth handles transport execution for both internal logistics operations and external clients — designed for flexibility across raw material movement, customer logistics support, and multi-channel coordination.",
     ops: ["Cargo Transportation", "Fleet Coordination", "External Logistics Support", "Raw Material Movement", "Integrated Transport Handling"],
     abstract: "Keeping industries moving beyond the port.",
   },
-];
-
-const PILLS = [
-  "Canaan Global Logistics",
-  "Canaan Global Shipping Services",
-  "Canaan Global International",
-  "Rehoboth Transports",
-  "Freight Forwarding",
-  "Customs Brokerage",
-  "Port Services",
 ];
 
 // ─── Individual card ──────────────────────────────────────────────────────────
@@ -67,6 +57,16 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
   const rafRef = useRef(null);
   const tiltRef = useRef({ rx: 0, ry: 0 });
   const [hovered, setHovered] = useState(false);
+  const [imgIdx, setImgIdx] = useState(0);
+
+  // Auto-advance carousel every 3 s
+  useEffect(() => {
+    if (!co.images?.length) return;
+    const timer = setInterval(() => {
+      setImgIdx((idx) => (idx + 1) % co.images.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [co.images]);
 
   const delay = 0.05 + (dir === "right" ? (3 - i) : i) * 0.1;
 
@@ -80,7 +80,7 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
       const rx = -((cy / h) - 0.5) * 10;
-      const ry =  ((cx / w) - 0.5) * 10;
+      const ry = ((cx / w) - 0.5) * 10;
       tiltRef.current = { rx, ry };
       if (cardRef.current) {
         cardRef.current.style.transform =
@@ -128,10 +128,10 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
   const transition = isActive
     ? "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.4s ease"
     : phase === "reveal"
-    ? `opacity 0.55s cubic-bezier(0.25,1,0.5,1) ${delay}s, transform 0.7s cubic-bezier(0.25,1,0.5,1) ${delay}s`
-    : phase === "idle" && !hovered
-    ? "transform 0.65s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease"
-    : "box-shadow 0.3s ease";
+      ? `opacity 0.55s cubic-bezier(0.25,1,0.5,1) ${delay}s, transform 0.7s cubic-bezier(0.25,1,0.5,1) ${delay}s`
+      : phase === "idle" && !hovered
+        ? "transform 0.65s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease"
+        : "box-shadow 0.3s ease";
 
   return (
     <div
@@ -154,8 +154,8 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
         boxShadow: isActive
           ? "inset 3px 0 0 rgba(210,165,45,0.85), 0 24px 56px rgba(0,0,0,0.13)"
           : hovered
-          ? "inset 3px 0 0 rgba(210,165,45,0.85), 0 20px 50px rgba(0,0,0,0.12)"
-          : "0 2px 12px rgba(0,0,0,0.05)",
+            ? "inset 3px 0 0 rgba(210,165,45,0.85), 0 20px 50px rgba(0,0,0,0.12)"
+            : "0 2px 12px rgba(0,0,0,0.05)",
         cursor: "pointer",
       }}
     >
@@ -192,17 +192,55 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
           </div>
         </div>
 
-        {/* Image placeholder */}
+        {/* Image carousel */}
         <div style={{
           position: "relative", zIndex: 1,
           flex: 1, minHeight: 0,
-          background: "#f5f4f0",
           margin: "0 12px",
           borderRadius: 12,
-          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8,
+          overflow: "hidden",
+          background: "#f5f4f0",
+          opacity: 0.92,
         }}>
-          <co.Icon size={40} color="rgba(0,0,0,0.07)" />
-          <span style={{ fontSize: 10, color: "rgba(0,0,0,0.18)", letterSpacing: "0.12em", textTransform: "uppercase" }}>Image</span>
+          {co.images.map((src, idx) => (
+            <img
+              key={src}
+              src={src}
+              alt={co.name}
+              style={{
+                position: idx === 0 ? "relative" : "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: idx === imgIdx ? 1 : 0,
+                transition: "opacity 0.9s ease",
+              }}
+            />
+          ))}
+
+          {/* Dot / pill indicators */}
+          <div style={{
+            position: "absolute", bottom: 8, left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex", gap: 4, alignItems: "center",
+            zIndex: 3,
+          }}>
+            {co.images.map((_, idx) => (
+              <div
+                key={idx}
+                onClick={(e) => { e.stopPropagation(); setImgIdx(idx); }}
+                style={{
+                  height: 4,
+                  width: idx === imgIdx ? 16 : 4,
+                  borderRadius: 4,
+                  background: idx === imgIdx ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.45)",
+                  transition: "width 0.35s ease, background 0.35s ease",
+                  cursor: "pointer",
+                }}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Bottom content */}
@@ -257,19 +295,53 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
             </div>
           </div>
 
-          {/* Large watermark abbr */}
-          <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{
-              fontSize: "clamp(2rem, 3vw, 3.2rem)",
-              fontWeight: 900,
-              color: "rgba(0,0,0,0.045)",
-              letterSpacing: "-0.04em",
-              lineHeight: 1,
-              textAlign: "center",
-              userSelect: "none",
+          {/* Image carousel (mirrors the inactive card carousel) */}
+          <div style={{
+            flex: 1, minHeight: 0,
+            position: "relative",
+            borderRadius: 10,
+            overflow: "hidden",
+            background: "#f0efeb",
+            opacity: 0.82,
+            marginBottom: 10,
+          }}>
+            {co.images.map((src, idx) => (
+              <img
+                key={src}
+                src={src}
+                alt={co.name}
+                style={{
+                  position: idx === 0 ? "relative" : "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  opacity: idx === imgIdx ? 1 : 0,
+                  transition: "opacity 0.9s ease",
+                }}
+              />
+            ))}
+            {/* Dot indicators */}
+            <div style={{
+              position: "absolute", bottom: 6, left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex", gap: 4, alignItems: "center", zIndex: 3,
             }}>
-              {co.abbr}
-            </span>
+              {co.images.map((_, idx) => (
+                <div
+                  key={idx}
+                  onClick={(e) => { e.stopPropagation(); setImgIdx(idx); }}
+                  style={{
+                    height: 4,
+                    width: idx === imgIdx ? 14 : 4,
+                    borderRadius: 4,
+                    background: idx === imgIdx ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.45)",
+                    transition: "width 0.35s ease, background 0.35s ease",
+                    cursor: "pointer",
+                  }}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Name + close */}
@@ -298,57 +370,91 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
         {/* RIGHT DETAIL */}
         <div style={{
           flex: 1,
-          padding: "16px 14px 16px 16px",
+          padding: "16px 18px 16px 16px",
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
-          gap: 10,
+          justifyContent: "space-between",
+          gap: 0,
         }}>
-          {/* Role */}
-          <div>
-            <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(210,165,45,0.75)", margin: "0 0 3px" }}>
-              Role
-            </p>
-            <p style={{ fontSize: "0.9rem", fontWeight: 700, color: "#111", letterSpacing: "-0.025em", lineHeight: 1.2, margin: 0 }}>
-              {co.role}
-            </p>
-          </div>
+          {/* ── Top block ── */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
 
-          {/* Divider */}
-          <div style={{ height: 1, background: "rgba(0,0,0,0.05)", flexShrink: 0 }} />
+            {/* Eyebrow + role headline */}
+            <div>
+              <p style={{
+                fontSize: 9, fontWeight: 700, letterSpacing: "0.18em",
+                textTransform: "uppercase", color: "rgba(210,165,45,0.85)", margin: "0 0 5px",
+              }}>
+                {co.category}
+              </p>
+              <p style={{
+                fontSize: "1rem", fontWeight: 750, color: "#111",
+                letterSpacing: "-0.03em", lineHeight: 1.2, margin: 0,
+              }}>
+                {co.role}
+              </p>
+            </div>
 
-          {/* Body */}
-          <p style={{ fontSize: "11px", color: "#777", lineHeight: 1.75, margin: 0 }}>
-            {co.body}
-          </p>
+            {/* Gold gradient divider */}
+            <div style={{
+              height: 1,
+              background: "linear-gradient(to right, rgba(210,165,45,0.3), rgba(210,165,45,0.05), transparent)",
+              flexShrink: 0,
+            }} />
 
-          {/* Core Operations */}
-          <div style={{ flex: 1, minHeight: 0 }}>
-            <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#bbbbbb", margin: "0 0 7px" }}>
-              Core Operations
+            {/* Body copy */}
+            <p style={{ fontSize: "12px", color: "#666", lineHeight: 1.78, margin: 0 }}>
+              {co.body}
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              {co.ops.map((op) => (
-                <div key={op} style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                  <div style={{
-                    width: 3, height: 3, borderRadius: "50%",
-                    background: "rgba(210,165,45,0.65)", flexShrink: 0,
-                  }} />
-                  <span style={{ fontSize: "11px", color: "#555", fontWeight: 500, lineHeight: 1.4 }}>{op}</span>
-                </div>
-              ))}
+
+            {/* Core Operations — pill chips */}
+            <div>
+              <p style={{
+                fontSize: 9, fontWeight: 700, letterSpacing: "0.16em",
+                textTransform: "uppercase", color: "#bbb", margin: "0 0 7px",
+              }}>
+                Core Operations
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                {co.ops.map((op) => (
+                  <span
+                    key={op}
+                    style={{
+                      fontSize: "10.5px",
+                      fontWeight: 600,
+                      color: "#444",
+                      background: "rgba(0,0,0,0.04)",
+                      border: "1px solid rgba(0,0,0,0.08)",
+                      borderRadius: 6,
+                      padding: "4px 10px",
+                      lineHeight: 1.4,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {op}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Abstract */}
-          <div style={{ paddingTop: 8, borderTop: "1px solid rgba(0,0,0,0.05)", flexShrink: 0 }}>
+          {/* ── Bottom: Abstract quote callout ── */}
+          <div style={{
+            marginTop: 14,
+            padding: "10px 13px",
+            background: "linear-gradient(135deg, rgba(210,165,45,0.07), rgba(210,165,45,0.02))",
+            borderLeft: "2.5px solid rgba(210,165,45,0.55)",
+            borderRadius: "0 8px 8px 0",
+            flexShrink: 0,
+          }}>
             <p style={{
-              fontSize: "11px",
+              fontSize: "11.5px",
               fontStyle: "italic",
-              color: "rgba(210,165,45,0.9)",
-              lineHeight: 1.5,
+              color: "rgba(180,135,25,0.95)",
+              lineHeight: 1.55,
               margin: 0,
-              letterSpacing: "0.005em",
+              letterSpacing: "0.01em",
             }}>
               &ldquo;{co.abstract}&rdquo;
             </p>
@@ -365,7 +471,7 @@ export default function GroupSection() {
   const sectionRef = useRef(null);
   const [phase, setPhase] = useState("hidden");
   const [dir, setDir] = useState("left");
-  const [activePill, setActivePill] = useState(0);
+  const [activePill, setActivePill] = useState(0); // unused — pills removed
   const [activeCard, setActiveCard] = useState(null);
   const revealTimer = useRef(null);
 
@@ -519,43 +625,6 @@ export default function GroupSection() {
           </div>
         </div>
 
-        {/* ── Pills ── */}
-        <div
-          className="pill-wrap"
-          style={{
-            flexShrink: 0,
-            display: "flex",
-            gap: 8,
-            overflowX: "auto",
-            paddingBottom: 2,
-            opacity: phase === "hidden" ? 0 : 1,
-            transition: "opacity 0.7s ease 0.45s",
-          }}
-        >
-          {PILLS.map((pill, i) => (
-            <button
-              key={i}
-              onClick={() => setActivePill(i)}
-              className="pill-btn"
-              style={{
-                flexShrink: 0,
-                padding: "7px 16px",
-                borderRadius: 9999,
-                border: "1.5px solid",
-                borderColor: activePill === i ? "#1a1916" : "#d5d2ca",
-                background: activePill === i ? "#1a1916" : "transparent",
-                color: activePill === i ? "#f5f4f0" : "#777777",
-                fontSize: 12,
-                fontWeight: 500,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                letterSpacing: "0.01em",
-              }}
-            >
-              {pill}
-            </button>
-          ))}
-        </div>
       </section>
     </>
   );

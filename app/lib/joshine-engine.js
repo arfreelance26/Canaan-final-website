@@ -180,10 +180,17 @@ const ABBREV = {
   hw: "how",
 };
 
+// ── Synonym Expansion ────────────────────────────────────────────────────────
+const SYNONYMS = {
+  quote: "pricing", cost: "pricing", fee: "pricing", fees: "pricing", price: "pricing",
+  haul: "transportation", ship: "transportation", carry: "transportation", move: "transportation",
+  clearance: "documentation", paperwork: "documentation"
+};
+
 /**
  * Preprocess user input:
  * 1. Collapse repeated characters (heeelp → help)
- * 2. Expand abbreviations token by token
+ * 2. Expand abbreviations and synonyms token by token
  * 3. Normalize (lowercase, strip punctuation)
  */
 function preprocess(raw) {
@@ -191,10 +198,11 @@ function preprocess(raw) {
   let text = raw.replace(/(.)(\1{2,})/g, "$1$1");
   // Normalize first
   text = normalize(text);
-  // Expand abbreviations
+  // Expand abbreviations and synonyms
   const tokens = text.split(" ");
   const expanded = tokens.flatMap((t) => {
-    const e = ABBREV[t];
+    let e = ABBREV[t];
+    if (!e && SYNONYMS[t]) e = SYNONYMS[t];
     return e ? e.split(" ") : [t];
   });
   return expanded.join(" ");
@@ -237,13 +245,16 @@ const CONTEXT_BOOSTS = {
   div_cgl:      ["transportation", "cargo", "ecosystem", "div_rehoboth"],
   div_cgss:     ["documentation", "import_ops", "export_ops"],
   div_cgi:      ["div_cgss", "pricing", "ecosystem"],
-  div_rehoboth: ["transportation", "div_cgl", "cargo"],
+  div_rehoboth: ["transportation", "div_cgl", "cargo", "fleet"],
   ecosystem:    ["div_cgl", "div_cgss", "div_cgi", "div_rehoboth"],
-  transportation: ["cargo", "div_cgl", "div_rehoboth"],
-  cargo:        ["transportation", "div_cgl"],
+  transportation: ["cargo", "div_cgl", "div_rehoboth", "cargo_types", "fleet"],
+  cargo:        ["transportation", "div_cgl", "cargo_types"],
+  cargo_types:  ["cargo", "granite", "transportation"],
+  fleet:        ["transportation", "div_rehoboth"],
   documentation: ["import_ops", "export_ops", "div_cgss"],
   lashing:      ["documentation", "export_ops"],
   about:        ["ecosystem", "branches", "granite"],
+  granite:      ["cargo_types", "transportation"],
 };
 
 function boostForContext(scores, ctx) {
@@ -262,6 +273,8 @@ function boostForContext(scores, ctx) {
 const INTENT_LABELS = {
   transportation: "Transportation",
   cargo: "Cargo Management",
+  cargo_types: "What We Carry",
+  fleet: "Our Fleet",
   documentation: "Documentation",
   lashing: "Lashing & Fumigation",
   import_ops: "Import Process",
@@ -524,6 +537,84 @@ const INTENTS = [
     fuzzy: [{ kw: ["granite", "marble", "limestone", "slate"], w: 2 }],
   },
 
+  // ── Cargo Types / What we carry ──
+  {
+    id: "cargo_types",
+    keywords: [
+      // Direct intent questions
+      { w: 6, p: /\bwhat\s*(cargo|goods?|products?)\s*(do\s*you\s*)?(carry|handle|ship|transport|move|accept)\b/ },
+      { w: 6, p: /\bwhat\s*(type|kind|sort|variety|varieties)\s*of\s*(cargo|goods?|shipment|freight)\b/ },
+      { w: 5, p: /\b(cargo\s*types?|cargo\s*categor(y|ies)|types?\s*of\s*cargo)\b/ },
+      { w: 5, p: /\bdo\s*you\s*(carry|ship|handle|transport|accept)\b/ },
+      { w: 5, p: /\bcan\s*you\s*(ship|carry|handle|transport|move)\b/ },
+      // Coir & Natural Fibre
+      { w: 5, p: /\bcoir\b/ },
+      { w: 4, p: /\bnatural\s*fib(re|er)\b/ },
+      { w: 3, p: /\bcoconut\s*fib(re|er)\b/ },
+      // Agricultural Machinery
+      { w: 5, p: /\bagricultural\s*machine(ry|s?)\b/ },
+      { w: 4, p: /\b(tractor|tractors)\b/ },
+      { w: 4, p: /\bfarm\s*(equipment|machine(ry|s?)|implement)\b/ },
+      // Palletised Cargo
+      { w: 5, p: /\bpallet(s|ised|ized)?\s*cargo\b/ },
+      { w: 4, p: /\bshrink\s*wrap\b/ },
+      // Industrial Rolls & Coils
+      { w: 5, p: /\bindustrial\s*(rolls?|coils?)\b/ },
+      { w: 4, p: /\b(hdpe|geotextile|geotextiles?)\b/ },
+      { w: 3, p: /\b(reels?|coils?)\b/ },
+      // Chemical Drums & Barrels
+      { w: 5, p: /\bchemical\s*(drums?|barrels?)\b/ },
+      { w: 4, p: /\b(drums?|barrels?)\b/ },
+      { w: 3, p: /\bregulated\s*(liquid|cargo|goods?)\b/ },
+      // Bulk Grain & Seeds
+      { w: 5, p: /\bbulk\s*(grain|seeds?|rice)\b/ },
+      { w: 4, p: /\b(grain|grains|seeds?|rice)\b/ },
+      // Bagged Cargo
+      { w: 5, p: /\bbagged\s*cargo\b/ },
+      { w: 4, p: /\b(pp\s*sack|sacks?|bagged|bags?)\s*(cargo|goods?)?\b/ },
+      // Bale Cargo
+      { w: 5, p: /\bbale\s*cargo\b/ },
+      { w: 4, p: /\b(bales?|baling)\b/ },
+      // Cashew & Agri Commodities
+      { w: 5, p: /\bcashew\b/ },
+      { w: 4, p: /\bagri\s*commodit(y|ies)\b/ },
+      { w: 3, p: /\b(nuts?|jute|produce)\b/ },
+      // Pipes
+      { w: 5, p: /\b(pipes?|pipeline)\b/ },
+      // Heavy Machinery
+      { w: 5, p: /\bheavy\s*machine(ry|s?)\b/ },
+      { w: 5, p: /\b(jcb|excavator|bulldozer|backhoe)\b/ },
+      { w: 4, p: /\bconstruction\s*(equipment|machine(ry|s?)|vehicle)\b/ },
+      // Bulk Liquid & Gas
+      { w: 5, p: /\bbulk\s*(liquid|gas)\s*cargo\b/ },
+      { w: 4, p: /\b(iso\s*tank|tanker|pressuri[sz]ed\s*vessel)\b/ },
+      { w: 3, p: /\bliquid\s*cargo\b/ },
+      // Special Cargo
+      { w: 4, p: /\bspecial\s*cargo\b/ },
+      { w: 3, p: /\bwhat\s*(all\s*)?(do\s*you|can\s*you)\s*(ship|carry|handle|accept)\b/ },
+      { w: 3, p: /\bwhat\s*(goods?|items?|products?)\s*(do\s*you|can\s*you)\b/ },
+    ],
+    fuzzy: [{ kw: ["coir", "cashew", "grain", "pallet", "bale", "coil", "drum", "tractor"], w: 3 }],
+  },
+
+  // ── Fleet / Vehicles ──
+  {
+    id: "fleet",
+    keywords: [
+      { w: 6, p: /\b(fleet|vehicles?)\b/ },
+      { w: 5, p: /\b(truck|trucks|lorry|lorries)\b/ },
+      { w: 5, p: /\b(trailer|trailers)\b/ },
+      { w: 4, p: /\bhow\s*many\s*(trucks?|vehicles?|trailers?|lorr(y|ies))\b/ },
+      { w: 4, p: /\b(wheeler|wheelers)\b/ },
+      { w: 4, p: /\bwhat\s*(trucks?|vehicles?|trailers?)\b/ },
+      { w: 3, p: /\b(10|12|14|18|22)\s*wheeler\b/ },
+      { w: 3, p: /\bcontainer\s*trailer\b/ },
+      { w: 2, p: /\b(capacit(y|ies)|tonnes?|tons?)\b/ },
+      { w: 2, p: /\brehoboth\s*transport\b/ },
+    ],
+    fuzzy: [{ kw: ["truck", "vehicle", "fleet", "trailer", "lorry"], w: 3 }],
+  },
+
   // ── Pricing / Quote ──
   {
     id: "pricing",
@@ -732,20 +823,20 @@ const RESPONSES = {
   greeting: (ctx) => ({
     text: ctx?.name
       ? pickOne([
-          `Welcome back, ${ctx.name}! 👋\nHow can I help you today?`,
-          `Great to see you, ${ctx.name}! 🌊 What can I help you with?`,
+          `Welcome back, ${ctx.name}! 🌊 How can I help you today?`,
+          `Good to have you back, ${ctx.name}! What can I do for you?`,
         ])
       : pickOne([
-          "Hello! Great to connect with you. 👋\nI'm Joshine — Canaan's virtual logistics assistant.\nHow can I help you today?",
-          "Hey there! Welcome to Canaan Global International. 🌊\nAsk me anything about our services or logistics!",
+          "Hello! I'm Joshine — your Canaan logistics guide. 🌊\nAsk me anything about our services, cargo, or operations!",
+          "Hey there! Welcome to Canaan Global International. 🚢\nWhat would you like to know today?",
           "Hi! I'm Joshine. ✨\nI'm here to help you explore Canaan's world-class logistics services.",
         ]),
-    chips: ["Our Services", "Contact Us", "Our Branches"],
+    chips: ["Our Services", "What We Carry", "Contact Us"],
   }),
 
   farewell: () => ({
     text: "Thanks for visiting Canaan Global International! 🚢\nSafe travels — come back anytime. We're always here to help.",
-    chips: [],
+    chips: ["Restart Chat", "Our Services"],
   }),
 
   thanks: (ctx) => ({
@@ -786,9 +877,18 @@ const RESPONSES = {
       "2️⃣  Cargo Management\n" +
       "3️⃣  Documentation & Compliance\n" +
       "4️⃣  Lashing & Fumigation\n\n" +
-      "Tap one to learn more, or type a number!",
-    chips: ["Transportation", "Cargo Management", "Documentation", "Lashing & Fumigation"],
+      "Tap below to explore our full Services page, or ask me about any one!",
+    chips: ["Transportation", "Cargo Management", "What We Carry", "Get a Quote"],
     listShown: SERVICE_LIST,
+    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+  }),
+
+  services_list_detail: () => ({
+    text:
+      "Our services are designed to work together as a seamless, end-to-end logistics chain. From the moment the cargo leaves the quarry on our trucks, through customs clearance and port handling, to its final international destination—we manage it all.\n\n" +
+      "Want to see real examples of what we carry?",
+    chips: ["What We Carry", "Contact Us"],
+    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
   }),
 
   transportation: () => ({
@@ -797,7 +897,8 @@ const RESPONSES = {
       `${KB.services.transportation.short}\n\n` +
       `Here's what that includes:\n` +
       `• ${KB.services.transportation.features.join("\n• ")}`,
-    chips: ["Tell me more", "Cargo Management", "Get a Quote"],
+    chips: ["Tell me more", "What We Carry", "Get a Quote"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
   transportation_detail: () => ({
@@ -806,6 +907,7 @@ const RESPONSES = {
       `${KB.services.transportation.detail}\n\n` +
       `Want to discuss a specific route or cargo? Drop us a message!`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
   cargo: () => ({
@@ -814,7 +916,8 @@ const RESPONSES = {
       `${KB.services.cargo.short}\n\n` +
       `We cover:\n` +
       `• ${KB.services.cargo.features.join("\n• ")}`,
-    chips: ["Tell me more", "Documentation", "Get a Quote"],
+    chips: ["Tell me more", "What We Carry", "Get a Quote"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
   cargo_detail: () => ({
@@ -823,6 +926,7 @@ const RESPONSES = {
       `${KB.services.cargo.detail}\n\n` +
       `Got an oversized or complex shipment? Let's talk — we handle it!`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
   documentation: () => ({
@@ -832,6 +936,7 @@ const RESPONSES = {
       `This covers:\n` +
       `• ${KB.services.documentation.features.join("\n• ")}`,
     chips: ["Tell me more", "Lashing & Fumigation", "Get a Quote"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
   documentation_detail: () => ({
@@ -840,6 +945,7 @@ const RESPONSES = {
       `${KB.services.documentation.detail}\n\n` +
       `Need compliance support for a specific destination? We've got you covered.`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
   lashing: () => ({
@@ -849,6 +955,7 @@ const RESPONSES = {
       `Services include:\n` +
       `• ${KB.services.lashing.features.join("\n• ")}`,
     chips: ["Tell me more", "Documentation", "Get a Quote"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
   lashing_detail: () => ({
@@ -857,6 +964,7 @@ const RESPONSES = {
       `${KB.services.lashing.detail}\n\n` +
       `ISPM-certified fumigation means smooth phytosanitary clearance at any port worldwide.`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
   contact: () => ({
@@ -865,7 +973,7 @@ const RESPONSES = {
       `📧 ${KB.company.email.join("\n📧 ")}\n\n` +
       `📱 ${KB.company.phone}\n\n` +
       `We're based in Tuticorin, Tamil Nadu — the map below shows our exact location.`,
-    chips: ["Our Branches", "Our Services"],
+    chips: ["Our Services", "What We Carry", "Our Branches"],
     mapEmbed: true,
     contactEmbed: true,
   }),
@@ -892,14 +1000,32 @@ const RESPONSES = {
     chips: ["Contact Us", "Our Services"],
   }),
 
+  branches_detail: () => ({
+    text:
+      `🏢 *Branch Connectivity*\n\n` +
+      `With strategic locations across major South Indian port cities (Tuticorin, Chennai, Cochin) and inland hubs (Madurai), our network ensures smooth coordination of export/import shipments, quick customs turnaround, and tight supply chain control.\n\n` +
+      `Need to speak to a representative at a specific branch?`,
+    chips: ["Contact Us", "Our Services"],
+  }),
+
   about: () => ({
     text:
       `🌊 *About Canaan Global International*\n\n` +
-      `“${KB.company.tagline}”\n\n` +
+      `"${KB.company.tagline}"\n\n` +
       `${KB.company.overview}\n\n` +
       `📍 HQ in Tuticorin, Tamil Nadu\n` +
       `🏢 Branches: Chennai · Madurai · Cochin`,
     chips: ["Our Services", "The Ecosystem", "Contact Us", "Our Branches"],
+    navLink: { href: "/about", label: "Visit About Page" },
+  }),
+
+  about_detail: () => ({
+    text:
+      `🌊 *The Canaan Legacy*\n\n` +
+      `For over 15 years, we've built a reputation as the most trusted logistics partner for the Indian stone industry. We aren't just freight forwarders; we are end-to-end project managers who understand the nuances of heavy cargo.\n\n` +
+      `Our unique structure—comprising CGL, CGSS, CGI, and Rehoboth Transports—allows us to control every step of the journey.`,
+    chips: ["The Ecosystem", "Our Services", "Contact Us"],
+    navLink: { href: "/about", label: "Visit About Page" },
   }),
 
   granite: () => ({
@@ -913,6 +1039,60 @@ const RESPONSES = {
       `🪵  Lashing & ISPM fumigation for all stone types\n\n` +
       `We cover the full chain — from quarry to your customer's door.`,
     chips: ["Transportation", "Cargo Management", "Documentation", "Lashing & Fumigation"],
+    navLink: { href: "/cargo", label: "View Cargo Gallery" },
+  }),
+
+  cargo_types: () => ({
+    text:
+      `📦 What We Carry — 14 Categories\n\n` +
+      `We handle a wide range of cargo types:\n\n` +
+      `🌿  Coir & Natural Fibre\n` +
+      `🚜  Agricultural Machinery\n` +
+      `📦  Palletised Cargo\n` +
+      `🔩  Industrial Rolls & Coils\n` +
+      `🪨  Stones & Marbles\n` +
+      `🧪  Chemical Drums & Barrels\n` +
+      `🌾  Bulk Grain & Seeds\n` +
+      `🛍️  Bagged Cargo\n` +
+      `🎁  Bale Cargo\n` +
+      `🥜  Cashew & Agri Commodities\n` +
+      `🔧  Pipes\n` +
+      `🏗️  Heavy Machinery\n` +
+      `💧  Bulk Liquid & Gas Cargo\n` +
+      `⭐  Special Cargo\n\n` +
+      `Tap below to see our full cargo gallery with photos of each category!`,
+    chips: ["Tell me more", "Transportation", "Get a Quote"],
+    navLink: { href: "/cargo", label: "View Cargo Gallery" },
+  }),
+
+  cargo_types_detail: () => ({
+    text:
+      `📦 About Our Cargo Expertise\n\n` +
+      `Canaan has spent 15+ years building hands-on expertise across every category we handle. ` +
+      `Our team knows exactly how to pack, lash, fumigate, and document each cargo type for its destination market.\n\n` +
+      `🪨 Stones & Marbles — our core, with 15+ years moving granite blocks and marble slabs\n` +
+      `🚜 Agricultural Machinery — tractors and farm equipment loaded by our specialist team\n` +
+      `🔩 Industrial Rolls & Coils — HDPE and geotextile reels in high-cube containers\n` +
+      `🏗️ Heavy Machinery — JCBs, excavators, bulldozers transported across India\n` +
+      `💧 Bulk Liquid & Gas — ISO tanks and tankers, fully certified\n\n` +
+      `Every shipment we touch is handled with care, compliance, and commitment.`,
+    chips: ["Get a Quote", "Contact Us", "Our Services"],
+    navLink: { href: "/cargo", label: "View Cargo Gallery" },
+  }),
+
+  fleet: () => ({
+    text:
+      `🚛 Our Fleet — 42 Vehicles Strong\n\n` +
+      `Operated by *Rehoboth Transports*, our ground fleet covers the full load spectrum:\n\n` +
+      `🚨  40 Ft Container Trailer — up to 40 Tons\n` +
+      `🚨  45 Ft Extended Trailer — up to 30 Tons\n` +
+      `🚚  10 Wheeler (6x4) — up to 16 Tons\n` +
+      `🚚  12 Wheeler (8x4) — up to 20 Tons\n` +
+      `🚚  14 Wheeler (10x4) — up to 25 Tons\n` +
+      `🚚  20 Ft Container Trailer — up to 20 Tons\n` +
+      `🚚  22 Wheeler — up to 30 Tons\n\n` +
+      `Every vehicle is GPS-tracked and dispatched through a computerised routing system for on-time delivery.`,
+    chips: ["Transportation", "What We Carry", "Contact Us"],
   }),
 
   pricing: () => ({
@@ -922,6 +1102,17 @@ const RESPONSES = {
       `Drop us a message and we'll get back to you quickly with a detailed quote.`,
     chips: ["Contact Us", "Our Services", "Our Branches"],
     contactEmbed: true,
+    navLink: { href: "/#contact", label: "Contact Us" },
+  }),
+
+  pricing_detail: () => ({
+    text:
+      `💰 More on Pricing\n\n` +
+      `Because we specialise in project cargo and heavy stone shipments, flat rates rarely apply. We calculate costs based on distance, cargo dimensions, necessary permits, and chosen transport mode.\n\n` +
+      `Request a quote today and our team will provide a transparent breakdown!`,
+    chips: ["Contact Us", "Our Services"],
+    contactEmbed: true,
+    navLink: { href: "/#contact", label: "Contact Us" },
   }),
 
   working_hours: () => ({
@@ -933,6 +1124,7 @@ const RESPONSES = {
       `📱 ${KB.company.phone}\n\n` +
       `Emails are checked and replied to promptly.`,
     chips: ["Contact Us", "Our Branches"],
+    navLink: { href: "/#contact", label: "Contact Us" },
   }),
 
   urgency: () => ({
@@ -972,13 +1164,16 @@ const RESPONSES = {
     };
   },
 
-  negation: () => ({
-    text: pickOne([
-      "No worries! Is there something else I can help with?",
-      "Sure, no problem. Just let me know if anything comes up!",
-    ]),
-    chips: ["Our Services", "Contact Us", "Our Branches"],
-  }),
+  negation: (ctx) => {
+    if (ctx) ctx.lastTopic = null;
+    return {
+      text: pickOne([
+        "No worries! What else can I help you explore?",
+        "Sure, let's look at something else. What would you like to know?",
+      ]),
+      chips: ["Our Services", "Contact Us", "What We Carry"],
+    };
+  },
 
   complaint: () => ({
     text:
@@ -1000,57 +1195,54 @@ const RESPONSES = {
   // ── Import Operations ──
   import_ops: () => {
     const steps = KB.operations.import.steps;
-    const stepsText = steps
-      .map((s) => `${s.num}  *${s.title}*\n      ${s.desc}`)
-      .join("\n\n");
+    const summaryList = steps.map((s) => `${s.num}  ${s.title}`).join("\n");
     return {
       text:
         `📦 *Import Operations*\n\n` +
         `${KB.operations.import.summary}\n\n` +
-        stepsText,
-      chips: ["Export Process", "Documentation", "Contact Us"],
+        summaryList + `\n\n` +
+        `Tap "Tell me more" for a full description of each step!`,
+      chips: ["Tell me more", "Export Process", "Contact Us"],
     };
   },
 
   // ── Import detail (follow-up) ──
-  import_ops_detail: () => ({
-    text:
-      `📦 *Import — Key Details*\n\n` +
-      `🔹 Documents are verified *before* customs filing begins\n` +
-      `🔹 Bill of Entry is filed as soon as arrival is confirmed\n` +
-      `🔹 Delivery order is coordinated *in parallel* with customs — saving time\n` +
-      `🔹 Final delivery is only dispatched after full clearance\n\n` +
-      `Questions about a specific step? Feel free to ask!`,
-    chips: ["Export Process", "Documentation", "Contact Us"],
-  }),
+  import_ops_detail: () => {
+    const steps = KB.operations.import.steps;
+    const stepsText = steps
+      .map((s) => `${s.num}  *${s.title}*\n      ${s.desc}`)
+      .join("\n\n");
+    return {
+      text: `📦 *Import — Full Workflow*\n\n` + stepsText,
+      chips: ["Export Process", "Documentation", "Contact Us"],
+    };
+  },
 
   // ── Export Operations ──
   export_ops: () => {
+    const steps = KB.operations.export.steps;
+    const summaryList = steps.map((s) => `${s.num}  ${s.title}`).join("\n");
+    return {
+      text:
+        `🚢 *Export Operations*\n\n` +
+        `${KB.operations.export.summary}\n\n` +
+        summaryList + `\n\n` +
+        `Tap "Tell me more" for a full description of each step!`,
+      chips: ["Tell me more", "Import Process", "Get a Quote"],
+    };
+  },
+
+  // ── Export detail (follow-up) ──
+  export_ops_detail: () => {
     const steps = KB.operations.export.steps;
     const stepsText = steps
       .map((s) => `${s.num}  *${s.title}*\n      ${s.desc}`)
       .join("\n\n");
     return {
-      text:
-        `🚢 *Export Operations*\n\n` +
-        `${KB.operations.export.summary}\n\n` +
-        stepsText,
-      chips: ["Import Process", "Documentation", "Get a Quote"],
+      text: `🚢 *Export — Full Workflow*\n\n` + stepsText,
+      chips: ["Import Process", "Get a Quote", "Contact Us"],
     };
   },
-
-  // ── Export detail (follow-up) ──
-  export_ops_detail: () => ({
-    text:
-      `🚢 *Export — Key Details*\n\n` +
-      `🔹 Export documents are verified upfront to prevent last-minute delays\n` +
-      `🔹 Cargo readiness is confirmed before any container booking\n` +
-      `🔹 Shipping bill is filed electronically through the customs system\n` +
-      `🔹 Stuffing plans ensure optimal container utilisation\n` +
-      `🔹 Gate-in is confirmed before vessel cut-off to guarantee vessel loading\n\n` +
-      `Need guidance on your export shipment? Reach out to us!`,
-    chips: ["Import Process", "Get a Quote", "Contact Us"],
-  }),
 
   // ── Canaan Ecosystem overview ──
   ecosystem: () => {
@@ -1069,6 +1261,14 @@ const RESPONSES = {
       listShown: ["div_cgl", "div_cgss", "div_cgi", "div_rehoboth"],
     };
   },
+
+  ecosystem_detail: () => ({
+    text:
+      `🌐 *More on the Ecosystem*\n\n` +
+      `Our four divisions are fully integrated. For example, Rehoboth handles the physical transport of a block of granite, while CGSS manages the customs clearance, and CGL books the ocean freight.\n\n` +
+      `This unified approach ensures zero handoff delays and single-point accountability.`,
+    chips: ["About CGL", "About CGSS", "Contact Us"],
+  }),
 
   // ── CGL ──
   div_cgl: () => {
@@ -1197,11 +1397,16 @@ export const CHIP_TO_INTENT = {
   "About CGSS": "div_cgss",
   "About CGI": "div_cgi",
   "About Rehoboth": "div_rehoboth",
+  // New smart chips
+  "What We Carry": "cargo_types",
+  "View Gallery": "cargo_types",
+  "Our Fleet": "fleet",
+  "Granite Industry": "granite",
 };
 
 // Topic intents — these update lastTopic in context
 const TOPIC_INTENTS = new Set([
-  "transportation", "cargo", "documentation", "lashing",
+  "transportation", "cargo", "cargo_types", "fleet", "documentation", "lashing",
   "contact", "address", "branches", "about", "granite",
   "import_ops", "export_ops",
   "ecosystem", "div_cgl", "div_cgss", "div_cgi", "div_rehoboth",
@@ -1225,6 +1430,8 @@ export function getResponse(userInput, ctx = {}) {
     listShown:  ctx.listShown  ?? null,
     msgCount:   (ctx.msgCount  ?? 0) + 1,
     name:       ctx.name       ?? null,
+    topicHistory: ctx.topicHistory ?? [],
+    isHotLead:  ctx.isHotLead  ?? false,
   };
 
   const raw = userInput.trim();
@@ -1354,14 +1561,36 @@ export function getResponse(userInput, ctx = {}) {
 
   // ── 11. Build response ───────────────────────────────────
   newCtx.lastIntent = bestId;
-  if (TOPIC_INTENTS.has(bestId)) newCtx.lastTopic = bestId;
+  if (TOPIC_INTENTS.has(bestId)) {
+    newCtx.lastTopic = bestId;
+    if (newCtx.topicHistory[newCtx.topicHistory.length - 1] !== bestId) {
+      newCtx.topicHistory.push(bestId);
+    }
+  }
+
+  // ── Hot Lead Detection ──
+  const highIntentTopics = new Set(["pricing", "fleet", "cargo_types", "transportation", "cargo", "contact"]);
+  const highIntentCount = newCtx.topicHistory.filter(t => highIntentTopics.has(t)).length;
+  if (highIntentCount >= 3) {
+    newCtx.isHotLead = true;
+  }
 
   const builder = RESPONSES[bestId] ?? RESPONSES.fallback;
   const result  = builder(newCtx);
 
+  // Proactive CTA for hot leads
+  if (newCtx.isHotLead && !result.navLink && !result.contactEmbed) {
+    result.navLink = { href: "https://wa.me/919047012891", label: "Chat on WhatsApp" };
+  }
+
   // Inject compound chip if detected
   if (bonusChip && result.chips && !result.chips.includes(bonusChip)) {
     result.chips = [result.chips[0], bonusChip, ...result.chips.slice(1)].slice(0, 4);
+  }
+
+  // Filter out any exact duplicate chips
+  if (result.chips) {
+    result.chips = Array.from(new Set(result.chips));
   }
 
   return {

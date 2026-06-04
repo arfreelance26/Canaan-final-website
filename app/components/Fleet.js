@@ -7,57 +7,59 @@ const FLEET = [
     name: "20 Feet Trailer",
     type: "Standard Trailer",
     capacity: "15 Tons",
-    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?q=70&w=900",
+    image: "/company/20feetb.png",
     tag: "Trailer",
+    objectFit: "cover",
+    objectPosition: "center 65%",
   },
   {
     name: "40 Feet Trailer",
     type: "Standard Trailer",
     capacity: "26 Tons",
-    image: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=70&w=900",
+    image: "/company/40feetb.png",
     tag: "Trailer",
+    objectFit: "cover",
+    objectPosition: "center 55%",
   },
   {
     name: "45 Feet Trailer",
     type: "Extended Trailer",
     capacity: "30 Tons",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=70&w=900",
+    image: "/company/45feet.jpeg",
     tag: "Trailer",
-  },
-  {
-    name: "Low Bed Trailer",
-    type: "Heavy & Oversized Load",
-    capacity: "60 Tons",
-    image: "https://images.unsplash.com/photo-1504222490345-c075b7b7b10b?q=70&w=900",
-    tag: "Specialized",
+    objectFit: "cover",
   },
   {
     name: "6x4 Truck",
     type: "10 Wheeler",
     capacity: "16 Tons",
-    image: "https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?q=70&w=900",
+    image: "/company/10wheeler.png",
     tag: "Truck",
+    objectFit: "cover",
   },
   {
     name: "8x4 Truck",
     type: "12 Wheeler",
     capacity: "20 Tons",
-    image: "https://images.unsplash.com/photo-1545459720-aac8509eb02c?q=70&w=900",
+    image: "/company/12wheeler.png",
     tag: "Truck",
+    objectFit: "cover",
   },
   {
     name: "10x4 Truck",
     type: "14 Wheeler",
     capacity: "25 Tons",
-    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=70&w=900",
+    image: "/company/14wheeler.png",
     tag: "Truck",
+    objectFit: "cover",
   },
   {
     name: "Tractor Head",
     type: "4x2 & 6x4 Variants",
     capacity: "Prime Mover",
-    image: "https://images.unsplash.com/photo-1556742031-c6961e8560b0?q=70&w=900",
+    image: "/company/tractorhead.png",
     tag: "Tractor",
+    objectFit: "cover",
   },
 ];
 
@@ -144,13 +146,22 @@ export default function FleetSection() {
                 style={{ width: "calc(85vw - 2.5rem)", maxWidth: "520px", minWidth: "280px" }}
               >
                 {/* Vehicle image */}
-                <img
-                  src={vehicle.image}
-                  alt={vehicle.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-                />
+                <div
+                  className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                  style={{ background: vehicle.objectFit === "contain" ? "#e8e7e3" : "transparent" }}
+                >
+                  <img
+                    src={vehicle.image}
+                    alt={vehicle.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full"
+                    style={{
+                      objectFit: vehicle.objectFit || "cover",
+                      objectPosition: vehicle.objectPosition || "center",
+                    }}
+                  />
+                </div>
                 <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors duration-300" />
 
                 {/* TOP LEFT — tag badge */}
@@ -182,7 +193,7 @@ export default function FleetSection() {
 
         {/* Bottom tags strip */}
         <div className="flex flex-wrap gap-2 px-1 shrink-0">
-          {["20 Ft Trailer", "40 Ft Trailer", "45 Ft Trailer", "Low Bed", "6x4 Truck", "8x4 Truck", "10x4 Truck", "Tractor Head", "GPS Tracked", "24/7 Support"].map((tag) => (
+          {["20 Ft Trailer", "40 Ft Trailer", "45 Ft Trailer", "Low Bed", "6x4 Truck", "8x4 Truck", "10x4 Truck", "Tractor Head"].map((tag) => (
             <span
               key={tag}
               className="bg-white/80 border border-black/10 text-neutral-700 text-xs font-medium px-4 py-2 rounded-full tracking-tight"
@@ -193,7 +204,7 @@ export default function FleetSection() {
         </div>
 
         {/* Mobile CTA */}
-        
+
       </div>
     </section>
   );
