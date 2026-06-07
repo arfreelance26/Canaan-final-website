@@ -33,12 +33,17 @@ export const metadata = {
   authors: [{ name: "Arun Samuel Alfred" }],
   creator: "Canaan Global International",
   publisher: "Canaan Global International",
-  metadataBase: new URL("https://www.canaanglobal.com"),
+  metadataBase: new URL("https://canaaanglobalinternational.com"),
+  icons: {
+    icon: "/canaan.png",
+    shortcut: "/canaan.png",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Canaan Global International",
     description:
       "Freight Forwarders, Customs Brokers & Transporters. Commit · Endure · Achieve · Satisfy.",
-    url: "https://www.canaanglobal.com",
+    url: "https://canaaanglobalinternational.com",
     siteName: "Canaan Global International",
     locale: "en_IN",
     type: "website",
@@ -48,6 +53,7 @@ export const metadata = {
     title: "Canaan Global International",
     description:
       "Freight Forwarders, Customs Brokers & Transporters. Commit · Endure · Achieve · Satisfy.",
+    images: ["/canaan.png"],
   },
   icons: {
     icon: "/favicon.ico",
@@ -58,7 +64,7 @@ export const metadata = {
     phone: "+91 90470 12891",
     tel: "0461 2900886",
     email: "canaanglobal@canaanglobal.com",
-    website: "www.canaanglobal.com",
+    website: "canaaanglobalinternational.com",
   },
 };
 
@@ -70,7 +76,8 @@ export default function RootLayout({ children }) {
     >
       <head>
         {/* Canonical */}
-        <link rel="canonical" href="https://www.canaanglobal.com" />
+        <link rel="canonical" href="https://canaaanglobalinternational.com" />
+        <link rel="icon" href="/canaan.png" type="image/png" sizes="any" />
 
         {/* Contact schema — structured data for Google */}
         <script
@@ -81,8 +88,8 @@ export default function RootLayout({ children }) {
               "@type": "Organization",
               name: "Canaan Global International",
               alternateName: "Canaan Global",
-              url: "https://www.canaanglobal.com",
-              logo: "https://www.canaanglobal.com/logo.png",
+              url: "https://canaaanglobalinternational.com",
+              logo: "https://canaaanglobalinternational.com/canaan.png",
               slogan: "Commit · Endure · Achieve · Satisfy",
               description:
                 "Freight Forwarders, Customs Brokers and Transporters based in Tuticorin, India.",
@@ -113,7 +120,7 @@ export default function RootLayout({ children }) {
                 },
               ],
               email: "canaanglobal@canaanglobal.com",
-              sameAs: ["https://www.canaanglobal.com"],
+              sameAs: ["https://canaaanglobalinternational.com"],
               serviceArea: {
                 "@type": "AdministrativeArea",
                 name: "Worldwide",

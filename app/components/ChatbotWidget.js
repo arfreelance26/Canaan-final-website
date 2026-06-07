@@ -103,6 +103,18 @@ export default function ChatbotWidget() {
     }
   }, [messages, open, isHidden]);
 
+  /* ── Body Scroll Lock when Chatbot is Open ── */
+  useEffect(() => {
+    if (isHidden) return;
+    if (open) {
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }
+  }, [open, isHidden]);
+
   /* ── Scroll listener — guarded so it's a no-op on hidden pages ── */
   useEffect(() => {
     if (isHidden) return;
@@ -266,8 +278,8 @@ export default function ChatbotWidget() {
 
         {/* ── Messages ── */}
         <div
-          className="joshine-messages flex-1 overflow-y-auto px-4 py-4"
-          style={{ display: "flex", flexDirection: "column", gap: "14px", overscrollBehavior: "contain" }}
+          className="joshine-messages flex-1 overflow-y-auto px-4 py-4 overscroll-y-none"
+          style={{ display: "flex", flexDirection: "column", gap: "14px", overscrollBehavior: "none" }}
         >
           {messages.map((msg) => (
             <div
