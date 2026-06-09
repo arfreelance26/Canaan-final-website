@@ -103,12 +103,12 @@ export default function DavidHazHero() {
   return (
     <section
       ref={sectionRef}
-      className="sticky top-0 h-screen bg-[#f5f4f0] font-sans flex flex-col gap-3 z-[1]"
+      className="sticky top-0 h-screen bg-[#f5f4f0] font-sans flex flex-col z-[1]"
     >
       {/* ── HERO IMAGE CARD ── */}
       <div
         ref={cardRef}
-        className="relative flex-1 overflow-hidden min-h-[380px] sm:min-h-[460px] lg:min-h-[520px]"
+        className="relative h-screen overflow-hidden"
         style={{ willChange: "opacity" }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -215,8 +215,52 @@ export default function DavidHazHero() {
         {/* ── BOTTOM RIGHT — scroll indicator ── */}
 
 
-      </div>
+        {/* ── EXCHANGE RATE MARQUEE ── */}
+        <div className="absolute bottom-0 left-0 w-full h-[36px] flex items-center bg-white/5 backdrop-blur-xl border-t border-white/10 overflow-hidden z-20 shadow-[0_-4px_30px_rgba(0,0,0,0.1)]">
 
+          {/* Static Title */}
+          <div className="flex items-center h-full px-4 sm:px-8 bg-black/80 backdrop-blur-xl border-r border-white/10 z-30 relative shrink-0 shadow-[4px_0_16px_rgba(0,0,0,0.4)]">
+            <span className="text-white/90 font-bold tracking-[0.2em] text-[10px] sm:text-[11px] uppercase drop-shadow-md">
+              Today's Custom Exchange Rates
+            </span>
+          </div>
+
+          <style>{`
+            @keyframes marqueeSlide {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .marquee-content {
+              display: flex;
+              white-space: nowrap;
+              animation: marqueeSlide 35s linear infinite;
+            }
+            .marquee-content:hover {
+              animation-play-state: paused;
+            }
+          `}</style>
+          <div className="flex-1 overflow-hidden h-full flex items-center">
+            <div className="marquee-content" style={{ width: "max-content" }}>
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="flex gap-12 sm:gap-20 px-6 sm:px-10 items-center">
+                  <span className="text-white/90 font-medium tracking-widest flex items-center gap-2 drop-shadow-sm text-[13px] sm:text-[14px]">
+                    <span className="text-lg opacity-90 drop-shadow-none">🇺🇸</span> USD - <span className="text-amber-400 font-semibold drop-shadow-none">₹83.45</span>
+                  </span>
+                  <span className="text-white/90 font-medium tracking-widest flex items-center gap-2 drop-shadow-sm text-[13px] sm:text-[14px]">
+                    <span className="text-lg opacity-90 drop-shadow-none">🇪🇺</span> EUR - <span className="text-amber-400 font-semibold drop-shadow-none">₹90.12</span>
+                  </span>
+                  <span className="text-white/90 font-medium tracking-widest flex items-center gap-2 drop-shadow-sm text-[13px] sm:text-[14px]">
+                    <span className="text-lg opacity-90 drop-shadow-none">🇬🇧</span> GBP - <span className="text-amber-400 font-semibold drop-shadow-none">₹105.67</span>
+                  </span>
+                  <span className="text-white/90 font-medium tracking-widest flex items-center gap-2 drop-shadow-sm text-[13px] sm:text-[14px]">
+                    <span className="text-lg opacity-90 drop-shadow-none">🇦🇪</span> AED - <span className="text-amber-400 font-semibold drop-shadow-none">₹22.72</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

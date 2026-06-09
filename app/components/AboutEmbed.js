@@ -2,10 +2,18 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { Globe, Award, TrendingUp, Quote } from "lucide-react";
+import { Globe, Award, TrendingUp, Quote, Mail, MapPin } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
 import team1 from "../../company photos/team1.jpeg";
+import team2 from "../../company photos/team2.jpeg";
+import team3 from "../../company photos/team3.jpeg";
+import team4 from "../../company photos/team4.jpeg";
+import team5 from "../../company photos/team5.jpeg";
 import arun from "../../company photos/Arun.png";
+import cgi1 from "../../company photos/cgi1.png";
+import cgi2 from "../../company photos/cgi2.png";
+import logistics1 from "../../company photos/logistics1.png";
+import logistics2 from "../../company photos/logistics2.png";
 
 function FounderSection() {
   const sectionRef = useRef(null);
@@ -241,11 +249,149 @@ function TeamSection() {
   );
 }
 
+const TEAM_MEMBERS = [
+  {
+    name: "John Doe",
+    role: "Chief Operating Officer",
+    email: "coo@canaanglobal.com",
+    image: team2,
+  },
+  {
+    name: "Jane Smith",
+    role: "Head of Customs",
+    email: "customs@canaanglobal.com",
+    image: team3,
+  },
+  {
+    name: "Michael Johnson",
+    role: "Global Logistics Director",
+    email: "logistics@canaanglobal.com",
+    image: team4,
+  },
+  {
+    name: "Emily Davis",
+    role: "Client Relations Manager",
+    email: "clients@canaanglobal.com",
+    image: team5,
+  },
+];
+
+const BRANCHES = [
+  { city: "Chennai", desc: "Headquarters & Primary Operations", image: cgi1 },
+  { city: "Vilinjiyam", desc: "Strategic Port Operations", image: logistics1 },
+  { city: "Tuticorin", desc: "Southern Gateway Hub", image: cgi2 },
+  { city: "Madurai", desc: "Inland Logistics Center", image: logistics2 },
+];
+
+function BranchesSection() {
+  const sectionRef = useRef(null);
+  const isVisible = useFadeIn(sectionRef, 0.05);
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 pb-12 overflow-hidden"
+    >
+      <div className={`mb-6 px-2 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">Our Branches</h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {BRANCHES.map((branch, i) => (
+          <div
+            key={i}
+            style={{ transitionDelay: isVisible ? `${i * 100}ms` : "0ms" }}
+            className={`group relative bg-white/80 border border-black/10 rounded-2xl overflow-hidden min-h-[300px] bento-card transition-all duration-700 ease-out transform hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"}`}
+          >
+            <div className="relative h-[160px] w-full overflow-hidden">
+              <Image
+                src={branch.image}
+                alt={branch.city}
+                fill
+                className="object-cover transition-transform duration-[1.2s] group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-40 transition-opacity duration-500" />
+            </div>
+
+            <div className="p-5 flex flex-col justify-between h-[calc(100%-160px)]">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin className="text-amber-600 w-4 h-4" />
+                  <h3 className="text-xl font-bold tracking-tight text-neutral-900 group-hover:text-amber-800 transition-colors duration-300">
+                    {branch.city}
+                  </h3>
+                </div>
+                <p className="text-[13px] sm:text-sm font-medium leading-relaxed text-neutral-500">
+                  {branch.desc}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HierarchySection() {
+  const sectionRef = useRef(null);
+  const isVisible = useFadeIn(sectionRef, 0.05);
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 pb-12 overflow-hidden"
+    >
+      <div className={`mb-6 px-2 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">Our Crew</h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {TEAM_MEMBERS.map((member, i) => (
+          <div
+            key={i}
+            style={{ transitionDelay: isVisible ? `${i * 120}ms` : "0ms" }}
+            className={`group relative bg-white/80 border border-black/10 rounded-2xl overflow-hidden min-h-[380px] bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"}`}
+          >
+            <div className="relative h-[240px] w-full overflow-hidden">
+              <Image
+                src={member.image}
+                alt={member.name}
+                fill
+                className="object-cover object-top transition-transform duration-[1.2s] group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+            </div>
+
+            <div className="p-5 flex flex-col justify-between h-[calc(100%-240px)]">
+              <div>
+                <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-amber-700/80 mb-1">
+                  {member.role}
+                </p>
+                <h3 className="text-xl font-bold tracking-[-0.02em] text-neutral-900 group-hover:text-amber-800 transition-colors duration-300">
+                  {member.name}
+                </h3>
+              </div>
+              
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-black/5">
+                <Mail size={14} className="text-neutral-400" />
+                <a href={`mailto:${member.email}`} className="text-[11px] font-medium tracking-wide text-neutral-500 hover:text-neutral-900 transition-colors duration-300">
+                  {member.email}
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function AboutEmbed() {
   return (
     <>
       <FounderSection />
       <TeamSection />
+      <BranchesSection />
+      <HierarchySection />
     </>
   );
 }

@@ -25,6 +25,7 @@ const CATEGORIES = [
       "/cargo/c12/1.jpeg", "/cargo/c12/2.jpeg",
       "/cargo/c13/1.jpeg", "/cargo/c13/2.jpeg",
       "/cargo/special/s1.jpeg", "/cargo/special/s2.jpeg",
+      "/cargo/special/s3.jpeg", "/cargo/special/s4.jpeg",
     ],
   },
   {
@@ -191,6 +192,8 @@ const CATEGORIES = [
     photos: [
       "/cargo/special/s1.jpeg",
       "/cargo/special/s2.jpeg",
+      "/cargo/special/s3.jpeg",
+      "/cargo/special/s4.jpeg",
     ],
   },
 ];

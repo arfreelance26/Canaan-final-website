@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import AOS from "aos";
@@ -62,7 +62,7 @@ function LogoCard({ name, logo, index, isVisible }) {
         alignItems: "center",
         justifyContent: "center",
         gap: 8,
-        minHeight: 100,
+        minHeight: "clamp(100px, 12vh, 130px)",
         padding: "1.25rem 1rem",
         cursor: "pointer",
         position: "relative",
@@ -135,7 +135,7 @@ export default function ClientsSection() {
     <section
       ref={sectionRef}
       id="clients"
-      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-4 overflow-hidden"
+      className="relative bg-[#f5f4f0] font-sans flex flex-col min-h-screen p-4 sm:p-5 overflow-hidden"
     >
       {/* ── HEADER ── */}
       <div className={`relative rounded-2xl overflow-hidden bg-white px-6 py-8 sm:px-10 sm:py-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4 transition-all duration-700 ease-out transform ${
@@ -160,16 +160,18 @@ export default function ClientsSection() {
       </div>
 
       {/* ── LOGO GRID ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3">
-        {CLIENTS.map(({ name, logo }, i) => (
-          <LogoCard
-            key={name}
-            name={name}
-            logo={logo}
-            index={i}
-            isVisible={isVisible}
-          />
-        ))}
+      <div className="flex-1 flex flex-col justify-center py-4 sm:py-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4">
+          {CLIENTS.map(({ name, logo }, i) => (
+            <LogoCard
+              key={name}
+              name={name}
+              logo={logo}
+              index={i}
+              isVisible={isVisible}
+            />
+          ))}
+        </div>
       </div>
 
       {/* ── BOTTOM STRIP ── */}

@@ -9,32 +9,35 @@ import TimelineSection from "./components/Timeline";
 import ContactSection from "./components/Contact";
 import WorldNetworkSection from "./components/World";
 import GroupSection from "./components/Group";
+import CustomsUpdatesSection from "./components/CustomsUpdates";
 
 // Section order
 const SECTIONS = [
   GroupSection,          // 0 — Home
-  CustomerGlobeSection,  // 1 — Home
-  TimelineSection,       // 2 — Home
-  //WorldNetworkSection,   // 3 — Service
-  AboutTeaserSection,    // 4 — About (teaser → links to /about)
-  FleetSection,          // 5 — Fleet
-  ClientsSection,        // 6 — Clients
-  ContactSection,        // 7 — Contact
+  //CustomsUpdatesSection, // 1 — Updates
+  CustomerGlobeSection,  // 2 — Home
+  TimelineSection,       // 3 — Home
+  //WorldNetworkSection,   // 4 — Service
+  AboutTeaserSection,    // 5 — About (teaser → links to /about)
+  FleetSection,          // 6 — Fleet
+  ClientsSection,        // 7 — Clients
+  ContactSection,        // 8 — Contact
 ];
 
 const SECTION_NAV_ITEMS = [
   "Home",    // 0 — GroupSection
-  "Home",    // 1 — CustomerGlobeSection
-  "Home",    // 2 — TimelineSection
-  "Home",    // 3 — AboutTeaserSection (part of Home scroll)
-  "Cargo",   // 4 — FleetSection
-  "Clients", // 5 — ClientsSection
-  "Contact", // 6 — ContactSection
+  "Updates", // 1 — CustomsUpdatesSection
+  "Home",    // 2 — CustomerGlobeSection
+  "Home",    // 3 — TimelineSection
+  "Home",    // 4 — AboutTeaserSection (part of Home scroll)
+  "Cargo",   // 5 — FleetSection
+  "Clients", // 6 — ClientsSection
+  "Contact", // 7 — ContactSection
 ];
 
 export default function Home() {
   const wrapRefs = useRef([]);
-  const snapRef  = useRef({ cooldown: false, delta: 0, ticks: 0, lastTime: 0, quietTimer: null });
+  const snapRef = useRef({ cooldown: false, delta: 0, ticks: 0, lastTime: 0, quietTimer: null });
   const [pageVisible, setPageVisible] = useState(false);
 
   useEffect(() => {
@@ -51,8 +54,8 @@ export default function Home() {
       if (i === 0) return;
       const { top, bottom } = el.getBoundingClientRect();
       if (!(top < window.innerHeight && bottom > 0)) {
-        el.style.opacity    = "0";
-        el.style.transform  = "scale(0.97)";
+        el.style.opacity = "0";
+        el.style.transform = "scale(0.97)";
         el.style.willChange = "transform, opacity";
       }
     });
@@ -62,8 +65,8 @@ export default function Home() {
       wraps.forEach((el) => {
         if (el.style.opacity === "0") {
           el.style.transition = "transform 0.8s cubic-bezier(0.16,1,0.3,1), opacity 0.7s ease";
-          el.style.opacity    = "1";
-          el.style.transform  = "scale(1)";
+          el.style.opacity = "1";
+          el.style.transform = "scale(1)";
           el.style.willChange = "auto";
         }
       });
@@ -79,7 +82,7 @@ export default function Home() {
             if (!entry.isIntersecting) return;
             el.style.transition =
               "transform 1.1s cubic-bezier(0.16,1,0.3,1), opacity 0.85s ease";
-            el.style.opacity   = "1";
+            el.style.opacity = "1";
             el.style.transform = "scale(1)";
             el.addEventListener("transitionend", () => {
               el.style.willChange = "auto";
@@ -102,20 +105,20 @@ export default function Home() {
               // Push previous section back with scale + blur.
               // Skip opacity on i===1 (GroupSection covers sticky hero — fading it
               // to <1 lets the hero bleed through behind it).
-              const fadeOpacity = i > 1;
+              const fadeOpacity = i > 1 || (i === 1 && false); // Keep Group opaque so it hides hero
               prev.style.transition = fadeOpacity
                 ? "transform 0.85s cubic-bezier(0.4,0,0.2,1), opacity 0.75s ease, filter 0.75s ease"
                 : "transform 0.85s cubic-bezier(0.4,0,0.2,1), filter 0.75s ease";
               prev.style.transform = "scale(0.93)";
-              prev.style.filter    = "blur(2px)";
+              prev.style.filter = "blur(2px)";
               if (fadeOpacity) prev.style.opacity = "0.55";
             } else if (entry.boundingClientRect.top > 0) {
               // User scrolled back up — restore previous section
               prev.style.transition =
                 "transform 0.65s cubic-bezier(0.16,1,0.3,1), opacity 0.6s ease, filter 0.55s ease";
               prev.style.transform = "scale(1)";
-              prev.style.filter    = "blur(0px)";
-              prev.style.opacity   = "1";
+              prev.style.filter = "blur(0px)";
+              prev.style.opacity = "1";
             }
           },
           { threshold: 0.18 }
@@ -135,12 +138,12 @@ export default function Home() {
   useEffect(() => {
     const state = snapRef.current;
     const WINDOW_MS = 160;  // accumulation window in ms
-    const TICK_MIN  = 3;    // min events in window to trigger section snap
+    const TICK_MIN = 3;    // min events in window to trigger section snap
     const DELTA_MIN = 300;  // OR accumulated |deltaY| to trigger section snap
     // QUIET_MS: cooldown lifts this long after the LAST scroll event.
     // Trackpad momentum keeps re-arming it until inertia fully decays.
     // A physical mouse releases almost immediately (no momentum events).
-    const QUIET_MS  = 360;
+    const QUIET_MS = 360;
 
     const getSectionTops = () =>
       wrapRefs.current
@@ -158,8 +161,8 @@ export default function Home() {
       clearTimeout(state.quietTimer);
       state.quietTimer = setTimeout(() => {
         state.cooldown = false;
-        state.delta    = 0;
-        state.ticks    = 0;
+        state.delta = 0;
+        state.ticks = 0;
       }, QUIET_MS);
     };
 
@@ -171,12 +174,12 @@ export default function Home() {
       const now = Date.now();
       if (now - state.lastTime > WINDOW_MS) { state.delta = 0; state.ticks = 0; }
       state.lastTime = now;
-      state.delta   += Math.abs(e.deltaY);
-      state.ticks   += 1;
+      state.delta += Math.abs(e.deltaY);
+      state.ticks += 1;
 
-      const dir     = e.deltaY > 0 ? 1 : -1;
+      const dir = e.deltaY > 0 ? 1 : -1;
       const scrollY = window.scrollY;
-      const vh      = window.innerHeight;
+      const vh = window.innerHeight;
 
       // Fire a snap and arm the adaptive quiet lock
       const doSnap = (targetY) => {
@@ -189,7 +192,7 @@ export default function Home() {
       // A normal section has 1 boundary (top)
       // A tall section has 2 boundaries (top, and bottom-vh)
       let inTallFreeZone = false;
-      
+
       const boundaries = [];
       wrapRefs.current.filter(Boolean).forEach((el) => {
         let t = 0, node = el;
@@ -199,14 +202,14 @@ export default function Home() {
         if (el.offsetHeight > vh * 1.5) {
           const bottomBoundary = t + el.offsetHeight - vh;
           boundaries.push(bottomBoundary);
-          
+
           // Check if we are currently free-scrolling inside this tall element
           if (scrollY >= t && scrollY <= bottomBoundary) {
             // At top boundary moving up -> NOT free zone (should snap up)
             if (scrollY < t + 20 && dir < 0) return;
             // At bottom boundary moving down -> NOT free zone (should snap down)
             if (scrollY > bottomBoundary - 20 && dir > 0) return;
-            
+
             inTallFreeZone = true;
           }
         }
@@ -245,8 +248,8 @@ export default function Home() {
             key={i}
             ref={(el) => { wrapRefs.current[i] = el; }}
             data-nav-item={SECTION_NAV_ITEMS[i]}
-            {...(i === 3 ? { id: "about" } : {})}
-            {...(i === 2 || i === 4 ? { "data-hide-navbar": "true" } : {})}
+            {...(i === 4 ? { id: "about" } : {})}
+            {...(i === 3 || i === 5 ? { "data-hide-navbar": "true" } : {})}
           >
             <Section />
           </div>

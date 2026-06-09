@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Anchor } from "lucide-react";
 import Image from "next/image";
 import companylogo from "../../company photos/companylogo.png";
 
-const NAV_ITEMS = ["Home", "About", "Service", "Cargo", "Clients", "Contact"];
+const NAV_ITEMS = ["Home", "About", "Service", "Cargo", "Accreditations", "Updates", "Clients", "Contact"];
 
 // ── Hot reload for logo position tweak ──
 function LogoPlaceholder() {
@@ -24,6 +24,8 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("Home");
   const [isHidden, setIsHidden] = useState(false);
+  const [sliderStyle, setSliderStyle] = useState({ left: 0, width: 0, opacity: 0 });
+  const navRefs = useRef({});
   const [isLogoVisible, setIsLogoVisible] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
   const pathname = usePathname();
@@ -34,12 +36,34 @@ export default function Navbar() {
     if (path === "/about" || path.startsWith("/about/")) return "About";
     if (path === "/canaan-shipping-services" || path.startsWith("/canaan-shipping-services/")) return "Service";
     if (path === "/cargo" || path.startsWith("/cargo/")) return "Cargo";
+    if (path === "/accreditations" || path.startsWith("/accreditations/")) return "Accreditations";
+    if (path === "/updates" || path.startsWith("/updates/")) return "Updates";
     return "Home";
   };
 
   useEffect(() => {
     setActiveItem(routeToNavItem(pathname));
   }, [pathname]);
+
+  useEffect(() => {
+    const updateSlider = () => {
+      const el = navRefs.current[activeItem];
+      if (el) {
+        setSliderStyle({
+          left: el.offsetLeft,
+          width: el.offsetWidth,
+          opacity: 1,
+        });
+      }
+    };
+    updateSlider();
+    const timer = setTimeout(updateSlider, 150); // allow fonts to render
+    window.addEventListener("resize", updateSlider);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateSlider);
+    };
+  }, [activeItem]);
 
   // Auto-hide when inside scroll-heavy sections
   useEffect(() => {
@@ -181,6 +205,34 @@ export default function Navbar() {
       return;
     }
 
+    if (item === "Accreditations") {
+      if (pathname === "/accreditations") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setTransitioning(true);
+        setTimeout(() => {
+          router.push("/accreditations");
+          setTimeout(() => setTransitioning(false), 400);
+        }, 180);
+      }
+      setMobileOpen(false);
+      return;
+    }
+
+    if (item === "Updates") {
+      if (pathname === "/updates") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        setTransitioning(true);
+        setTimeout(() => {
+          router.push("/updates");
+          setTimeout(() => setTransitioning(false), 400);
+        }, 180);
+      }
+      setMobileOpen(false);
+      return;
+    }
+
     // For in-page sections: if not on home, navigate home first then scroll
     if (pathname !== "/") {
       await router.push("/");
@@ -227,17 +279,35 @@ export default function Navbar() {
       }`}>
 
         {/* Desktop nav pill */}
-        <nav className="hidden sm:flex items-center bg-black/[0.07] border border-black/10 rounded-full px-1.5 h-11 gap-0.5">
+        <nav className="hidden sm:flex relative items-center bg-black/[0.07] border border-black/10 rounded-full px-1.5 h-11 gap-0.5">
+          {/* Glassmorphic Slider */}
+          <div
+            className="absolute h-8 rounded-full bg-white/60 backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white/80 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
+            style={{
+              left: sliderStyle.left,
+              width: sliderStyle.width,
+              opacity: sliderStyle.opacity,
+            }}
+          />
           {NAV_ITEMS.map((item) => (
             <button
               key={item}
+              ref={(el) => (navRefs.current[item] = el)}
               onClick={() => navigateTo(item)}
-              className={`bg-transparent border-none font-medium text-[13.5px] tracking-tight px-3 h-8 rounded-full cursor-pointer transition-colors ${
-                activeItem === item
-                  ? "text-neutral-950 font-semibold"
-                  : "text-neutral-600 hover:text-neutral-900"
+              className={`relative z-10 bg-transparent border-none font-medium text-[12.5px] tracking-tight px-3 h-8 rounded-full cursor-pointer transition-colors ${
+                item === "Updates"
+                  ? `text-white ${activeItem === item ? "font-semibold" : "hover:text-white"}`
+                  : activeItem === item
+                    ? "text-neutral-950 font-semibold"
+                    : "text-neutral-600 hover:text-neutral-900"
               }`}
             >
+              {item === "Updates" && (
+                <span 
+                  className={`absolute inset-0 bg-red-500/60 border border-red-500 rounded-full -z-10 pointer-events-none shadow-[0_0_8px_rgba(239,68,68,0.5)] ${pathname === "/" && isLogoVisible ? "animate-pulse" : ""}`}
+                  style={pathname === "/" && isLogoVisible ? { animationDuration: '1s' } : {}}
+                />
+              )}
               {item}
             </button>
           ))}

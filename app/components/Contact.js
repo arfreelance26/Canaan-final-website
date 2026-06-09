@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ArrowRight, Mail, Phone, MapPin, Clock } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
 
@@ -11,21 +11,133 @@ const CONTACT_INFO = [
   { icon: Clock, label: "Working hours", value: "Mon–Sat, 9am–6pm" },
 ];
 
+function CustomSelect({ value, onChange, options, placeholder, name }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full text-left bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300 flex items-center justify-between outline-none"
+      >
+        <span className={value ? "text-neutral-900" : "text-neutral-500"}>
+          {value || placeholder}
+        </span>
+        <svg className={`w-4 h-4 text-neutral-400 transition-transform duration-300 ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+      </button>
+      
+      {open && (
+        <div className="absolute z-[100] w-full mt-2 bg-white border border-black/5 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] py-1 overflow-hidden"
+             style={{ animation: "fadeSlideIn 0.2s ease-out forwards" }}
+        >
+          {options.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => { onChange({ target: { name, value: opt } }); setOpen(false); }}
+              className="w-full text-left px-5 py-2.5 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-[#f5f4f0] transition-colors outline-none"
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FileUpload({ value, onChange, name }) {
+  return (
+    <div className="relative group w-full">
+      <input 
+        type="file" 
+        name={name} 
+        onChange={onChange} 
+        accept=".pdf" 
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+      />
+      <div className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-500 flex items-center justify-between group-hover:bg-white group-hover:border-neutral-900 group-hover:ring-4 group-hover:ring-neutral-900/5 transition-all duration-300">
+        <span className="truncate pr-4">{value ? value.name : "Upload PDF..."}</span>
+        <svg className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+      </div>
+    </div>
+  );
+}
+
 export default function ContactSection() {
   const sectionRef = useRef(null);
   const isVisible = useFadeIn(sectionRef, 0.05);
+
+  const INQUIRY_TYPES = ["Shipping", "Transportation", "RFID Seals"];
+  const [inquiryType, setInquiryType] = useState("Shipping");
+  const [sliderStyle, setSliderStyle] = useState({ left: 0, width: 0 });
+  const typeRefs = useRef({});
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    service: "",
     message: "",
+    shippingMode: "Import",
+    portOfOrigin: "",
+    portOfDestination: "",
+    pickupLocation: "",
+    deliveryLocation: "",
+    quantity: "",
+    deliveryAddress: "",
+    companyName: "",
+    orgType: "",
+    orgStatus: "",
+    portOfLoading: "",
+    portOfDischarge: "",
+    commodity: "",
+    dgStatus: "",
+    containerType: "",
+    weight: "",
+    factoryLocation: "",
+    transportCargoType: "",
+    transportExportImport: "",
+    rfidOrgName: "",
+    rfidSelfSealing: null,
+    rfidIec: null,
+    rfidGst: null,
+    rfidPan: null,
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e) =>
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  useEffect(() => {
+    const updateSlider = () => {
+      const el = typeRefs.current[inquiryType];
+      if (el) {
+        setSliderStyle({ left: el.offsetLeft, width: el.offsetWidth });
+      }
+    };
+    updateSlider();
+    const timer = setTimeout(updateSlider, 100);
+    window.addEventListener("resize", updateSlider);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateSlider);
+    };
+  }, [inquiryType]);
+
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : value,
+    }));
+  };
 
   const handleSubmit = () => {
     if (!form.name || !form.email || !form.message) return;
@@ -191,14 +303,36 @@ export default function ContactSection() {
             </div>
           ) : (
             // ── Form ──
-            <div className="flex flex-col flex-1 min-h-0 px-5 sm:px-6 pt-4 pb-4">
+            <div className="flex flex-col flex-1 min-h-0 pt-0 pb-4 overflow-y-auto" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+              
+              {/* Neumorphic Segmented Control */}
+              <div className={`mx-5 sm:mx-6 mb-3 p-1 bg-[#f0eee9] rounded-xl flex relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] border border-black/5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "50ms" : "0ms" }}>
+                <div
+                  className="absolute top-1 bottom-1 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  style={{ left: sliderStyle.left, width: sliderStyle.width }}
+                />
+                {INQUIRY_TYPES.map((type) => (
+                  <button
+                    key={type}
+                    ref={(el) => (typeRefs.current[type] = el)}
+                    onClick={() => setInquiryType(type)}
+                    className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${
+                      inquiryType === type ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+
+              <div className="px-5 sm:px-6 flex flex-col flex-1">
 
               {/* Name + Email row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                 <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
-                    Full name
+                    Full name *
                   </label>
                   <input
                     name="name"
@@ -211,7 +345,7 @@ export default function ContactSection() {
                 <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
-                    Email address
+                    Email address {inquiryType !== "Transportation" ? "*" : ""}
                   </label>
                   <input
                     name="email"
@@ -223,12 +357,12 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              {/* Phone + Service row */}
+              {/* Phone + Dynamic row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                 <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`} style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}>
                   <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
-                    Phone number
+                    Phone number *
                   </label>
                   <input
                     name="phone"
@@ -238,27 +372,129 @@ export default function ContactSection() {
                     className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
                   />
                 </div>
-                <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                  }`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
-                  <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
-                    Service needed
-                  </label>
-                  <select
-                    name="service"
-                    value={form.service}
-                    onChange={handleChange}
-                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 appearance-none cursor-pointer"
-                  >
-                    <option value="" disabled>Select a service</option>
-                    <option>Transportation Services</option>
-                    <option>Cargo Management</option>
-                    <option>Warehousing</option>
-                    <option>Documentation & Compliance</option>
-                    <option>Lashing & Fumigation Services</option>
-                    <option>Other</option>
-                  </select>
-                </div>
+                {inquiryType === "Shipping" && (
+                  <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                    }`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
+                    <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Company Name *</label>
+                    <input name="companyName" value={form.companyName} onChange={handleChange} placeholder="e.g. Acme Corp" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300" />
+                  </div>
+                )}
+                {inquiryType === "Transportation" && (
+                  <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
+                    <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Trade Type *</label>
+                    <div className="p-1 bg-[#f0eee9] rounded-xl flex relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] border border-black/5">
+                      <div
+                        className="absolute top-1 bottom-1 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                        style={{ left: form.transportExportImport === "Export" ? "calc(50% + 2px)" : "4px", width: "calc(50% - 6px)" }}
+                      />
+                      <button type="button" onClick={() => setForm(f => ({...f, transportExportImport: "Import"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.transportExportImport !== "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Import</button>
+                      <button type="button" onClick={() => setForm(f => ({...f, transportExportImport: "Export"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.transportExportImport === "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Export</button>
+                    </div>
+                  </div>
+                )}
+                {inquiryType === "RFID Seals" && (
+                  <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                    }`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
+                    <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Quantity Required *</label>
+                    <input name="quantity" type="number" value={form.quantity} onChange={handleChange} placeholder="e.g. 500" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300" />
+                  </div>
+                )}
               </div>
+
+              {/* Dynamic rows for Shipping */}
+              {inquiryType === "Shipping" && (
+                <>
+                  <div className="grid grid-cols-1 gap-2 mb-2 relative z-50">
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Trade Type *</label>
+                      <div className="p-1 bg-[#f0eee9] rounded-xl flex relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] border border-black/5">
+                        <div
+                          className="absolute top-1 bottom-1 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                          style={{ left: form.shippingMode === "Export" ? "calc(50% + 2px)" : "4px", width: "calc(50% - 6px)" }}
+                        />
+                        <button type="button" onClick={() => setForm(f => ({...f, shippingMode: "Import"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.shippingMode !== "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Import</button>
+                        <button type="button" onClick={() => setForm(f => ({...f, shippingMode: "Export"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.shippingMode === "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Export</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-40">
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "280ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Port of loading *</label>
+                      <input name="portOfLoading" value={form.portOfLoading} onChange={handleChange} placeholder="e.g. Shanghai" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
+                    </div>
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "290ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Port of discharge *</label>
+                      <input name="portOfDischarge" value={form.portOfDischarge} onChange={handleChange} placeholder="e.g. Tuticorin" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-30">
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "320ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Container Type & Size *</label>
+                      <CustomSelect name="containerType" value={form.containerType} onChange={handleChange} placeholder="Select type" options={["20 FT", "40 FT", "40 RF", "Other"]} />
+                    </div>
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "330ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Weight</label>
+                      <input name="weight" value={form.weight} onChange={handleChange} placeholder="e.g. 20 Tons" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 mb-2 relative z-20">
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "340ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Factory location</label>
+                      <input name="factoryLocation" value={form.factoryLocation} onChange={handleChange} placeholder="City, Country" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Dynamic rows for Transportation */}
+              {inquiryType === "Transportation" && (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-50">
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Pickup</label>
+                      <input name="pickupLocation" value={form.pickupLocation} onChange={handleChange} placeholder="City or Address" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
+                    </div>
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "270ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Delivery</label>
+                      <input name="deliveryLocation" value={form.deliveryLocation} onChange={handleChange} placeholder="City or Address" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-40">
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "280ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Type of Cargo</label>
+                      <CustomSelect name="transportCargoType" value={form.transportCargoType} onChange={handleChange} placeholder="Select type" options={["Open-Load", "Container"]} />
+                    </div>
+                    {form.transportCargoType === "Container" && (
+                      <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "290ms" : "0ms" }}>
+                        <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Container Type</label>
+                        <CustomSelect name="containerType" value={form.containerType} onChange={handleChange} placeholder="Select size" options={["20 FT", "40 FT"]} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-30">
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Weight *</label>
+                      <input name="weight" value={form.weight} onChange={handleChange} placeholder="e.g. 20 Tons" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Dynamic rows for RFID Seals */}
+              {inquiryType === "RFID Seals" && (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-50">
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Organisation Name *</label>
+                      <input name="rfidOrgName" value={form.rfidOrgName} onChange={handleChange} placeholder="Company Name" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
+                    </div>
+                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "270ms" : "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">IEC Certificate *</label>
+                      <FileUpload name="rfidIec" value={form.rfidIec} onChange={handleChange} />
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* Message */}
               <div className={`flex flex-col gap-1.5 mb-3 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
@@ -283,6 +519,7 @@ export default function ContactSection() {
               >
                 Send message <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </button>
+              </div>
             </div>
           )}
         </div>
