@@ -20,6 +20,17 @@ const KB = {
     email: ["canaanglobal@canaanglobal.com", "tutsal@canaanglobal.com"],
     phone: "+91 90470 12891",
     branches: ["Tuticorin (HQ)", "Chennai", "Madurai", "Cochin"],
+    achievements: ["Best Logistics Partner", "AEO Certified", "ISO 9001:2015", "100% Delivery Success"],
+    crew: ["Jonathan Davis (Operations Director)", "Sarah Jenkins (Head of Customs Clearance)", "Michael Chen (Logistics Coordinator)", "David Smith (Fleet Manager)", "Emily Davis (Client Relations Manager)"]
+  },
+  accreditations: {
+    title: "Accreditations & Licenses",
+    summary: "Canaan holds multiple prestigious licenses and certifications proving our excellence.",
+    list: ["Customs Broker License (Official EF Card)", "ISO Certificates", "FFFAI Membership", "Customs Broker Associations in Chennai, Cochin, and Tuticorin", "Bolt Seal & Warner Dealerships"]
+  },
+  updates: {
+    title: "Updates & Circulars",
+    summary: "We track Daily Exchange Rates (USD, EUR, GBP, AED) against INR and provide the latest Customs Circulars and notifications for our clients."
   },
   services: {
     transportation: {
@@ -129,7 +140,23 @@ const KB = {
 };
 
 // Numbered list order for services
-const SERVICE_LIST = ["transportation", "cargo", "documentation", "lashing"];
+const SERVICE_LIST = ["transportation", "documentation", "warehousing", "lashing", "nvocc", "rfid"];
+
+// ── TELEMETRY ─────────────────────────────────────────────────────────────────
+
+/**
+ * Log missed queries for telemetry.
+ * In a production environment, this should hit an analytics webhook.
+ */
+function logFallback(query) {
+  console.warn(`[Joshine Telemetry] Fallback triggered for query: "${query}"`);
+  // Example Webhook integration for the future:
+  // fetch("https://your-webhook-url.com/analytics", {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({ event: "fallback", query, timestamp: new Date() })
+  // }).catch(() => {});
+}
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 
@@ -180,11 +207,24 @@ const ABBREV = {
   hw: "how",
 };
 
-// ── Synonym Expansion ────────────────────────────────────────────────────────
+// ── Synonym Expansion & Stemming ─────────────────────────────────────────────
 const SYNONYMS = {
-  quote: "pricing", cost: "pricing", fee: "pricing", fees: "pricing", price: "pricing",
+  // Pricing
+  quote: "pricing", cost: "pricing", fee: "pricing", fees: "pricing", price: "pricing", prices: "pricing",
+  // Transportation & Shipping
   haul: "transportation", ship: "transportation", carry: "transportation", move: "transportation",
-  clearance: "documentation", paperwork: "documentation"
+  shipping: "transportation", shipped: "transportation", ships: "transportation",
+  transporting: "transportation", transported: "transportation", transports: "transportation",
+  // Documentation
+  clearance: "documentation", paperwork: "documentation", documents: "documentation",
+  // Accreditations & Updates
+  licenses: "license", licensed: "license",
+  accreditations: "accreditation", accredited: "accreditation",
+  certifications: "certification", certified: "certification",
+  circulars: "circular", updates: "update",
+  // Achievements & Complaints
+  achievements: "achievement", achieved: "achievement",
+  complaints: "complaint", complaining: "complaint", complained: "complaint"
 };
 
 /**
@@ -225,15 +265,17 @@ function levenshtein(a, b) {
 }
 
 // Returns true if any token in the normalised input is within edit distance
-// `threshold` of any word in `keywords`.
-function fuzzyHit(norm, keywords, threshold = 2) {
+// of any word in `keywords`. Dynamic threshold based on length prevents aggressive false positives.
+function fuzzyHit(norm, keywords) {
   const tokens = norm.split(" ");
   return keywords.some((kw) =>
-    tokens.some(
-      (tok) =>
-        tok === kw ||
-        (tok.length >= 4 && kw.length >= 4 && levenshtein(tok, kw) <= threshold)
-    )
+    tokens.some((tok) => {
+      if (tok === kw) return true;
+      if (tok.length < 4 || kw.length < 4) return false;
+      // Dynamic threshold: 1 error for 4-6 char words, 2 errors for 7+ char words
+      const maxErrors = Math.max(tok.length, kw.length) > 6 ? 2 : 1;
+      return levenshtein(tok, kw) <= maxErrors;
+    })
   );
 }
 
@@ -253,8 +295,12 @@ const CONTEXT_BOOSTS = {
   fleet:        ["transportation", "div_rehoboth"],
   documentation: ["import_ops", "export_ops", "div_cgss"],
   lashing:      ["documentation", "export_ops"],
-  about:        ["ecosystem", "branches", "granite"],
+  about:        ["ecosystem", "branches", "granite", "crew", "achievements", "accreditations"],
   granite:      ["cargo_types", "transportation"],
+  accreditations: ["about", "documentation", "ecosystem"],
+  updates:      ["import_ops", "export_ops", "documentation"],
+  crew:         ["about", "ecosystem", "branches"],
+  achievements: ["about", "ecosystem"],
 };
 
 function boostForContext(scores, ctx) {
@@ -291,6 +337,10 @@ const INTENT_LABELS = {
   services_list: "Our Services",
   working_hours: "Working Hours",
   granite: "Granite Industry",
+  accreditations: "Accreditations",
+  updates: "Latest Updates",
+  achievements: "Our Achievements",
+  crew: "Our Crew",
 };
 
 /**
@@ -706,11 +756,78 @@ const INTENTS = [
 
   // ── Complaint ──
   {
+    id: "lashing",
+    keywords: [
+      { w: 10, p: /\b(lash|lashing|fumigation|fumigate|pallet|palletisation|crate|crating|ispm|heat treatment)\b/i },
+    ],
+  },
+  {
+    id: "warehousing",
+    keywords: [
+      { w: 10, p: /\b(warehouse|warehousing|storage|store)\b/i },
+    ],
+  },
+  {
+    id: "nvocc",
+    keywords: [
+      { w: 10, p: /\b(nvocc|steamer|vessel agent|ship agency)\b/i },
+    ],
+  },
+  {
+    id: "rfid",
+    keywords: [
+      { w: 10, p: /\b(rfid|seal|seals|e-seal|bolt seal|warner)\b/i },
+    ],
+  },
+  {
     id: "complaint",
     keywords: [
       { w: 3, p: /\b(complain|complaint|disappointed|frustrated|angry|upset)\b/ },
       { w: 2, p: /\b(bad|terrible|poor|worst|awful)\s*(service|experience|response)?\b/ },
       { w: 2, p: /\b(issue|problem|trouble)\b/ },
+    ],
+  },
+
+  // ── Accreditations ──
+  {
+    id: "accreditations",
+    keywords: [
+      { w: 5, p: /\b(accreditation|accreditations|certifications?|licenses?)\b/ },
+      { w: 4, p: /\b(certified|iso|fffai|aeo)\b/ },
+      { w: 4, p: /\b(dealership|bolt\s*seal|warner)\b/ },
+      { w: 3, p: /\b(customs\s*broker\s*license|broker\s*license)\b/ },
+    ],
+    fuzzy: [{ kw: ["accreditations", "certifications", "licenses"], w: 3 }],
+  },
+
+  // ── Updates ──
+  {
+    id: "updates",
+    keywords: [
+      { w: 5, p: /\b(updates?|circulars?|news|exchange\s*rates?|currencies)\b/ },
+      { w: 4, p: /\blatest\s*(news|updates|circulars)\b/ },
+      { w: 3, p: /\b(usd|eur|gbp|aed|inr|dollar|euro)\b/ },
+    ],
+    fuzzy: [{ kw: ["updates", "circulars", "exchange"], w: 3 }],
+  },
+
+  // ── Achievements ──
+  {
+    id: "achievements",
+    keywords: [
+      { w: 5, p: /\b(achievements?|awards?|success\s*rate)\b/ },
+      { w: 4, p: /\b(best\s*logistics|aeo\s*certified)\b/ },
+      { w: 3, p: /\bwhat\s*have\s*you\s*(achieved|won|accomplished)\b/ },
+    ],
+  },
+
+  // ── Crew ──
+  {
+    id: "crew",
+    keywords: [
+      { w: 5, p: /\b(crew|team|staff|employees?)\b/ },
+      { w: 4, p: /\bwho\s*(works|runs|manages)\b/ },
+      { w: 3, p: /\byour\s*(people|team|crew)\b/ },
     ],
   },
 
@@ -872,13 +989,15 @@ const RESPONSES = {
 
   services_list: () => ({
     text:
-      "We specialise in four core service areas for the stone and granite industry:\n\n" +
-      "1️⃣  Transportation Services\n" +
-      "2️⃣  Cargo Management\n" +
-      "3️⃣  Documentation & Compliance\n" +
-      "4️⃣  Lashing & Fumigation\n\n" +
-      "Tap below to explore our full Services page, or ask me about any one!",
-    chips: ["Transportation", "Cargo Management", "What We Carry", "Get a Quote"],
+      "We offer 10 core service areas to handle your logistics end-to-end:\n\n" +
+      "1️⃣ Transportation & Cargo Management\n" +
+      "2️⃣ Customs Clearance & Documentation\n" +
+      "3️⃣ Warehousing & Storage\n" +
+      "4️⃣ Lashing & Fumigation\n" +
+      "5️⃣ NVOCC & Steamer Agent\n" +
+      "6️⃣ RFID E-Seal Security\n\n" +
+      "Tap below to explore our full Services page, or ask me about any of these!",
+    chips: ["Transportation", "Customs Clearance", "Warehousing", "Get a Quote"],
     listShown: SERVICE_LIST,
     navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
   }),
@@ -896,8 +1015,9 @@ const RESPONSES = {
       `🚛 Transportation Services\n\n` +
       `${KB.services.transportation.short}\n\n` +
       `Here's what that includes:\n` +
-      `• ${KB.services.transportation.features.join("\n• ")}`,
-    chips: ["Tell me more", "What We Carry", "Get a Quote"],
+      `• ${KB.services.transportation.features.join("\n• ")}\n\n` +
+      `Would you like to get a quote for a specific route, or learn more about our fleet capabilities?`,
+    chips: ["Get a Quote", "Our Fleet"],
     navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
@@ -915,8 +1035,9 @@ const RESPONSES = {
       `🏗️ Cargo Management\n\n` +
       `${KB.services.cargo.short}\n\n` +
       `We cover:\n` +
-      `• ${KB.services.cargo.features.join("\n• ")}`,
-    chips: ["Tell me more", "What We Carry", "Get a Quote"],
+      `• ${KB.services.cargo.features.join("\n• ")}\n\n` +
+      `Are you currently facing any bottlenecks with your oversized or complex shipments?`,
+    chips: ["What We Carry", "Contact Us"],
     navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
@@ -929,13 +1050,47 @@ const RESPONSES = {
     navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
+  lashing_detail: () => ({
+    text:
+      `🪵 More on Lashing & Fumigation\n\n` +
+      `${KB.services.lashing.detail}\n\n` +
+      `Do you need custom crating for a delicate shipment? Let me know!`,
+    chips: ["Contact Us", "Get a Quote"],
+    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+  }),
+
+  warehousing: () => ({
+    text:
+      "📦 *Warehousing & Storage*\n\n" +
+      "We provide secure and spacious storage facilities for your short and long-term warehousing needs.",
+    chips: ["Get a Quote", "Contact Us"],
+    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+  }),
+
+  nvocc: () => ({
+    text:
+      "🚢 *NVOCC & Steamer Agent*\n\n" +
+      "We offer comprehensive Non-Vessel Operating Common Carrier services for flexible ocean freight, as well as professional ship agency services ensuring smooth port calls for all vessels.",
+    chips: ["Get a Quote", "Contact Us"],
+    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+  }),
+
+  rfid: () => ({
+    text:
+      "🔒 *RFID E-Seals*\n\n" +
+      "As an authorized dealer for Bolt Seal and Warner, we provide highly secure, tamper-evident electronic seals to ensure your cargo's integrity throughout transit.",
+    chips: ["Get a Quote", "Contact Us"],
+    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+  }),
+
   documentation: () => ({
     text:
       `📋 Documentation & Compliance\n\n` +
       `${KB.services.documentation.short}\n\n` +
       `This covers:\n` +
-      `• ${KB.services.documentation.features.join("\n• ")}`,
-    chips: ["Tell me more", "Lashing & Fumigation", "Get a Quote"],
+      `• ${KB.services.documentation.features.join("\n• ")}\n\n` +
+      `Customs can be a headache. Would you like me to explain how our import or export processes work?`,
+    chips: ["Import Process", "Export Process"],
     navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
@@ -953,8 +1108,9 @@ const RESPONSES = {
       `🪵 Lashing & Fumigation\n\n` +
       `${KB.services.lashing.short}\n\n` +
       `Services include:\n` +
-      `• ${KB.services.lashing.features.join("\n• ")}`,
-    chips: ["Tell me more", "Documentation", "Get a Quote"],
+      `• ${KB.services.lashing.features.join("\n• ")}\n\n` +
+      `Many clients who need lashing also require customs clearance. Would you like me to share details on that?`,
+    chips: ["Documentation", "Get a Quote"],
     navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
   }),
 
@@ -972,7 +1128,7 @@ const RESPONSES = {
       `📞 Here's how to reach us:\n\n` +
       `📧 ${KB.company.email.join("\n📧 ")}\n\n` +
       `📱 ${KB.company.phone}\n\n` +
-      `We're based in Tuticorin, Tamil Nadu — the map below shows our exact location.`,
+      `We also have detailed inquiry forms for *Shipping*, *Transportation*, and *RFID Seals* (where you can upload IEC/GST documents directly).`,
     chips: ["Our Services", "What We Carry", "Our Branches"],
     mapEmbed: true,
     contactEmbed: true,
@@ -1099,8 +1255,8 @@ const RESPONSES = {
     text:
       `💰 Pricing & Quotes\n\n` +
       `Our pricing depends on the cargo type, route, volume, and services needed — so every quote is tailored.\n\n` +
-      `Drop us a message and we'll get back to you quickly with a detailed quote.`,
-    chips: ["Contact Us", "Our Services", "Our Branches"],
+      `The easiest way to get exact numbers is a quick chat with our operations team. Should I open the direct contact form for you?`,
+    chips: ["Inquiry Forms", "Our Services"],
     contactEmbed: true,
     navLink: { href: "/#contact", label: "Contact Us" },
   }),
@@ -1129,9 +1285,9 @@ const RESPONSES = {
 
   urgency: () => ({
     text:
-      `🚨 Got an urgent shipment?\n\n` +
-      `Reach our team immediately — we prioritise time-sensitive shipments!`,
-    chips: ["Contact Us"],
+      `🚨 Understood. We move fast on urgent shipments.\n\n` +
+      `Let's skip the small talk. Use the direct line or the form below right now, and our team will prioritize your request instantly.`,
+    chips: ["Inquiry Forms"],
     contactEmbed: true,
   }),
 
@@ -1177,19 +1333,63 @@ const RESPONSES = {
 
   complaint: () => ({
     text:
-      `I'm sorry to hear that. 🙏 Your experience matters to us.\n\n` +
-      `Please reach out to our team directly and we'll sort it out:`,
-    chips: ["Contact Us"],
+      `I hear you, and I am truly sorry you're dealing with this. 🙏 That is incredibly frustrating, and it is absolutely not the standard we set for ourselves.\n\n` +
+      `I want to make sure this gets resolved for you immediately. Could you please send a quick message to our operations team below? They will escalate this instantly.`,
+    chips: ["Inquiry Forms"],
     contactEmbed: true,
   }),
 
   fallback: () => ({
     text: pickOne([
-      "Hmm, not sure I caught that. Could you rephrase? I'm best with questions about our services, location, or how to get in touch.",
-      "I didn't quite get that — try asking about transportation, cargo, documentation, or our branches!",
-      "That one's a bit outside my zone. 😅 Ask me about our logistics services or how to reach the team!",
+      "I'll be honest, I'm still learning the ropes and didn't quite catch that! 😅 Could you rephrase? I'm really good at answering questions about our services or how to get a quote.",
+      "My apologies—I'm just a bot and that one went over my head. 🙏 Let's try again! Are you looking for our services, or trying to reach the team?",
+      "I might need a human to help with that one! 😅 In the meantime, I can definitely point you towards our logistics services or contact forms."
     ]),
-    chips: ["Our Services", "Contact Us", "Our Branches", "About Canaan"],
+    chips: ["Our Services", "Inquiry Forms"],
+  }),
+
+  // ── Accreditations ──
+  accreditations: () => ({
+    text:
+      `📜 *${KB.accreditations.title}*\n\n` +
+      `${KB.accreditations.summary}\n\n` +
+      `Our key licenses include:\n` +
+      `✅ ${KB.accreditations.list.join("\n✅ ")}\n\n` +
+      `Tap below to view our official certificates and dealership appointments.`,
+    chips: ["About Canaan", "Our Services"],
+    navLink: { href: "/accreditations", label: "View Accreditations" },
+  }),
+
+  // ── Updates ──
+  updates: () => ({
+    text:
+      `📰 *${KB.updates.title}*\n\n` +
+      `${KB.updates.summary}\n\n` +
+      `Stay informed with the latest indicative exchange rates (USD, EUR, GBP, AED to INR) and official Customs Circulars directly on our Updates page.`,
+    chips: ["Accreditations", "Our Services"],
+    navLink: { href: "/updates", label: "View Updates & Circulars" },
+  }),
+
+  // ── Achievements ──
+  achievements: () => ({
+    text:
+      `🏆 *Our Achievements*\n\n` +
+      `We take pride in our track record. Our key achievements include:\n` +
+      `⭐ ${KB.company.achievements.join("\n⭐ ")}\n\n` +
+      `Learn more about our legacy on the About page!`,
+    chips: ["Our Crew", "About Canaan", "Accreditations"],
+    navLink: { href: "/about", label: "Visit About Page" },
+  }),
+
+  // ── Crew ──
+  crew: () => ({
+    text:
+      `👥 *Our Crew*\n\n` +
+      `Our operations are driven by a dedicated team of logistics experts:\n\n` +
+      `🔹 ${KB.company.crew.join("\n🔹 ")}\n\n` +
+      `Meet the faces behind Canaan Global on our About page.`,
+    chips: ["Our Achievements", "About Canaan", "Our Branches"],
+    navLink: { href: "/about", label: "Meet the Team" },
   }),
 
   // ── Import Operations ──
@@ -1397,19 +1597,31 @@ export const CHIP_TO_INTENT = {
   "About CGSS": "div_cgss",
   "About CGI": "div_cgi",
   "About Rehoboth": "div_rehoboth",
-  // New smart chips
   "What We Carry": "cargo_types",
   "View Gallery": "cargo_types",
   "Our Fleet": "fleet",
   "Granite Industry": "granite",
+  "Accreditations": "accreditations",
+  "Latest Updates": "updates",
+  "Exchange Rates": "updates",
+  "Customs Circulars": "updates",
+  "Our Achievements": "achievements",
+  "Our Crew": "crew",
+  "Inquiry Forms": "contact",
+  "Customs Clearance": "documentation",
+  "Warehousing": "warehousing",
+  "RFID Seals": "rfid",
+  "NVOCC": "nvocc",
 };
 
 // Topic intents — these update lastTopic in context
 const TOPIC_INTENTS = new Set([
   "transportation", "cargo", "cargo_types", "fleet", "documentation", "lashing",
+  "warehousing", "nvocc", "rfid",
   "contact", "address", "branches", "about", "granite",
   "import_ops", "export_ops",
   "ecosystem", "div_cgl", "div_cgss", "div_cgi", "div_rehoboth",
+  "accreditations", "updates", "achievements", "crew",
 ]);
 
 // ── MAIN ENGINE FUNCTION ──────────────────────────────────────────────────────
@@ -1432,6 +1644,7 @@ export function getResponse(userInput, ctx = {}) {
     name:       ctx.name       ?? null,
     topicHistory: ctx.topicHistory ?? [],
     isHotLead:  ctx.isHotLead  ?? false,
+    hotLeadTriggered: ctx.hotLeadTriggered ?? false,
   };
 
   const raw = userInput.trim();
@@ -1545,16 +1758,39 @@ export function getResponse(userInput, ctx = {}) {
     return { ...buildSmartFallback(scores), ctx: newCtx };
   }
 
-  // ── 10. Compound query detection ───────────────────────────
-  // If the runner-up topic scores within 60% of the best AND is a different
-  // service category, note it in chips so the user can explore both.
+  // ── 10. Multi-Intent (Compound) detection ───────────────────────────
+  // If the runner-up topic scores very highly AND is a different service,
+  // we combine the answers to form a smart multi-intent response!
+  let multiResult = null;
   let bonusChip = null;
+  
   if (sorted.length >= 2) {
     const [runnerId, runnerScore] = sorted[1];
     const bothTopics = TOPIC_INTENTS.has(bestId) && TOPIC_INTENTS.has(runnerId);
-    const closeEnough = runnerScore >= bestScore * 0.6;
     const notMeta = !META_INTENTS.has(runnerId);
-    if (bothTopics && closeEnough && notMeta && runnerId !== bestId) {
+    
+    // Very strong multi-intent match (e.g. "prices and branches")
+    if (bothTopics && notMeta && runnerId !== bestId && runnerScore >= 10 && runnerScore >= bestScore * 0.75) {
+      const b1 = RESPONSES[bestId];
+      const b2 = RESPONSES[runnerId];
+      if (b1 && b2) {
+        const res1 = b1(newCtx);
+        const res2 = b2(newCtx);
+        
+        multiResult = {
+          text: res1.text + `\n\n---\n\nAlso, you asked about ${INTENT_LABELS[runnerId] ?? "this"}:\n\n` + res2.text,
+          chips: [...(res1.chips || []), ...(res2.chips || [])].slice(0, 3),
+          navLink: res1.navLink || res2.navLink,
+          contactEmbed: res1.contactEmbed || res2.contactEmbed,
+          mapEmbed: res1.mapEmbed || res2.mapEmbed,
+          listShown: res1.listShown || res2.listShown,
+        };
+        
+        newCtx.topicHistory.push(runnerId);
+      }
+    } 
+    // Weak compound match (just suggest it as a chip)
+    else if (bothTopics && notMeta && runnerId !== bestId && runnerScore >= bestScore * 0.6) {
       bonusChip = INTENT_LABELS[runnerId] ?? null;
     }
   }
@@ -1571,16 +1807,26 @@ export function getResponse(userInput, ctx = {}) {
   // ── Hot Lead Detection ──
   const highIntentTopics = new Set(["pricing", "fleet", "cargo_types", "transportation", "cargo", "contact"]);
   const highIntentCount = newCtx.topicHistory.filter(t => highIntentTopics.has(t)).length;
-  if (highIntentCount >= 3) {
+  if (highIntentCount >= 3 && !newCtx.hotLeadTriggered) {
     newCtx.isHotLead = true;
+    newCtx.hotLeadTriggered = true;
+  } else {
+    newCtx.isHotLead = false;
   }
 
   const builder = RESPONSES[bestId] ?? RESPONSES.fallback;
-  const result  = builder(newCtx);
+  const result  = multiResult || builder(newCtx);
 
-  // Proactive CTA for hot leads
-  if (newCtx.isHotLead && !result.navLink && !result.contactEmbed) {
-    result.navLink = { href: "https://wa.me/919047012891", label: "Chat on WhatsApp" };
+  // Fallback Telemetry Logging
+  if (bestId === "fallback") {
+    logFallback(raw);
+  }
+
+  // Proactive CTA for hot leads (Consultative Shift)
+  if (newCtx.isHotLead && !result.contactEmbed && bestId !== "fallback") {
+    result.text += `\n\n💡 *Quick tip:* Since you're looking deeply into our services and pricing, I'd highly recommend a quick chat with our operations team to get exact figures. Should I open the direct contact form for you?`;
+    result.chips = ["Inquiry Forms", ...result.chips].slice(0, 3);
+    result.contactEmbed = true;
   }
 
   // Inject compound chip if detected

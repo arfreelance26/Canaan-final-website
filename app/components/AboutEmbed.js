@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { Globe, Award, TrendingUp, Quote, Mail, MapPin } from "lucide-react";
+import { Globe, Award, TrendingUp, Quote, Mail, MapPin, Trophy, Star, ShieldCheck, Target } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
 import team1 from "../../company photos/team1.jpeg";
 import team2 from "../../company photos/team2.jpeg";
@@ -276,6 +276,64 @@ const TEAM_MEMBERS = [
   },
 ];
 
+const ACHIEVEMENTS = [
+  { icon: Trophy, title: "Best Logistics Partner", desc: "Awarded by the Global Shipping Association for outstanding reliability and performance.", image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070" },
+  { icon: ShieldCheck, title: "AEO Certified", desc: "Recognized as an Authorized Economic Operator for highly secure international trade.", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070" },
+  { icon: Star, title: "ISO 9001:2015", desc: "Certified for maintaining top-tier Quality Management Systems globally.", image: "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=2070" },
+  { icon: Target, title: "100% Delivery Success", desc: "Maintained a perfect, incident-free delivery record for critical project cargo.", image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070" },
+];
+
+function AchievementsSection() {
+  const sectionRef = useRef(null);
+  const isVisible = useFadeIn(sectionRef, 0.05);
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 pb-12 overflow-hidden"
+    >
+      <div className={`mb-6 px-2 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">Our Achievements</h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {ACHIEVEMENTS.map((ach, i) => {
+          const Icon = ach.icon;
+          return (
+            <div
+              key={i}
+              style={{ transitionDelay: isVisible ? `${i * 100}ms` : "0ms" }}
+              className={`group relative bg-white/80 border border-black/10 rounded-2xl overflow-hidden min-h-[380px] h-full bento-card transition-all duration-700 ease-out transform hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"}`}
+            >
+              <div className="relative h-[180px] w-full overflow-hidden shrink-0">
+                <Image
+                  src={ach.image}
+                  alt={ach.title}
+                  fill
+                  className="object-cover transition-transform duration-[1.2s] group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-60 transition-opacity duration-500" />
+              </div>
+              <div className="p-5 flex flex-col justify-between flex-1">
+                <div>
+                  <div className="w-10 h-10 rounded-full bg-[#f5f4f0] border border-black/5 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:bg-[#e8e4db] transition-all duration-300">
+                    <Icon className="text-[#85660c] w-5 h-5" />
+                  </div>
+                  <h3 className="text-[17px] font-bold tracking-tight text-neutral-900 mb-2 group-hover:text-[#85660c] transition-colors duration-300">
+                    {ach.title}
+                  </h3>
+                  <p className="text-[13px] sm:text-sm font-medium leading-relaxed text-neutral-500">
+                    {ach.desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 const BRANCHES = [
   { city: "Chennai", desc: "Headquarters & Primary Operations", image: cgi1 },
   { city: "Vilinjiyam", desc: "Strategic Port Operations", image: logistics1 },
@@ -300,9 +358,9 @@ function BranchesSection() {
           <div
             key={i}
             style={{ transitionDelay: isVisible ? `${i * 100}ms` : "0ms" }}
-            className={`group relative bg-white/80 border border-black/10 rounded-2xl overflow-hidden min-h-[300px] bento-card transition-all duration-700 ease-out transform hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"}`}
+            className={`group relative bg-white/80 border border-black/10 rounded-2xl overflow-hidden min-h-[380px] h-full bento-card transition-all duration-700 ease-out transform hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"}`}
           >
-            <div className="relative h-[160px] w-full overflow-hidden">
+            <div className="relative h-[220px] w-full overflow-hidden shrink-0">
               <Image
                 src={branch.image}
                 alt={branch.city}
@@ -312,7 +370,7 @@ function BranchesSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-40 transition-opacity duration-500" />
             </div>
 
-            <div className="p-5 flex flex-col justify-between h-[calc(100%-160px)]">
+            <div className="p-5 flex flex-col justify-between flex-1">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <MapPin className="text-amber-600 w-4 h-4" />
@@ -349,9 +407,9 @@ function HierarchySection() {
           <div
             key={i}
             style={{ transitionDelay: isVisible ? `${i * 120}ms` : "0ms" }}
-            className={`group relative bg-white/80 border border-black/10 rounded-2xl overflow-hidden min-h-[380px] bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"}`}
+            className={`group relative bg-white/80 border border-black/10 rounded-2xl overflow-hidden min-h-[380px] h-full bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"}`}
           >
-            <div className="relative h-[240px] w-full overflow-hidden">
+            <div className="relative h-[240px] w-full overflow-hidden shrink-0">
               <Image
                 src={member.image}
                 alt={member.name}
@@ -361,7 +419,7 @@ function HierarchySection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
             </div>
 
-            <div className="p-5 flex flex-col justify-between h-[calc(100%-240px)]">
+            <div className="p-5 flex flex-col justify-between flex-1">
               <div>
                 <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-amber-700/80 mb-1">
                   {member.role}
@@ -390,6 +448,7 @@ export default function AboutEmbed() {
     <>
       <FounderSection />
       <TeamSection />
+      <AchievementsSection />
       <BranchesSection />
       <HierarchySection />
     </>

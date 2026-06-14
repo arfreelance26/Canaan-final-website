@@ -26,13 +26,12 @@ const SECTIONS = [
 
 const SECTION_NAV_ITEMS = [
   "Home",    // 0 — GroupSection
-  "Updates", // 1 — CustomsUpdatesSection
-  "Home",    // 2 — CustomerGlobeSection
-  "Home",    // 3 — TimelineSection
-  "Home",    // 4 — AboutTeaserSection (part of Home scroll)
-  "Cargo",   // 5 — FleetSection
-  "Clients", // 6 — ClientsSection
-  "Contact", // 7 — ContactSection
+  "Home",    // 1 — CustomerGlobeSection
+  "Home",    // 2 — TimelineSection
+  "Home",    // 3 — AboutTeaserSection
+  "Cargo",   // 4 — FleetSection
+  "Clients", // 5 — ClientsSection
+  "Contact", // 6 — ContactSection
 ];
 
 export default function Home() {

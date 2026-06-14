@@ -39,29 +39,66 @@ export default function ChatbotWidget() {
   const ctxRef = useRef({});
   const timerRef = useRef(null);
 
-  // ── Session Persistence (Load) ──
-  useEffect(() => {
-    if (isHidden) return;
-    try {
-      const storedCtx = sessionStorage.getItem("joshine_ctx");
-      const storedMsgs = sessionStorage.getItem("joshine_messages");
-      if (storedCtx) ctxRef.current = JSON.parse(storedCtx);
-      if (storedMsgs) setMessages(JSON.parse(storedMsgs));
-    } catch (e) {
-      console.error("Failed to load chat session", e);
-    }
-  }, [isHidden]);
+  // ── Dynamic Hooks Logic ─────────────────────────────────
+  const [hookIndex, setHookIndex] = useState(0);
+  const [cycleAuto, setCycleAuto] = useState(false);
 
-  // ── Session Persistence (Save) ──
-  useEffect(() => {
-    if (isHidden) return;
-    try {
-      sessionStorage.setItem("joshine_ctx", JSON.stringify(ctxRef.current));
-      sessionStorage.setItem("joshine_messages", JSON.stringify(messages));
-    } catch (e) {
-      console.error("Failed to save chat session", e);
+  // Context-aware hooks based on pathname
+  const getHooksForPage = (path) => {
+    if (path.includes("/canaan-shipping-services") || path.includes("/cargo")) {
+      return [
+        { prefix: "Need Help?", suffix: "Ask me about our Services", actionText: "Our Services" },
+        { prefix: "Heavy Cargo?", suffix: "See our transport fleet", actionText: "Our Fleet" },
+        { prefix: "Exporting?", suffix: "Ask about Customs Clearance", actionText: "Customs Clearance" },
+        { prefix: "Quick Info:", suffix: "Get a Freight Quote", actionText: "Get a Quote" },
+      ];
     }
-  }, [messages, isHidden]);
+    if (path.includes("/about") || path.includes("/accreditations")) {
+      return [
+        { prefix: "Curious?", suffix: "Want to see our Achievements?", actionText: "Our Achievements" },
+        { prefix: "Discover:", suffix: "Meet the Canaan Crew", actionText: "Our Crew" },
+        { prefix: "Need Help?", suffix: "Ask me anything", actionText: null },
+      ];
+    }
+    // Default / Home
+    return [
+      { prefix: "Need Help?", suffix: "Ask me anything", actionText: null },
+      { prefix: "Curious?", suffix: "Explore our Logistics Services", actionText: "Our Services" },
+      { prefix: "Quick Info:", suffix: "Get a Freight Quote!", actionText: "Get a Quote" },
+      { prefix: "Want to see", suffix: "our latest Achievements?", actionText: "Our Achievements" },
+    ];
+  };
+
+  const currentHooks = getHooksForPage(pathname);
+
+  // Cycle hooks and periodically pop the bubble up to grab attention
+  useEffect(() => {
+    if (open || isHidden) return;
+    
+    const interval = setInterval(() => {
+      // Move to the next hook
+      setHookIndex((prev) => (prev + 1) % currentHooks.length);
+      
+      // Pop the bubble up automatically
+      setCycleAuto(true);
+      
+      // Hide the bubble after 4.5 seconds
+      setTimeout(() => {
+        setCycleAuto(false);
+      }, 4500);
+      
+    }, 12000); // Pops up every 12 seconds
+    
+    return () => clearInterval(interval);
+  }, [open, isHidden, currentHooks.length]);
+  
+  // Reset index when page changes
+  useEffect(() => {
+    setHookIndex(0);
+    setCycleAuto(false);
+  }, [pathname]);
+
+  // Session persistence removed per user request: Memory is now erased on browser refresh.
 
   // ── Inactivity Nudge ──
   useEffect(() => {
@@ -122,7 +159,8 @@ export default function ChatbotWidget() {
     hasPopped.current = false;
 
     const onScroll = () => {
-      const pastHero = window.scrollY >= window.innerHeight * 0.9;
+      const isHome = pathname === "/";
+      const pastHero = !isHome || window.scrollY >= window.innerHeight * 0.9;
 
       if (pastHero && !isVisibleRef.current) {
         isVisibleRef.current = true;
@@ -151,7 +189,7 @@ export default function ChatbotWidget() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isHidden]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isHidden, pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Hide entirely on excluded pages — AFTER all hooks
   if (isHidden) return null;
@@ -185,6 +223,50 @@ export default function ChatbotWidget() {
         },
       ]);
     }, delay);
+  }
+
+  const injectHookAction = (actionText) => {
+    // 1. Show the user's message
+    const userMsg = { id: Date.now(), from: "user", text: actionText };
+    setMessages((prev) => [...prev, userMsg]);
+    setIsTyping(true);
+    setOpen(true);
+    
+    // 2. Add realistic typing delay before the bot answers
+    const delay = 600 + Math.random() * 500;
+    setTimeout(() => {
+      const { text: botText, chips, ctx: newCtx, mapEmbed, contactEmbed, navLink } = getResponse(actionText, ctxRef.current);
+      ctxRef.current = newCtx ?? {};
+      setIsTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          from: "bot",
+          text: botText,
+          chips: chips ?? [],
+          mapEmbed: !!mapEmbed,
+          contactEmbed: !!contactEmbed,
+          navLink: navLink ?? null,
+        },
+      ]);
+    }, delay);
+  };
+
+  function handleWidgetClick() {
+    if (!open) {
+      // Opening the chat
+      // Always trigger the hook action if one is currently visible!
+      const currentAction = currentHooks[hookIndex]?.actionText;
+      if (currentAction) {
+        injectHookAction(currentAction);
+        return;
+      }
+      setOpen(true);
+    } else {
+      // Closing the chat
+      setOpen(false);
+    }
   }
 
 
@@ -613,14 +695,24 @@ export default function ChatbotWidget() {
         {/* Thought Bubble Tooltip */}
         <div
           aria-hidden={!(!open && hovered)}
+          onClick={(e) => {
+            e.stopPropagation();
+            const currentAction = currentHooks[hookIndex]?.actionText;
+            if (currentAction) {
+              injectHookAction(currentAction);
+            } else {
+              setOpen(true);
+            }
+          }}
           style={{
             position: "absolute",
             bottom: "calc(100% + 14px)",
             right: "0",
-            pointerEvents: "none",
-            opacity: !open && (hovered || bubbleAuto) ? 1 : 0,
-            transform: !open && (hovered || bubbleAuto) ? "translateY(0) scale(1)" : "translateY(6px) scale(0.96)",
-            transition: bubbleAuto
+            pointerEvents: !open && (hovered || bubbleAuto || cycleAuto) ? "auto" : "none",
+            cursor: !open && (hovered || bubbleAuto || cycleAuto) ? "pointer" : "default",
+            opacity: !open && (hovered || bubbleAuto || cycleAuto) ? 1 : 0,
+            transform: !open && (hovered || bubbleAuto || cycleAuto) ? "translateY(0) scale(1)" : "translateY(6px) scale(0.96)",
+            transition: (bubbleAuto || cycleAuto)
               ? "opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1)"
               : "opacity 0.28s cubic-bezier(0.16,1,0.3,1), transform 0.28s cubic-bezier(0.16,1,0.3,1)",
             transformOrigin: "bottom right",
@@ -637,9 +729,18 @@ export default function ChatbotWidget() {
               border: "1px solid rgba(255,255,255,0.10)",
             }}
           >
-            <p style={{ margin: 0, fontSize: "13px", fontWeight: 500, letterSpacing: "0.01em", color: "#fff", lineHeight: 1.4 }}>
-              Need Help?{" "}
-              <span style={{ color: "#6ee7b7", fontWeight: 600 }}>Ask me anything</span>
+            <p 
+              style={{ 
+                margin: 0, 
+                fontSize: "13px", 
+                fontWeight: 500, 
+                letterSpacing: "0.01em", 
+                color: "#fff", 
+                lineHeight: 1.4,
+              }}
+            >
+              {currentHooks[hookIndex]?.prefix}{" "}
+              <span style={{ color: "#6ee7b7", fontWeight: 600 }}>{currentHooks[hookIndex]?.suffix}</span>
             </p>
           </div>
 
@@ -654,7 +755,7 @@ export default function ChatbotWidget() {
         {/* Button */}
         <button
           id="chatbot-trigger"
-          onClick={() => setOpen((v) => !v)}
+          onClick={handleWidgetClick}
           className={`
             relative w-16 h-16 rounded-full
             shadow-[0_8px_24px_rgba(0,0,0,0.22),0_0_18px_6px_rgba(56,139,255,0.28)]
