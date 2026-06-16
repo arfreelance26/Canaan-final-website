@@ -36,7 +36,7 @@ export default function UpdatesPage() {
           ]);
         }
       })
-      .catch(err => console.error("Failed to fetch exchange rates", err));
+      .catch(() => {});
 
     fetch(`${API_BASE_URL}/api/circulars/`)
       .then(res => res.json())
@@ -53,7 +53,7 @@ export default function UpdatesPage() {
           setCirculars(dynamicCirculars);
         }
       })
-      .catch(err => console.error("Failed to fetch circulars", err));
+      .catch(() => {});
   }, []);
 
   return (
@@ -61,7 +61,7 @@ export default function UpdatesPage() {
       {/* ── Image Header ── */}
       <header style={{ position: "relative", height: "40%", overflow: "hidden", flexShrink: 0 }}>
         <img
-          src={ship1.src}
+          src="/company/rehoboth3b.png"
           alt="News and Updates"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 45%" }}
         />
@@ -113,10 +113,7 @@ export default function UpdatesPage() {
                   <div className="w-8 h-8 rounded-full bg-neutral-100 border border-black/[0.04] flex items-center justify-center font-medium text-neutral-600 group-hover:bg-neutral-900 group-hover:text-white transition-colors duration-300">
                     {rate.symbol}
                   </div>
-                  <span className={`flex items-center gap-1 text-[11px] font-semibold tracking-wide ${rate.isUp ? "text-emerald-600" : "text-rose-500"}`}>
-                    {rate.isUp ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                    {rate.trend}
-                  </span>
+                  
                 </div>
                 <div>
                   <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-neutral-400 mb-0.5">

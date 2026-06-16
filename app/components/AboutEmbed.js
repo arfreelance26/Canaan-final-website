@@ -21,7 +21,7 @@ function FounderSection() {
           setOwnerImageUrl(data.image_url);
         }
       })
-      .catch((err) => console.error("Failed to fetch owner image", err));
+      .catch(() => {});
   }, []);
 
   return (
@@ -34,7 +34,7 @@ function FounderSection() {
           }`}
       >
         <Image
-          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070"
+          src="/company/logistics1b.png"
           alt="Canaan Global International"
           fill
           className="object-cover absolute inset-0 transition-transform duration-[1.2s] group-hover:scale-105"
@@ -221,7 +221,7 @@ function TeamSection() {
 
         <div className="absolute top-0 left-0 bg-[#f5f4f0] backdrop-blur-sm px-4 py-3 sm:px-7 sm:py-5 rounded-br-2xl z-10">
           <span className="text-[10px] sm:text-xs font-medium tracking-[0.12em] uppercase text-neutral-400">
-            Our Team
+            Our Core Team
           </span>
         </div>
 
@@ -276,7 +276,7 @@ function AchievementsSection() {
           setAchievements(dynamicAchievements);
         }
       })
-      .catch(err => console.error("Failed to fetch achievements", err));
+      .catch(() => {});
   }, []);
 
   return (
@@ -346,7 +346,7 @@ function BranchesSection() {
           setBranches(dynamicBranches);
         }
       })
-      .catch(err => console.error("Failed to fetch branches", err));
+      .catch(() => {});
   }, []);
 
   return (
@@ -419,7 +419,7 @@ function HierarchySection() {
           })));
         }
       })
-      .catch(err => console.error("Failed to fetch team members", err));
+      .catch(() => {});
   }, []);
 
   return (

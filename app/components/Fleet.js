@@ -28,7 +28,7 @@ export default function FleetSection() {
           setFleetItems(dynamicFleet);
         }
       })
-      .catch((err) => console.error("Failed to fetch fleet", err));
+      .catch(() => {});
   }, []);
 
   useEffect(() => {

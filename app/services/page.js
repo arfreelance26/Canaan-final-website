@@ -19,7 +19,7 @@ export default function ServicesPage() {
           setServices(dynamicServices);
         }
       })
-      .catch(err => console.error("Failed to fetch services", err));
+      .catch(() => {});
   }, []);
 
   return (
@@ -40,7 +40,7 @@ export default function ServicesPage() {
       {/* ── Image Header ── */}
       <header style={{ position: "relative", height: "40%", overflow: "hidden", flexShrink: 0 }}>
         <img
-          src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?q=90&w=2400"
+          src="/company/logistics2.png"
           alt="Port"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 38%" }}
         />

@@ -329,7 +329,7 @@ export default function ChatbotWidget() {
             className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0"
             style={{ boxShadow: "0 0 0 2px rgba(110,231,183,0.35), 0 0 12px rgba(56,139,255,0.25)" }}
           >
-            <Image src="/Chatbot.png" alt="Joshine" fill className="object-cover" />
+            <Image src="/Chatbot.png" alt="Joshine" fill sizes="64px" className="object-cover" />
           </div>
 
           {/* Name & subtitle */}
@@ -374,7 +374,7 @@ export default function ChatbotWidget() {
                   className="relative flex-shrink-0"
                   style={{ width: "30px", height: "30px", borderRadius: "50%", overflow: "hidden", marginTop: "2px", border: "1.5px solid rgba(255,255,255,0.12)" }}
                 >
-                  <Image src="/Chatbot.png" alt="Joshine" fill className="object-cover" />
+                  <Image src="/Chatbot.png" alt="Joshine" fill sizes="64px" className="object-cover" />
                 </div>
               )}
 
@@ -612,7 +612,7 @@ export default function ChatbotWidget() {
                 className="relative flex-shrink-0"
                 style={{ width: "30px", height: "30px", borderRadius: "50%", overflow: "hidden", marginTop: "2px", border: "1.5px solid rgba(255,255,255,0.12)" }}
               >
-                <Image src="/Chatbot.png" alt="Joshine" fill className="object-cover" />
+                <Image src="/Chatbot.png" alt="Joshine" fill sizes="64px" className="object-cover" />
               </div>
               <div
                 style={{
@@ -782,6 +782,7 @@ export default function ChatbotWidget() {
             src="/Chatbot.png"
             alt="Chat with Canaan"
             fill
+            sizes="64px"
             className="object-cover"
             priority
           />

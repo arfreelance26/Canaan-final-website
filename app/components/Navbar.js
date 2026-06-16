@@ -67,13 +67,15 @@ export default function Navbar() {
 
   // Auto-hide when inside scroll-heavy sections
   useEffect(() => {
+    const hiddenStates = new Map();
     let observer;
     const timer = setTimeout(() => {
       const targets = document.querySelectorAll("[data-hide-navbar]");
       if (!targets.length) return;
       observer = new IntersectionObserver(
         (entries) => {
-          setIsHidden(entries.some((e) => e.isIntersecting));
+          entries.forEach((e) => hiddenStates.set(e.target, e.isIntersecting));
+          setIsHidden(Array.from(hiddenStates.values()).some(Boolean));
         },
         { threshold: 0.12 }
       );
@@ -323,22 +325,27 @@ export default function Navbar() {
           <span className={`block h-0.5 w-5 bg-neutral-900 transition-all duration-200 ${mobileOpen ? "opacity-0" : ""}`} />
           <span className={`block h-0.5 w-5 bg-neutral-900 transition-all duration-200 ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`} />
         </button>
-
-        {/* Mobile dropdown nav */}
-        {mobileOpen && (
-          <div className="absolute top-20 left-4 right-4 z-50 sm:hidden flex flex-col bg-[#f5f4f0] rounded-xl px-4 py-3 gap-1 shadow-md">
-            {NAV_ITEMS.map((item) => (
-              <button
-                key={item}
-                onClick={() => navigateTo(item)}
-                className="text-left text-neutral-900 font-medium text-[15px] py-2 border-b border-black/5 last:border-0 hover:text-neutral-500 transition-colors"
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
+
+      {/* ── Mobile dropdown nav ── */}
+      {mobileOpen && (
+        <div className={`fixed top-[84px] left-4 right-4 z-40 sm:hidden flex flex-col bg-[#f5f4f0] rounded-2xl px-5 py-4 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-black/5 transition-all duration-300 ${
+          isHidden ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
+        }`}>
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item}
+              onClick={() => navigateTo(item)}
+              className="text-left text-neutral-900 font-semibold text-[15px] py-3.5 border-b border-black/5 last:border-0 hover:text-neutral-500 transition-colors flex justify-between items-center"
+            >
+              <span>{item}</span>
+              {item === "Updates" && (
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse mr-2" />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
     </>
   );
 }

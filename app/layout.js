@@ -2,6 +2,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import ChatbotWidget from "./components/ChatbotWidget";
+import AosInit from "./components/AosInit";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -88,8 +89,8 @@ export default function RootLayout({ children }) {
               "@type": "Organization",
               name: "Canaan Global International",
               alternateName: "Canaan Global",
-              url: "https://canaaanglobalinternational.com",
-              logo: "https://canaaanglobalinternational.com/canaan.png",
+              url: "https://canaanglobalinternational.com",
+              logo: "https://canaanglobalinternational.com/canaan.png",
               slogan: "Commit · Endure · Achieve · Satisfy",
               description:
                 "Freight Forwarders, Customs Brokers and Transporters based in Tuticorin, India.",
@@ -139,6 +140,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-full flex flex-col">
+        <AosInit />
         <Navbar />
         {children}
         <ChatbotWidget />

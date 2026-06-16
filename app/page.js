@@ -244,7 +244,7 @@ export default function Home() {
             ref={(el) => { wrapRefs.current[i] = el; }}
             data-nav-item={SECTION_NAV_ITEMS[i]}
             {...(i === 4 ? { id: "about" } : {})}
-            {...(i === 3 || i === 5 ? { "data-hide-navbar": "true" } : {})}
+            {...(i === 3 || i === 4 || i === 5 ? { "data-hide-navbar": "true" } : {})}
           >
             <Section />
           </div>

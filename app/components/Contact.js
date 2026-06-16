@@ -114,6 +114,10 @@ export default function ContactSection() {
     rfidPan: null,
   });
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const PHONE_RE = /^[+]?[\d\s\-().]{7,20}$/;
 
   useEffect(() => {
     const updateSlider = () => {
@@ -140,7 +144,15 @@ export default function ContactSection() {
   };
 
   const handleSubmit = () => {
-    if (!form.name || !form.email || !form.message) return;
+    const next = {};
+    if (!form.name.trim())                        next.name    = "Name is required.";
+    if (!form.email.trim())                       next.email   = "Email is required.";
+    else if (!EMAIL_RE.test(form.email.trim()))   next.email   = "Enter a valid email address.";
+    if (form.phone && !PHONE_RE.test(form.phone)) next.phone   = "Enter a valid phone number.";
+    if (!form.message.trim())                     next.message = "Message is required.";
+
+    setErrors(next);
+    if (Object.keys(next).length > 0) return;
     setSubmitted(true);
   };
 
@@ -148,7 +160,7 @@ export default function ContactSection() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative bg-[#f5f4f0] font-sans flex flex-col h-screen p-4 sm:p-5 gap-2 overflow-hidden"
+      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-4 lg:gap-2 pb-10 lg:pb-5 lg:h-screen lg:overflow-hidden"
     >
 
       {/* ── HEADER ── */}
@@ -166,7 +178,7 @@ export default function ContactSection() {
 
         {/* ── LEFT — Contact info cards ── */}
         <div className="lg:col-span-2 flex flex-col gap-2 min-h-0">
-          <div className="grid grid-cols-2 gap-2 shrink-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 shrink-0">
             {CONTACT_INFO.map(({ icon: Icon, label, value }, i) => (
               <div
                 key={label}
@@ -326,179 +338,129 @@ export default function ContactSection() {
               </div>
 
               <div className="px-5 sm:px-6 flex flex-col flex-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                <style>{`
+                  @keyframes fieldEnter {
+                    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+                    to { opacity: 1; transform: translateY(0) scale(1); }
+                  }
+                  .field-animate {
+                    animation: fieldEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+                  }
+                `}</style>
 
-              {/* Name + Email row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                  }`} style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}>
-                  <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
-                    Full name *
-                  </label>
-                  <input
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="Your name"
-                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
-                  />
+                {/* Name */}
+                <div className={`relative flex flex-col gap-1.5 z-[60] transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}>
+                  <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Full name *</label>
+                  <input name="name" value={form.name} onChange={handleChange} placeholder="Your name" className={`bg-[#f5f4f0] border rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 ${errors.name ? "border-red-400 bg-red-50/40" : "border-black/10"}`} />
+                  {errors.name && <p className="text-[11px] text-red-500 mt-0.5">{errors.name}</p>}
                 </div>
-                <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                  }`} style={{ transitionDelay: isVisible ? "150ms" : "0ms" }}>
-                  <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
-                    Email address {inquiryType !== "Transportation" ? "*" : ""}
-                  </label>
-                  <input
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="Your Email"
-                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
-                  />
-                </div>
-              </div>
 
-              {/* Phone + Dynamic row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-                <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                  }`} style={{ transitionDelay: isVisible ? "200ms" : "0ms" }}>
-                  <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
-                    Phone number *
-                  </label>
-                  <input
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    placeholder="Your Phone Number"
-                    className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300"
-                  />
+                {/* Email */}
+                <div className={`relative flex flex-col gap-1.5 z-[59] transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "120ms" : "0ms" }}>
+                  <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Email address {inquiryType !== "Transportation" ? "*" : ""}</label>
+                  <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="Your Email" className={`bg-[#f5f4f0] border rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 ${errors.email ? "border-red-400 bg-red-50/40" : "border-black/10"}`} />
+                  {errors.email && <p className="text-[11px] text-red-500 mt-0.5">{errors.email}</p>}
                 </div>
+
+                {/* Phone */}
+                <div className={`relative flex flex-col gap-1.5 z-[58] transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "140ms" : "0ms" }}>
+                  <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Phone number *</label>
+                  <input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="Your Phone Number" className={`bg-[#f5f4f0] border rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 ${errors.phone ? "border-red-400 bg-red-50/40" : "border-black/10"}`} />
+                  {errors.phone && <p className="text-[11px] text-red-500 mt-0.5">{errors.phone}</p>}
+                </div>
+
+                {/* ── SHIPPING FIELDS ── */}
                 {inquiryType === "Shipping" && (
-                  <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                    }`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
-                    <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Company Name *</label>
-                    <input name="companyName" value={form.companyName} onChange={handleChange} placeholder="e.g. Acme Corp" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300" />
-                  </div>
-                )}
-                {inquiryType === "Transportation" && (
-                  <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
-                    <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Trade Type *</label>
-                    <div className="p-1 bg-[#f0eee9] rounded-xl flex relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] border border-black/5">
-                      <div
-                        className="absolute top-1 bottom-1 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                        style={{ left: form.transportExportImport === "Export" ? "calc(50% + 2px)" : "4px", width: "calc(50% - 6px)" }}
-                      />
-                      <button type="button" onClick={() => setForm(f => ({...f, transportExportImport: "Import"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.transportExportImport !== "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Import</button>
-                      <button type="button" onClick={() => setForm(f => ({...f, transportExportImport: "Export"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.transportExportImport === "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Export</button>
+                  <>
+                    <div className="relative flex flex-col gap-1.5 z-[57] field-animate" style={{ animationDelay: "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Company Name *</label>
+                      <input name="companyName" value={form.companyName} onChange={handleChange} placeholder="e.g. Acme Corp" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300" />
                     </div>
-                  </div>
-                )}
-                {inquiryType === "RFID Seals" && (
-                  <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                    }`} style={{ transitionDelay: isVisible ? "250ms" : "0ms" }}>
-                    <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Quantity Required *</label>
-                    <input name="quantity" type="number" value={form.quantity} onChange={handleChange} placeholder="e.g. 500" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300" />
-                  </div>
-                )}
-              </div>
-
-              {/* Dynamic rows for Shipping */}
-              {inquiryType === "Shipping" && (
-                <>
-                  <div className="grid grid-cols-1 gap-2 mb-2 relative z-50">
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[56] field-animate" style={{ animationDelay: "40ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Trade Type *</label>
                       <div className="p-1 bg-[#f0eee9] rounded-xl flex relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] border border-black/5">
-                        <div
-                          className="absolute top-1 bottom-1 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                          style={{ left: form.shippingMode === "Export" ? "calc(50% + 2px)" : "4px", width: "calc(50% - 6px)" }}
-                        />
+                        <div className="absolute top-1 bottom-1 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]" style={{ left: form.shippingMode === "Export" ? "calc(50% + 2px)" : "4px", width: "calc(50% - 6px)" }} />
                         <button type="button" onClick={() => setForm(f => ({...f, shippingMode: "Import"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.shippingMode !== "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Import</button>
                         <button type="button" onClick={() => setForm(f => ({...f, shippingMode: "Export"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.shippingMode === "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Export</button>
                       </div>
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-40">
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "280ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[55] field-animate" style={{ animationDelay: "80ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Port of loading *</label>
                       <input name="portOfLoading" value={form.portOfLoading} onChange={handleChange} placeholder="e.g. Shanghai" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
                     </div>
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "290ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[54] field-animate" style={{ animationDelay: "120ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Port of discharge *</label>
                       <input name="portOfDischarge" value={form.portOfDischarge} onChange={handleChange} placeholder="e.g. Tuticorin" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-30">
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "320ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[53] field-animate" style={{ animationDelay: "160ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Container Type & Size *</label>
                       <CustomSelect name="containerType" value={form.containerType} onChange={handleChange} placeholder="Select type" options={["20 FT", "40 FT", "40 RF", "Other"]} />
                     </div>
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "330ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[52] field-animate" style={{ animationDelay: "200ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Weight</label>
                       <input name="weight" value={form.weight} onChange={handleChange} placeholder="e.g. 20 Tons" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 mb-2 relative z-20">
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "340ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[51] field-animate" style={{ animationDelay: "240ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Factory location</label>
                       <input name="factoryLocation" value={form.factoryLocation} onChange={handleChange} placeholder="City, Country" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
 
-              {/* Dynamic rows for Transportation */}
-              {inquiryType === "Transportation" && (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-50">
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}>
+                {/* ── TRANSPORTATION FIELDS ── */}
+                {inquiryType === "Transportation" && (
+                  <>
+                    <div className="relative flex flex-col gap-1.5 z-[57] field-animate" style={{ animationDelay: "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Trade Type *</label>
+                      <div className="p-1 bg-[#f0eee9] rounded-xl flex relative shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] border border-black/5">
+                        <div className="absolute top-1 bottom-1 rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]" style={{ left: form.transportExportImport === "Export" ? "calc(50% + 2px)" : "4px", width: "calc(50% - 6px)" }} />
+                        <button type="button" onClick={() => setForm(f => ({...f, transportExportImport: "Import"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.transportExportImport !== "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Import</button>
+                        <button type="button" onClick={() => setForm(f => ({...f, transportExportImport: "Export"}))} className={`relative z-10 flex-1 py-2 text-[11.5px] font-semibold tracking-wide transition-colors duration-300 ${form.transportExportImport === "Export" ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-700"}`}>Export</button>
+                      </div>
+                    </div>
+                    <div className="relative flex flex-col gap-1.5 z-[56] field-animate" style={{ animationDelay: "40ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Pickup</label>
                       <input name="pickupLocation" value={form.pickupLocation} onChange={handleChange} placeholder="City or Address" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
                     </div>
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "270ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[55] field-animate" style={{ animationDelay: "80ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Delivery</label>
                       <input name="deliveryLocation" value={form.deliveryLocation} onChange={handleChange} placeholder="City or Address" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-40">
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "280ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[54] field-animate" style={{ animationDelay: "120ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Type of Cargo</label>
                       <CustomSelect name="transportCargoType" value={form.transportCargoType} onChange={handleChange} placeholder="Select type" options={["Open-Load", "Container"]} />
                     </div>
                     {form.transportCargoType === "Container" && (
-                      <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "290ms" : "0ms" }}>
+                      <div className="relative flex flex-col gap-1.5 z-[53] field-animate" style={{ animationDelay: "160ms" }}>
                         <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Container Type</label>
                         <CustomSelect name="containerType" value={form.containerType} onChange={handleChange} placeholder="Select size" options={["20 FT", "40 FT"]} />
                       </div>
                     )}
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-30">
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}>
+                    <div className="relative flex flex-col gap-1.5 z-[52] field-animate" style={{ animationDelay: "200ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Weight *</label>
                       <input name="weight" value={form.weight} onChange={handleChange} placeholder="e.g. 20 Tons" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
 
-              {/* Dynamic rows for RFID Seals */}
-              {inquiryType === "RFID Seals" && (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 relative z-50">
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "260ms" : "0ms" }}>
+                {/* ── RFID SEALS FIELDS ── */}
+                {inquiryType === "RFID Seals" && (
+                  <>
+                    <div className="relative flex flex-col gap-1.5 z-[57] field-animate" style={{ animationDelay: "0ms" }}>
+                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Quantity Required *</label>
+                      <input name="quantity" type="number" value={form.quantity} onChange={handleChange} placeholder="e.g. 500" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300" />
+                    </div>
+                    <div className="relative flex flex-col gap-1.5 z-[56] field-animate" style={{ animationDelay: "40ms" }}>
                       <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">Organisation Name *</label>
                       <input name="rfidOrgName" value={form.rfidOrgName} onChange={handleChange} placeholder="Company Name" className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-all duration-300" />
                     </div>
-                    <div className={`flex flex-col gap-1.5 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "270ms" : "0ms" }}>
-                      <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">IEC Certificate *</label>
-                      <FileUpload name="rfidIec" value={form.rfidIec} onChange={handleChange} />
-                    </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
 
               {/* Message */}
-              <div className={`flex flex-col gap-1.5 mb-3 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`} style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}>
+              <div className={`flex flex-col gap-1.5 mb-3 transition-[opacity,transform] duration-500 ease-out ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={{ transitionDelay: isVisible ? "300ms" : "0ms" }}>
                 <label className="text-[10px] font-medium tracking-[0.1em] uppercase text-neutral-400">
                   Your message
                 </label>
@@ -508,14 +470,15 @@ export default function ContactSection() {
                   onChange={handleChange}
                   rows={3}
                   placeholder="Tell us about your shipment requirements..."
-                  className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 resize-none"
+                  className={`bg-[#f5f4f0] border rounded-xl px-4 py-3 text-sm text-neutral-900 placeholder:text-neutral-300 outline-none focus:bg-white focus:border-neutral-900 focus:ring-4 focus:ring-neutral-900/5 transition-[background-color,border-color,box-shadow] duration-300 resize-none ${errors.message ? "border-red-400 bg-red-50/40" : "border-black/10"}`}
                 />
+                {errors.message && <p className="text-[11px] text-red-500 mt-0.5">{errors.message}</p>}
               </div>
 
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                className="group flex items-center justify-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl hover:bg-neutral-800 transition-colors duration-300 w-full active:scale-[0.98] mt-1"
+                className="group flex items-center justify-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl hover:bg-neutral-800 transition-colors duration-300 w-full active:scale-[0.98] mt-auto"
               >
                 Send message <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
               </button>

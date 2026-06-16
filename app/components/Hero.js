@@ -25,7 +25,7 @@ export default function DavidHazHero() {
           });
         }
       })
-      .catch((err) => console.error("Failed to fetch exchange rates", err));
+      .catch(() => {});
   }, []);
 
   // ── #2 Cursor micro-parallax ──────────────────────────────────
@@ -126,11 +126,9 @@ export default function DavidHazHero() {
     >
       {/* ── HERO IMAGE CARD ── */}
       <div
-        ref={cardRef}
+        
         className="relative h-screen overflow-hidden"
-        style={{ willChange: "opacity" }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        
       >
 
         {/* Background video */}
@@ -158,16 +156,7 @@ export default function DavidHazHero() {
         <div className="absolute bottom-0 left-0 z-10 px-6 pt-8 pb-16 sm:px-10 sm:pt-12 sm:pb-24 flex flex-col max-w-[700px]">
 
           {/* Eyebrow */}
-          <p
-            style={{
-              letterSpacing: "0.18em",
-              marginBottom: "1.1rem",
-              animation: "heroRevealLeft 0.8s cubic-bezier(0.16,1,0.3,1) 0.15s both",
-            }}
-            className="text-[10px] sm:text-[11px] font-medium uppercase text-white/55"
-          >
-            Est. 2009 · International Freight Forwarding
-          </p>
+          
 
           {/* Company name — unified two-line wordmark */}
           <h1 style={{ margin: 0, padding: 0 }}>
@@ -190,14 +179,15 @@ export default function DavidHazHero() {
             <span
               style={{
                 display: "block",
-                fontSize: "clamp(1.5rem, 5.5vw, 3.8rem)",
-                fontWeight: 700,
+                fontSize: "clamp(1.1rem, 3.8vw, 3rem)",
+                fontWeight: 500,
                 letterSpacing: "-0.02em",
                 lineHeight: 1.15,
                 color: "rgba(255,255,255,0.70)",
                 paddingLeft: "0.045em",
                 marginTop: "0.04em",
                 textTransform: "uppercase",
+                whiteSpace: "nowrap",
                 animation: "heroRevealLeft 1.0s cubic-bezier(0.16,1,0.3,1) 0.58s both",
               }}
             >
@@ -238,9 +228,10 @@ export default function DavidHazHero() {
         <div className="absolute bottom-0 left-0 w-full h-[36px] flex items-center bg-white/5 backdrop-blur-xl border-t border-white/10 overflow-hidden z-20 shadow-[0_-4px_30px_rgba(0,0,0,0.1)]">
 
           {/* Static Title */}
-          <div className="flex items-center h-full px-4 sm:px-8 bg-black/80 backdrop-blur-xl border-r border-white/10 z-30 relative shrink-0 shadow-[4px_0_16px_rgba(0,0,0,0.4)]">
-            <span className="text-white/90 font-bold tracking-[0.2em] text-[10px] sm:text-[11px] uppercase drop-shadow-md">
-              Today's Custom Exchange Rates
+          <div className="flex items-center h-full px-3 sm:px-8 bg-black/80 backdrop-blur-xl border-r border-white/10 z-30 relative shrink-0 shadow-[4px_0_16px_rgba(0,0,0,0.4)] whitespace-nowrap">
+            <span className="text-white/90 font-bold tracking-[0.1em] sm:tracking-[0.2em] text-[9px] sm:text-[11px] uppercase drop-shadow-md">
+              <span className="sm:hidden">Exchange Rates</span>
+              <span className="hidden sm:inline">Today's Custom Exchange Rates</span>
             </span>
           </div>
 

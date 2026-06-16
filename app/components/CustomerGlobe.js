@@ -217,7 +217,7 @@ export default function CustomerGlobeSection() {
 
       {/* ── LEFT: STATIC CONTENT ── */}
       <div
-        className="flex flex-col lg:w-[40%] shrink-0 justify-start lg:pr-10 py-8 lg:pt-12 lg:pb-0"
+        className="flex flex-col lg:w-[40%] shrink-0 justify-center lg:pr-10 py-8 lg:py-0"
         style={{
           opacity: sectionIn ? 1 : 0,
           transform: sectionIn ? "translateX(0)" : "translateX(-100px)",
@@ -263,62 +263,10 @@ export default function CustomerGlobeSection() {
         </div>
 
         {/* Founder portrait + Meet the team button */}
-        <div
-          onClick={() => router.push("/about")}
-          style={{
-            marginTop: 28,
-            display: "flex",
-            alignItems: "center",
-            gap: 14,
-            padding: "12px 14px",
-            borderRadius: 14,
-            
-            
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(26,25,22,0.07)";
-            e.currentTarget.style.borderColor = "rgba(0,0,0,0.13)";
-            e.currentTarget.style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(26,25,22,0.04)";
-            e.currentTarget.style.borderColor = "rgba(0,0,0,0.07)";
-            e.currentTarget.style.transform = "translateY(0)";
-          }}
-        >
-          {/* Portrait */}
-          <div style={{ width: 120, height: 120, flexShrink: 0, position: "relative", borderRadius: 9999, overflow: "hidden", boxShadow: "0 8px 24px rgba(0,0,0,0.12)", border: "2px solid rgba(210,165,45,0.10)" }}>
-            <Image src="/arun2.png" alt="Arun Samuel Alfred" fill sizes="(max-width: 768px) 100vw, 300px" className="object-cover" />
-          </div>
-
-          {/* Visually hidden name for accessibility */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <span style={{ position: "absolute", width: 1, height: 1, padding: 0, margin: -1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>Arun Samuel Alfred — Founder & CEO</span>
-          </div>
-
-          {/* Arrow / button text */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              fontSize: 12,
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "#555555",
-              flexShrink: 0,
-              transition: "color 0.2s ease",
-            }}
-          >
-            Meet the team
-            <ArrowRight size={13} />
-          </div>
-        </div>
+        
       </div>
       <div
-        className="relative flex-1 rounded-2xl overflow-hidden border border-black/[0.08]"
+        className="relative flex-1 rounded-2xl overflow-hidden border border-black/[0.08] -mt-4 sm:-mt-8 lg:mt-4"
         style={{
           minHeight: 440,
           touchAction: "none",
@@ -354,8 +302,8 @@ export default function CustomerGlobeSection() {
               waitForGlobeReady={false}
               width={globeSize.width}
               height={globeSize.height}
-              globeImageUrl="//unpkg.com/three-globe@2.33.0/example/img/earth-blue-marble.jpg"
-              bumpImageUrl="//unpkg.com/three-globe@2.33.0/example/img/earth-topology.png"
+              globeImageUrl="https://unpkg.com/three-globe@2.33.0/example/img/earth-blue-marble.jpg"
+              bumpImageUrl="https://unpkg.com/three-globe@2.33.0/example/img/earth-topology.png"
               backgroundImageUrl=""
               backgroundColor="rgba(0,0,0,0)"
               atmosphereColor="rgb(120, 185, 255)"

@@ -55,7 +55,7 @@ function Card({ co, i, phase, dir, isActive, onToggle, isMobile }) {
   const cardRef = useRef(null);
   const spotlightRef = useRef(null);
   const rafRef = useRef(null);
-  const tiltRef = useRef({ rx: 0, ry: 0 });
+
   const [hovered, setHovered] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
 
@@ -79,13 +79,6 @@ function Card({ co, i, phase, dir, isActive, onToggle, isMobile }) {
     const h = rect.height;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     rafRef.current = requestAnimationFrame(() => {
-      const rx = -((cy / h) - 0.5) * 10;
-      const ry = ((cx / w) - 0.5) * 10;
-      tiltRef.current = { rx, ry };
-      if (cardRef.current) {
-        cardRef.current.style.transform =
-          `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-5px)`;
-      }
       if (spotlightRef.current) {
         spotlightRef.current.style.background =
           `radial-gradient(circle 200px at ${(cx / w) * 100}% ${(cy / h) * 100}%, rgba(255,255,255,0.55) 0%, transparent 70%)`;
@@ -100,22 +93,11 @@ function Card({ co, i, phase, dir, isActive, onToggle, isMobile }) {
 
   const handleMouseLeave = useCallback(() => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    tiltRef.current = { rx: 0, ry: 0 };
     setHovered(false);
-    if (cardRef.current && !isActive) {
-      cardRef.current.style.transform =
-        "perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0px)";
-    }
     if (spotlightRef.current) spotlightRef.current.style.opacity = "0";
   }, [isActive]);
 
-  // Reset tilt immediately when card becomes active
-  useEffect(() => {
-    if (isActive && cardRef.current) {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      cardRef.current.style.transform = "none";
-    }
-  }, [isActive]);
+
 
   const entranceTransform =
     phase === "hidden"
@@ -170,7 +152,7 @@ function Card({ co, i, phase, dir, isActive, onToggle, isMobile }) {
       }} />
 
       {/* ── INACTIVE LAYOUT — always in DOM, fades out when active ── */}
-      <div style={{
+      <div className="mt-4" style={{
         position: "absolute", inset: 0,
         display: "flex", flexDirection: "column",
         opacity: isActive ? 0 : 1,
@@ -182,18 +164,10 @@ function Card({ co, i, phase, dir, isActive, onToggle, isMobile }) {
         {/* Spotlight */}
         <div ref={spotlightRef} style={{ position: "absolute", inset: 0, opacity: 0, transition: "opacity 0.4s ease", pointerEvents: "none", zIndex: 0 }} />
 
-        {/* Top row */}
-        <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px 8px", flexShrink: 0 }}>
-          <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#aaaaaa" }}>
-            {co.category}
-          </span>
-          <div style={{ width: 30, height: 30, borderRadius: 8, border: "1.5px solid #eeeeee", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <co.Icon size={14} color="#c0bdb6" />
-          </div>
-        </div>
 
         {/* Image carousel */}
-        <div style={{
+        <div
+        style={{
           position: "relative", zIndex: 1,
           flex: 1, minHeight: 0,
           margin: "0 12px",
@@ -216,6 +190,7 @@ function Card({ co, i, phase, dir, isActive, onToggle, isMobile }) {
                 opacity: idx === imgIdx ? 1 : 0,
                 transition: "opacity 0.9s ease",
               }}
+              
             />
           ))}
 
@@ -515,10 +490,25 @@ export default function GroupSection() {
     };
   }, []);
 
-  const gridTemplateDynamic =
+  const desktopCols =
+    activeCard === null
+      ? "1fr 1fr"
+      : activeCard % 2 === 0
+      ? "2.5fr 0.83fr"
+      : "0.83fr 2.5fr";
+
+  const desktopRows =
+    activeCard === null
+      ? "1fr 1fr"
+      : activeCard < 2
+      ? "2.5fr 0.83fr"
+      : "0.83fr 2.5fr";
+
+  const mobileCols = "1fr";
+  const mobileRows =
     activeCard === null
       ? "repeat(4, 1fr)"
-      : [0, 1, 2, 3].map((i) => (i === activeCard ? "2.5fr" : "0.83fr")).join(" ");
+      : [0, 1, 2, 3].map((i) => (i === activeCard ? "2.5fr" : "0.5fr")).join(" ");
 
   return (
     <>
@@ -553,51 +543,22 @@ export default function GroupSection() {
           padding: 16,
         }}
       >
-        {/* ── Banner ── */}
+        {/* ── Banner Title ── */}
         <div style={{
           position: "relative",
           flexShrink: 0,
-          borderRadius: 16,
-          overflow: "hidden",
-          height: "clamp(120px, 18vh, 190px)",
+          padding: "10px 14px",
           opacity: phase === "hidden" ? 0 : 1,
           transform: phase === "hidden" ? "translateY(16px)" : "translateY(0)",
           transition: "opacity 0.6s ease, transform 0.6s ease",
         }}>
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(125deg, #1c2b3a 0%, #2b4560 50%, #1e3a2f 100%)" }} />
-          <div style={{
-            position: "absolute", inset: 0,
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }} />
-          <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0, height: 2,
-            background: "linear-gradient(90deg, transparent, rgba(210,165,45,0.65) 25%, rgba(210,165,45,0.65) 75%, transparent)",
-          }} />
-          <div style={{
-            position: "absolute", top: 14, left: 14,
-            background: "rgba(255,255,255,0.97)",
-            borderRadius: 12, padding: "12px 18px",
-          }}>
-            <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "rgba(210,165,45,0.8)", textTransform: "uppercase", fontWeight: 500, display: "block", marginBottom: 5 }}>
-              The Canaan Group
-            </span>
-            <h2 style={{ fontSize: "clamp(1.1rem, 2vw, 1.6rem)", fontWeight: 700, color: "#0a0a0a", letterSpacing: "-0.025em", lineHeight: 1.15, margin: 0 }}>
-              Four companies,{" "}
-              <span style={{ color: "rgba(0,0,0,0.28)" }}>one mission.</span>
-            </h2>
-          </div>
-          <div style={{
-            position: "absolute", top: 14, right: 14,
-            background: "rgba(255,255,255,0.10)",
-            backdropFilter: "blur(8px)",
-            borderRadius: 20, padding: "6px 14px",
-            border: "1px solid rgba(255,255,255,0.18)",
-          }}>
-            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.8)", fontWeight: 500, letterSpacing: "0.04em" }}>
-              The Canaan Group
-            </span>
-          </div>
+          <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "rgba(210,165,45,0.8)", textTransform: "uppercase", fontWeight: 700, display: "block", marginBottom: 5 }}>
+            The Canaan Group
+          </span>
+          <h2 style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 700, color: "#111", letterSpacing: "-0.025em", lineHeight: 1.15, margin: 0 }}>
+            Four companies,{" "}
+            <span style={{ color: "rgba(0,0,0,0.3)" }}>one mission.</span>
+          </h2>
         </div>
 
         {/* ── Cards ── */}
@@ -618,8 +579,8 @@ export default function GroupSection() {
             position: "relative",
             zIndex: 1,
             display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : gridTemplateDynamic,
-            gridTemplateRows: isMobile ? gridTemplateDynamic : "1fr",
+            gridTemplateColumns: isMobile ? mobileCols : desktopCols,
+            gridTemplateRows: isMobile ? mobileRows : desktopRows,
             gap: 12,
             height: "100%",
             minHeight: isMobile ? "1200px" : "auto",

@@ -167,7 +167,7 @@ export default function CargoPage() {
           setCategories([allCat, ...dynamicCats]);
         }
       })
-      .catch(err => console.error("Failed to fetch cargos", err));
+      .catch(() => {});
   }, []);
 
   const currentCat = categories.find((c) => c.id === activeCat) || categories[0] || { id: 'all', label: 'Loading...', desc: '', photos: [] };
@@ -264,12 +264,12 @@ export default function CargoPage() {
               </p>
               <h1
                 className="text-white font-black tracking-[-0.04em] leading-[0.92]"
-                style={{ fontSize: "clamp(2.8rem, 9vw, 6.5rem)", textShadow: "0 4px 32px rgba(0,0,0,0.4)" }}
+                style={{ fontSize: "clamp(2.8rem, 4vw, 6.5rem)", textShadow: "0 4px 32px rgba(0,0,0,0.4)" }}
               >
-                What we<br />move.
+                What we move.
               </h1>
               <p className="text-white/55 text-sm sm:text-base leading-relaxed max-w-md mt-1">
-                Real shipments. Real cargo. A living record of every consignment we've moved — from coir to construction machinery.
+                Real shipments. Real cargo. A living record of every consignment we've moved from coir to construction machinery.
               </p>
             </div>
 

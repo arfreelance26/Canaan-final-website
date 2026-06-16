@@ -178,7 +178,7 @@ function ImageCarousel({ images, alt }) {
       >
         {images.map((src, i) => (
           <div key={i} className="relative w-full h-full flex-shrink-0">
-            <Image src={src} alt={`${alt} ${i + 1}`} fill className="object-cover" />
+            <Image src={src} alt={`${alt} ${i + 1}`} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
           </div>
         ))}
       </div>

@@ -23,7 +23,7 @@ export default function AccreditationsPage() {
           setAccreditations(dynamicAccs);
         }
       })
-      .catch(err => console.error("Failed to fetch licenses", err));
+      .catch(() => {});
   }, []);
 
   return (
@@ -44,7 +44,7 @@ export default function AccreditationsPage() {
       {/* ── Image Header ── */}
       <header style={{ position: "relative", height: "40%", overflow: "hidden", flexShrink: 0 }}>
         <img
-          src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=90&w=2400"
+          src="/company/cgi2.png"
           alt="Accreditations"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 50%" }}
         />

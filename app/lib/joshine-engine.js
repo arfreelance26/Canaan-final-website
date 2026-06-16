@@ -148,8 +148,10 @@ const SERVICE_LIST = ["transportation", "documentation", "warehousing", "lashing
  * Log missed queries for telemetry.
  * In a production environment, this should hit an analytics webhook.
  */
-function logFallback(query) {
-  console.warn(`[Joshine Telemetry] Fallback triggered for query: "${query}"`);
+function logFallback(_query) {
+  if (process.env.NODE_ENV === "development") {
+    console.warn("[Joshine] Fallback triggered");
+  }
   // Example Webhook integration for the future:
   // fetch("https://your-webhook-url.com/analytics", {
   //   method: "POST",
