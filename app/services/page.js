@@ -1,29 +1,25 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Award, ShieldCheck, Building2, IdCard, FileSignature, MapPin, Lock } from "lucide-react";
 import { API_BASE_URL } from "@/app/lib/api";
-
-export default function AccreditationsPage() {
+export default function ServicesPage() {
   const [hovered, setHovered] = useState(null);
-  const [accreditations, setAccreditations] = useState([]);
+  const [services, setServices] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/licenses/`)
+    fetch(`${API_BASE_URL}/api/services/`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          const ICONS = [IdCard, Award, FileSignature, Building2, MapPin, Lock, ShieldCheck];
-          const dynamicAccs = data.map((lic, i) => ({
-            Icon: ICONS[i % ICONS.length],
+          const dynamicServices = data.map((svc, i) => ({
             num: String(i + 1).padStart(2, '0'),
-            image: lic.image_url || null,
-            title: lic.title || "License",
-            body: lic.description || ""
+            image: svc.image_url || null,
+            title: svc.title || "Service",
+            body: svc.description || ""
           }));
-          setAccreditations(dynamicAccs);
+          setServices(dynamicServices);
         }
       })
-      .catch(err => console.error("Failed to fetch licenses", err));
+      .catch(err => console.error("Failed to fetch services", err));
   }, []);
 
   return (
@@ -44,9 +40,9 @@ export default function AccreditationsPage() {
       {/* ── Image Header ── */}
       <header style={{ position: "relative", height: "40%", overflow: "hidden", flexShrink: 0 }}>
         <img
-          src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=90&w=2400"
-          alt="Accreditations"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 50%" }}
+          src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?q=90&w=2400"
+          alt="Port"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 38%" }}
         />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(13,12,10,0.25) 0%, rgba(13,12,10,0.55) 55%, rgba(13,12,10,0.88) 100%)" }} />
 
@@ -55,21 +51,18 @@ export default function AccreditationsPage() {
             Canaan Global International
           </p>
           <h1 style={{ fontSize: "clamp(1.8rem, 4.5vw, 3rem)", fontWeight: 700, color: "#fff", letterSpacing: "-0.035em", margin: 0, lineHeight: 1 }}>
-            Accreditations & Licenses
+            Our Services
           </h1>
-          <p style={{ fontStyle: "italic", fontSize: "1.1rem", color: "rgba(255,255,255,0.8)", margin: "12px 0 0 0", letterSpacing: "0.02em" }}>
-            Nothing to Hide. Everything to Prove.
-          </p>
         </div>
       </header>
 
       {/* ── Cards ── */}
       <section className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-min gap-3 p-4 box-border">
-        {accreditations.map((acc, i) => {
+        {services.map((svc, i) => {
           const on = hovered === i;
           return (
             <div
-              key={acc.num}
+              key={svc.num}
               style={{
                 animation: `slideInFromLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.2}s both`,
                 display: "flex",
@@ -115,10 +108,10 @@ export default function AccreditationsPage() {
 
                 {/* Card image */}
                 <div style={{ position: "relative", height: 280, borderRadius: 10, overflow: "hidden", flexShrink: 0, marginBottom: 5, background: "#f0efeb" }}>
-                  {acc.image ? (
+                  {svc.image ? (
                     <img
-                      src={acc.image}
-                      alt={acc.title}
+                      src={svc.image}
+                      alt={svc.title}
                       style={{
                         width: "100%", height: "100%",
                         objectFit: "cover",
@@ -139,25 +132,16 @@ export default function AccreditationsPage() {
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.25) 100%)", opacity: on ? 1 : 0.5, transition: "opacity 0.35s ease" }} />
                 </div>
 
-                {/* Number + Icon row */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                {/* Number row */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", minHeight: 34 }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: on ? "#c8b98a" : "#ccc", letterSpacing: "0.08em", transition: "color 0.3s ease" }}>
-                    {acc.num}
+                    {svc.num}
                   </span>
-                  <div style={{
-                    width: 34, height: 34, borderRadius: 9,
-                    background: on ? "rgba(200,185,138,0.12)" : "#f5f4f0",
-                    border: `1px solid ${on ? "rgba(200,185,138,0.35)" : "rgba(0,0,0,0.07)"}`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    transition: "background 0.3s ease, border-color 0.3s ease",
-                  }}>
-                    <acc.Icon size={14} color={on ? "#c8b98a" : "#999"} />
-                  </div>
                 </div>
 
                 {/* Title */}
                 <h2 style={{ fontSize: "0.92rem", fontWeight: 700, color: on ? "#111" : "#333", letterSpacing: "-0.02em", margin: 0, lineHeight: 1.25, transition: "color 0.25s ease" }}>
-                  {acc.title}
+                  {svc.title}
                 </h2>
 
                 {/* Gold rule */}
@@ -165,7 +149,7 @@ export default function AccreditationsPage() {
 
                 {/* Body */}
                 <p style={{ fontSize: 11.5, color: on ? "#444" : "#888", lineHeight: 1.72, margin: 0, transition: "color 0.3s ease" }}>
-                  {acc.body}
+                  {svc.body}
                 </p>
               </div>
             </div>

@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Anchor } from "lucide-react";
 import Image from "next/image";
-import companylogo from "../../company photos/companylogo.png";
+import companylogo from "@/app/assets/images/company/companylogo.png";
 
 const NAV_ITEMS = ["Home", "About", "Service", "Cargo", "Accreditations", "Updates", "Clients", "Contact"];
 
@@ -34,7 +34,7 @@ export default function Navbar() {
   const routeToNavItem = (path) => {
     if (!path) return "Home";
     if (path === "/about" || path.startsWith("/about/")) return "About";
-    if (path === "/canaan-shipping-services" || path.startsWith("/canaan-shipping-services/")) return "Service";
+    if (path === "/services" || path.startsWith("/services/")) return "Service";
     if (path === "/cargo" || path.startsWith("/cargo/")) return "Cargo";
     if (path === "/accreditations" || path.startsWith("/accreditations/")) return "Accreditations";
     if (path === "/updates" || path.startsWith("/updates/")) return "Updates";
@@ -178,12 +178,12 @@ export default function Navbar() {
     }
 
     if (item === "Service") {
-      if (pathname === "/canaan-shipping-services") {
+      if (pathname === "/services") {
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
         setTransitioning(true);
         setTimeout(() => {
-          router.push("/canaan-shipping-services");
+          router.push("/services");
           setTimeout(() => setTransitioning(false), 400);
         }, 180);
       }
@@ -265,7 +265,7 @@ export default function Navbar() {
       {/* ── TOP LEFT — logo + company name ── */}
       <div 
         onClick={handleLogoClick}
-        className={`fixed cursor-pointer z-50 top-0 left-0 bg-white/80 backdrop-blur-xl border-b border-r border-black/[0.06] pl-5 pr-10 h-[76px] sm:h-[88px] sm:pl-6 sm:pr-12 rounded-br-2xl flex items-center animate-fade-in transition-[opacity,transform] duration-500 ease-in-out ${
+        className={`fixed cursor-pointer z-50 top-0 left-0 bg-[#f5f4f0] pl-5 pr-10 h-[76px] sm:h-[88px] sm:pl-6 sm:pr-12 rounded-br-2xl flex items-center animate-fade-in transition-[opacity,transform] duration-500 ease-in-out ${
           isHidden || !isLogoVisible ? "-translate-y-full opacity-0 pointer-events-none" : "translate-y-0 opacity-100"
         }`}
       >
@@ -274,15 +274,15 @@ export default function Navbar() {
       </div>
 
       {/* ── TOP RIGHT — nav (desktop) + hamburger (mobile) ── */}
-      <div className={`fixed z-50 top-0 right-0 bg-white/80 backdrop-blur-xl border-b border-l border-black/[0.06] px-5 sm:px-7 h-[76px] sm:h-[88px] rounded-bl-2xl flex items-center gap-3 transition-transform duration-500 ease-in-out ${
+      <div className={`fixed z-50 top-0 right-0 bg-[#f5f4f0] px-5 sm:px-7 h-[76px] sm:h-[88px] rounded-bl-2xl flex items-center gap-3 transition-transform duration-500 ease-in-out ${
         isHidden ? "-translate-y-full" : "translate-y-0"
       }`}>
 
         {/* Desktop nav pill */}
-        <nav className="hidden sm:flex relative items-center bg-black/[0.07] border border-black/10 rounded-full px-1.5 h-11 gap-0.5">
-          {/* Glassmorphic Slider */}
+        <nav className="hidden sm:flex relative items-center bg-black/[0.07] rounded-full px-1.5 h-11 gap-0.5">
+          {/* Active Slider */}
           <div
-            className="absolute h-8 rounded-full bg-white/60 backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.06)] border border-white/80 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
+            className="absolute h-8 rounded-full bg-[#f5f4f0] shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
             style={{
               left: sliderStyle.left,
               width: sliderStyle.width,
@@ -326,7 +326,7 @@ export default function Navbar() {
 
         {/* Mobile dropdown nav */}
         {mobileOpen && (
-          <div className="absolute top-20 left-4 right-4 z-50 sm:hidden flex flex-col bg-[#f5f4f0] backdrop-blur-md border border-black/10 rounded-xl px-4 py-3 gap-1">
+          <div className="absolute top-20 left-4 right-4 z-50 sm:hidden flex flex-col bg-[#f5f4f0] rounded-xl px-4 py-3 gap-1 shadow-md">
             {NAV_ITEMS.map((item) => (
               <button
                 key={item}

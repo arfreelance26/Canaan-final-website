@@ -51,7 +51,7 @@ const COMPANIES = [
 ];
 
 // ─── Individual card ──────────────────────────────────────────────────────────
-function Card({ co, i, phase, dir, isActive, onToggle }) {
+function Card({ co, i, phase, dir, isActive, onToggle, isMobile }) {
   const cardRef = useRef(null);
   const spotlightRef = useRef(null);
   const rafRef = useRef(null);
@@ -266,7 +266,7 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
       {/* ── ACTIVE LAYOUT — always in DOM, fades in when active ── */}
       <div style={{
         position: "absolute", inset: 0,
-        display: "flex", flexDirection: "row",
+        display: "flex", flexDirection: isMobile ? "column" : "row",
         opacity: isActive ? 1 : 0,
         transition: isActive
           ? "opacity 0.32s ease 0.26s"
@@ -277,12 +277,14 @@ function Card({ co, i, phase, dir, isActive, onToggle }) {
 
         {/* LEFT SPINE */}
         <div style={{
-          width: "36%",
+          width: isMobile ? "100%" : "36%",
+          height: isMobile ? "30%" : "auto",
           flexShrink: 0,
           display: "flex",
           flexDirection: "column",
           padding: "14px 12px 14px 14px",
-          borderRight: "1px solid rgba(0,0,0,0.05)",
+          borderRight: isMobile ? "none" : "1px solid rgba(0,0,0,0.05)",
+          borderBottom: isMobile ? "1px solid rgba(0,0,0,0.05)" : "none",
           background: "#fafafa",
         }}>
           {/* Category + icon */}
@@ -473,7 +475,15 @@ export default function GroupSection() {
   const [dir, setDir] = useState("left");
   const [activePill, setActivePill] = useState(0); // unused — pills removed
   const [activeCard, setActiveCard] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const revealTimer = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleToggle = useCallback((idx) => {
     setActiveCard((prev) => (prev === idx ? null : idx));
@@ -505,7 +515,7 @@ export default function GroupSection() {
     };
   }, []);
 
-  const gridTemplate =
+  const gridTemplateDynamic =
     activeCard === null
       ? "repeat(4, 1fr)"
       : [0, 1, 2, 3].map((i) => (i === activeCard ? "2.5fr" : "0.83fr")).join(" ");
@@ -534,7 +544,8 @@ export default function GroupSection() {
           background: "#f5f4f0",
           borderRadius: "20px 20px 0 0",
           boxShadow: "0 -20px 60px rgba(0,0,0,0.10)",
-          height: "100vh",
+          height: isMobile ? "auto" : "100vh",
+          minHeight: isMobile ? "100vh" : "auto",
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
@@ -604,12 +615,15 @@ export default function GroupSection() {
             filter: "blur(2px)",
           }} />
           <div style={{
-            position: "relative", zIndex: 1,
+            position: "relative",
+            zIndex: 1,
             display: "grid",
-            gridTemplateColumns: gridTemplate,
+            gridTemplateColumns: isMobile ? "1fr" : gridTemplateDynamic,
+            gridTemplateRows: isMobile ? gridTemplateDynamic : "1fr",
             gap: 12,
             height: "100%",
-            transition: "grid-template-columns 0.48s cubic-bezier(0.16,1,0.3,1)",
+            minHeight: isMobile ? "1200px" : "auto",
+            transition: "grid-template-columns 0.48s cubic-bezier(0.16,1,0.3,1), grid-template-rows 0.48s cubic-bezier(0.16,1,0.3,1)",
           }}>
             {COMPANIES.map((co, i) => (
               <Card
@@ -620,6 +634,7 @@ export default function GroupSection() {
                 dir={dir}
                 isActive={activeCard === i}
                 onToggle={handleToggle}
+                isMobile={isMobile}
               />
             ))}
           </div>

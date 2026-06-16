@@ -142,7 +142,7 @@ export default function LoadingPage({ onComplete, duration = 3200 }) {
           background: "#f5f4f0",
           display: "flex", flexDirection: "column",
           alignItems: "center", justifyContent: "center",
-          fontFamily: "'Helvetica Neue', Arial, sans-serif",
+          fontFamily: "inherit",
           overflow: "hidden",
           opacity: phase === "exit" ? 0 : 1,
           transition: "opacity 0.7s ease",

@@ -66,8 +66,8 @@ export default function FounderSection() {
 
             {/* Pull quote */}
             <div className="bg-white rounded-xl px-5 py-4">
-              <span className="font-serif text-5xl leading-none text-neutral-200 float-left mr-2 mt-1">&ldquo;</span>
-              <p className="font-serif italic text-[15px] text-neutral-700 leading-relaxed">
+              <span className="font-sans text-5xl leading-none text-neutral-200 float-left mr-2 mt-1">&ldquo;</span>
+              <p className="font-sans italic text-[15px] text-neutral-700 leading-relaxed">
                 Every shipment represents someone&apos;s livelihood. We treat it that way.
               </p>
             </div>

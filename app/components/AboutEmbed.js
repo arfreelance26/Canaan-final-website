@@ -1,28 +1,33 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import { API_BASE_URL } from "@/app/lib/api";
 import Image from "next/image";
 import { Globe, Award, TrendingUp, Quote, Mail, MapPin, Trophy, Star, ShieldCheck, Target } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
-import team1 from "../../company photos/team1.jpeg";
-import team2 from "../../company photos/team2.jpeg";
-import team3 from "../../company photos/team3.jpeg";
-import team4 from "../../company photos/team4.jpeg";
-import team5 from "../../company photos/team5.jpeg";
-import arun from "../../company photos/Arun.png";
-import cgi1 from "../../company photos/cgi1.png";
-import cgi2 from "../../company photos/cgi2.png";
-import logistics1 from "../../company photos/logistics1.png";
-import logistics2 from "../../company photos/logistics2.png";
+import team1 from "@/app/assets/images/company/team1.jpeg";
+
 
 function FounderSection() {
   const sectionRef = useRef(null);
   const isVisible = useFadeIn(sectionRef, 0.05);
+  const [ownerImageUrl, setOwnerImageUrl] = useState("");
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/owner-image/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.image_url) {
+          setOwnerImageUrl(data.image_url);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch owner image", err));
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 overflow-hidden"
+      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pb-8"
     >
       <div
         className={`group relative rounded-2xl overflow-hidden min-h-[180px] sm:min-h-[200px] transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
@@ -36,7 +41,7 @@ function FounderSection() {
         />
         <div className="absolute inset-0 bg-black/45 group-hover:bg-black/50 transition-colors duration-500" />
 
-        <div className="absolute bottom-0 left-0 right-0 sm:right-auto bg-white/90 backdrop-blur-sm px-5 py-5 sm:px-7 sm:py-6 rounded-tr-2xl z-10">
+        <div className="absolute bottom-0 left-0 right-0 sm:right-auto bg-[#f5f4f0] backdrop-blur-sm px-5 py-5 sm:px-7 sm:py-6 rounded-tr-2xl z-10">
           <h1 className="text-2xl sm:text-3xl lg:text-[2.4rem] font-bold tracking-[-0.03em] leading-[1.18] text-neutral-900">
             The people behind<br className="hidden sm:block" /> Canaan Global
           </h1>
@@ -46,15 +51,18 @@ function FounderSection() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
         <div
           style={{ transitionDelay: isVisible ? "100ms" : "0ms" }}
-          className={`lg:col-span-2 relative rounded-2xl overflow-hidden min-h-[360px] sm:min-h-[440px] group cursor-pointer bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+          className={`lg:col-span-2 relative rounded-2xl overflow-hidden min-h-[360px] sm:min-h-[440px] group bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
             }`}
         >
-          <Image
-            src={arun}
-            alt="Arun Samuel Alfred — Founder"
-            fill
-            className="object-cover object-top absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-          />
+          {ownerImageUrl && (
+            <Image
+              unoptimized={process.env.NODE_ENV === 'development'}
+              src={ownerImageUrl}
+              alt="Arun Samuel Alfred — Founder"
+              fill
+              className="object-cover object-top absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent group-hover:via-black/20 transition-all duration-500" />
 
           <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-5 sm:py-4 rounded-br-2xl z-10">
@@ -118,8 +126,6 @@ function FounderSection() {
                 to serve clients faithfully, lead with humility, and conduct
                 business with excellence and integrity.
               </p>
-
-              {/* Tag pills intentionally removed per request */}
             </div>
           </div>
 
@@ -213,15 +219,13 @@ function TeamSection() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent group-hover:via-black/30 transition-all duration-500" />
 
-        <div className="absolute top-0 left-0 bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-7 sm:py-5 rounded-br-2xl z-10">
+        <div className="absolute top-0 left-0 bg-[#f5f4f0] backdrop-blur-sm px-4 py-3 sm:px-7 sm:py-5 rounded-br-2xl z-10">
           <span className="text-[10px] sm:text-xs font-medium tracking-[0.12em] uppercase text-neutral-400">
             Our Team
           </span>
         </div>
 
-        {/* Top-right team count removed per request */}
-
-        <div className="absolute bottom-0 left-0 right-0 sm:right-auto bg-white/90 backdrop-blur-sm px-5 py-5 sm:px-7 sm:py-7 rounded-tr-2xl z-10">
+        <div className="absolute bottom-0 left-0 right-0 sm:right-auto bg-[#f5f4f0] backdrop-blur-sm px-5 py-5 sm:px-7 sm:py-7 rounded-tr-2xl z-10">
           <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-neutral-400 mb-2">
             Canaan Global International
           </p>
@@ -230,7 +234,7 @@ function TeamSection() {
           </h2>
         </div>
 
-        <div className="hidden sm:flex absolute bottom-0 right-0 bg-white/90 backdrop-blur-sm px-7 py-7 rounded-tl-2xl z-10 flex-col gap-2">
+        <div className="hidden sm:flex absolute bottom-0 right-0 bg-[#f5f4f0] backdrop-blur-sm px-7 py-7 rounded-tl-2xl z-10 flex-col gap-2">
           {[
             "People-first culture",
             "Diverse & global",
@@ -249,54 +253,42 @@ function TeamSection() {
   );
 }
 
-const TEAM_MEMBERS = [
-  {
-    name: "John Doe",
-    role: "Chief Operating Officer",
-    email: "coo@canaanglobal.com",
-    image: team2,
-  },
-  {
-    name: "Jane Smith",
-    role: "Head of Customs",
-    email: "customs@canaanglobal.com",
-    image: team3,
-  },
-  {
-    name: "Michael Johnson",
-    role: "Global Logistics Director",
-    email: "logistics@canaanglobal.com",
-    image: team4,
-  },
-  {
-    name: "Emily Davis",
-    role: "Client Relations Manager",
-    email: "clients@canaanglobal.com",
-    image: team5,
-  },
-];
-
-const ACHIEVEMENTS = [
-  { icon: Trophy, title: "Best Logistics Partner", desc: "Awarded by the Global Shipping Association for outstanding reliability and performance.", image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070" },
-  { icon: ShieldCheck, title: "AEO Certified", desc: "Recognized as an Authorized Economic Operator for highly secure international trade.", image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070" },
-  { icon: Star, title: "ISO 9001:2015", desc: "Certified for maintaining top-tier Quality Management Systems globally.", image: "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=2070" },
-  { icon: Target, title: "100% Delivery Success", desc: "Maintained a perfect, incident-free delivery record for critical project cargo.", image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070" },
-];
-
 function AchievementsSection() {
   const sectionRef = useRef(null);
   const isVisible = useFadeIn(sectionRef, 0.05);
+  const [achievements, setAchievements] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/achievements/`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const dynamicAchievements = data.map((ach, index) => {
+            const icons = [Trophy, ShieldCheck, Star, Target];
+            const IconComp = icons[index % icons.length];
+            return {
+              icon: IconComp,
+              title: ach.title || "Achievement",
+              desc: ach.description || "",
+              image: ach.image_url || "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070"
+            };
+          });
+          setAchievements(dynamicAchievements);
+        }
+      })
+      .catch(err => console.error("Failed to fetch achievements", err));
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 pb-12 overflow-hidden"
+      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 overflow-hidden"
     >
       <div className={`mb-6 px-2 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">Our Achievements</h2>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {ACHIEVEMENTS.map((ach, i) => {
+        {achievements.map((ach, i) => {
           const Icon = ach.icon;
           return (
             <div
@@ -306,6 +298,7 @@ function AchievementsSection() {
             >
               <div className="relative h-[180px] w-full overflow-hidden shrink-0">
                 <Image
+                  unoptimized={process.env.NODE_ENV === 'development'}
                   src={ach.image}
                   alt={ach.title}
                   fill
@@ -334,27 +327,38 @@ function AchievementsSection() {
   );
 }
 
-const BRANCHES = [
-  { city: "Chennai", desc: "Headquarters & Primary Operations", image: cgi1 },
-  { city: "Vilinjiyam", desc: "Strategic Port Operations", image: logistics1 },
-  { city: "Tuticorin", desc: "Southern Gateway Hub", image: cgi2 },
-  { city: "Madurai", desc: "Inland Logistics Center", image: logistics2 },
-];
-
 function BranchesSection() {
   const sectionRef = useRef(null);
   const isVisible = useFadeIn(sectionRef, 0.05);
+  const [branches, setBranches] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/branches/`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const dynamicBranches = data.map(branch => ({
+            city: branch.title || "Branch City",
+            desc: branch.address || "Branch Location",
+            image: branch.image_url || "",
+            mapLink: branch.map_link || ""
+          }));
+          setBranches(dynamicBranches);
+        }
+      })
+      .catch(err => console.error("Failed to fetch branches", err));
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 pb-12 overflow-hidden"
+      className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 pb-12 overflow-hidden border-b border-black/5"
     >
       <div className={`mb-6 px-2 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">Our Branches</h2>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {BRANCHES.map((branch, i) => (
+        {branches.map((branch, i) => (
           <div
             key={i}
             style={{ transitionDelay: isVisible ? `${i * 100}ms` : "0ms" }}
@@ -362,6 +366,7 @@ function BranchesSection() {
           >
             <div className="relative h-[220px] w-full overflow-hidden shrink-0">
               <Image
+                unoptimized={process.env.NODE_ENV === 'development'}
                 src={branch.image}
                 alt={branch.city}
                 fill
@@ -381,6 +386,11 @@ function BranchesSection() {
                 <p className="text-[13px] sm:text-sm font-medium leading-relaxed text-neutral-500">
                   {branch.desc}
                 </p>
+                {branch.mapLink && (
+                  <a href={branch.mapLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-[11px] font-semibold tracking-wide text-amber-700 hover:text-amber-900 transition-colors uppercase">
+                    View on Map &rarr;
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -393,45 +403,81 @@ function BranchesSection() {
 function HierarchySection() {
   const sectionRef = useRef(null);
   const isVisible = useFadeIn(sectionRef, 0.05);
+  const [teamMembers, setTeamMembers] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/teams/`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const sortedData = data.sort((a, b) => (a.rank || 0) - (b.rank || 0));
+          setTeamMembers(sortedData.map(member => ({
+            name: member.name || "Team Member",
+            role: member.designation || "Staff",
+            email: member.email || "info@canaanglobal.com",
+            image: member.image_url || ""
+          })));
+        }
+      })
+      .catch(err => console.error("Failed to fetch team members", err));
+  }, []);
 
   return (
     <section
       ref={sectionRef}
       className="relative bg-[#f5f4f0] font-sans flex flex-col p-4 sm:p-5 gap-3 pt-0 pb-12 overflow-hidden"
     >
-      <div className={`mb-6 px-2 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">Our Crew</h2>
+      {/* Header */}
+      <div
+        className={`px-2 mb-2 transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          }`}
+      >
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">
+          Our Crew
+        </h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {TEAM_MEMBERS.map((member, i) => (
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {teamMembers.map((member, i) => (
           <div
             key={i}
-            style={{ transitionDelay: isVisible ? `${i * 120}ms` : "0ms" }}
-            className={`group relative bg-white/80 border border-black/10 rounded-2xl overflow-hidden min-h-[380px] h-full bento-card transition-all duration-700 ease-out transform ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"}`}
+            style={{ transitionDelay: isVisible ? `${i * 80}ms` : "0ms" }}
+            className={`group flex flex-row bg-white/80 border border-black/10 rounded-2xl overflow-hidden bento-card transition-all duration-700 ease-out transform hover:bg-white hover:shadow-[0_8px_30px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 ${isVisible ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-[0.98]"
+              }`}
           >
-            <div className="relative h-[240px] w-full overflow-hidden shrink-0">
-              <Image
-                src={member.image}
-                alt={member.name}
-                fill
-                className="object-cover object-top transition-transform duration-[1.2s] group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+            {/* Square image, left side */}
+            <div className="relative w-[110px] sm:w-[120px] shrink-0 bg-neutral-100 overflow-hidden">
+              {member.image && (
+                <Image
+                  unoptimized={process.env.NODE_ENV === "development"}
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                />
+              )}
+              {/* subtle gradient on right edge to blend into card */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/10" />
             </div>
 
-            <div className="p-5 flex flex-col justify-between flex-1">
+            {/* Right: text content */}
+            <div className="flex flex-col justify-between p-4 flex-1 min-w-0">
               <div>
-                <p className="text-[10px] font-medium tracking-[0.12em] uppercase text-amber-700/80 mb-1">
+                <span className="inline-block text-[9px] font-semibold tracking-[0.14em] uppercase text-amber-700/80 bg-amber-50 border border-amber-100 rounded-full px-2 py-0.5 mb-2">
                   {member.role}
-                </p>
-                <h3 className="text-xl font-bold tracking-[-0.02em] text-neutral-900 group-hover:text-amber-800 transition-colors duration-300">
+                </span>
+                <h3 className="text-[15px] font-bold tracking-[-0.02em] text-neutral-900 leading-snug group-hover:text-amber-800 transition-colors duration-300">
                   {member.name}
                 </h3>
               </div>
-              
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-black/5">
-                <Mail size={14} className="text-neutral-400" />
-                <a href={`mailto:${member.email}`} className="text-[11px] font-medium tracking-wide text-neutral-500 hover:text-neutral-900 transition-colors duration-300">
+
+              <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-black/5">
+                <Mail size={11} className="text-neutral-300 shrink-0" />
+                <a
+                  href={`mailto:${member.email}`}
+                  className="text-[10px] font-medium text-neutral-400 hover:text-neutral-800 transition-colors duration-200 truncate"
+                >
                   {member.email}
                 </a>
               </div>
@@ -439,7 +485,7 @@ function HierarchySection() {
           </div>
         ))}
       </div>
-    </section>
+    </section >
   );
 }
 

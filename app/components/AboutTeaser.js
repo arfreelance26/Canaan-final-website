@@ -3,10 +3,10 @@ import { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
-import team2 from "../../company photos/team2.jpeg";
-import team3 from "../../company photos/team3.jpeg";
-import team4 from "../../company photos/team4.jpeg";
-import team5 from "../../company photos/team5.jpeg";
+import team2 from "@/app/assets/images/company/team2.jpeg";
+import team3 from "@/app/assets/images/company/team3.jpeg";
+import team4 from "@/app/assets/images/company/team4.jpeg";
+import team5 from "@/app/assets/images/company/team5.jpeg";
 
 const STATS = [
   { num: "100+", label: "Team members" },

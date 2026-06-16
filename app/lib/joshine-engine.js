@@ -999,7 +999,7 @@ const RESPONSES = {
       "Tap below to explore our full Services page, or ask me about any of these!",
     chips: ["Transportation", "Customs Clearance", "Warehousing", "Get a Quote"],
     listShown: SERVICE_LIST,
-    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+    navLink: { href: "/services", label: "View Our Services Page" },
   }),
 
   services_list_detail: () => ({
@@ -1007,7 +1007,7 @@ const RESPONSES = {
       "Our services are designed to work together as a seamless, end-to-end logistics chain. From the moment the cargo leaves the quarry on our trucks, through customs clearance and port handling, to its final international destination—we manage it all.\n\n" +
       "Want to see real examples of what we carry?",
     chips: ["What We Carry", "Contact Us"],
-    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+    navLink: { href: "/services", label: "View Our Services Page" },
   }),
 
   transportation: () => ({
@@ -1018,7 +1018,7 @@ const RESPONSES = {
       `• ${KB.services.transportation.features.join("\n• ")}\n\n` +
       `Would you like to get a quote for a specific route, or learn more about our fleet capabilities?`,
     chips: ["Get a Quote", "Our Fleet"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   transportation_detail: () => ({
@@ -1027,7 +1027,7 @@ const RESPONSES = {
       `${KB.services.transportation.detail}\n\n` +
       `Want to discuss a specific route or cargo? Drop us a message!`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   cargo: () => ({
@@ -1038,7 +1038,7 @@ const RESPONSES = {
       `• ${KB.services.cargo.features.join("\n• ")}\n\n` +
       `Are you currently facing any bottlenecks with your oversized or complex shipments?`,
     chips: ["What We Carry", "Contact Us"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   cargo_detail: () => ({
@@ -1047,7 +1047,7 @@ const RESPONSES = {
       `${KB.services.cargo.detail}\n\n` +
       `Got an oversized or complex shipment? Let's talk — we handle it!`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   lashing_detail: () => ({
@@ -1056,7 +1056,7 @@ const RESPONSES = {
       `${KB.services.lashing.detail}\n\n` +
       `Do you need custom crating for a delicate shipment? Let me know!`,
     chips: ["Contact Us", "Get a Quote"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   warehousing: () => ({
@@ -1064,7 +1064,7 @@ const RESPONSES = {
       "📦 *Warehousing & Storage*\n\n" +
       "We provide secure and spacious storage facilities for your short and long-term warehousing needs.",
     chips: ["Get a Quote", "Contact Us"],
-    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+    navLink: { href: "/services", label: "View Our Services Page" },
   }),
 
   nvocc: () => ({
@@ -1072,7 +1072,7 @@ const RESPONSES = {
       "🚢 *NVOCC & Steamer Agent*\n\n" +
       "We offer comprehensive Non-Vessel Operating Common Carrier services for flexible ocean freight, as well as professional ship agency services ensuring smooth port calls for all vessels.",
     chips: ["Get a Quote", "Contact Us"],
-    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+    navLink: { href: "/services", label: "View Our Services Page" },
   }),
 
   rfid: () => ({
@@ -1080,7 +1080,7 @@ const RESPONSES = {
       "🔒 *RFID E-Seals*\n\n" +
       "As an authorized dealer for Bolt Seal and Warner, we provide highly secure, tamper-evident electronic seals to ensure your cargo's integrity throughout transit.",
     chips: ["Get a Quote", "Contact Us"],
-    navLink: { href: "/canaan-shipping-services", label: "View Our Services Page" },
+    navLink: { href: "/services", label: "View Our Services Page" },
   }),
 
   documentation: () => ({
@@ -1091,7 +1091,7 @@ const RESPONSES = {
       `• ${KB.services.documentation.features.join("\n• ")}\n\n` +
       `Customs can be a headache. Would you like me to explain how our import or export processes work?`,
     chips: ["Import Process", "Export Process"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   documentation_detail: () => ({
@@ -1100,7 +1100,7 @@ const RESPONSES = {
       `${KB.services.documentation.detail}\n\n` +
       `Need compliance support for a specific destination? We've got you covered.`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   lashing: () => ({
@@ -1111,7 +1111,7 @@ const RESPONSES = {
       `• ${KB.services.lashing.features.join("\n• ")}\n\n` +
       `Many clients who need lashing also require customs clearance. Would you like me to share details on that?`,
     chips: ["Documentation", "Get a Quote"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   lashing_detail: () => ({
@@ -1120,7 +1120,7 @@ const RESPONSES = {
       `${KB.services.lashing.detail}\n\n` +
       `ISPM-certified fumigation means smooth phytosanitary clearance at any port worldwide.`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
-    navLink: { href: "/canaan-shipping-services", label: "See Services Page" },
+    navLink: { href: "/services", label: "See Services Page" },
   }),
 
   contact: () => ({

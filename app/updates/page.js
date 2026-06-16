@@ -1,47 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ArrowRight, FileText, Download, Calendar, TrendingUp, TrendingDown } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
-import ship1 from "../../company photos/ship1.png";
+import ship1 from "@/app/assets/images/company/ship1.png";
+import { API_BASE_URL } from "@/app/lib/api";
 
-const EXCHANGE_RATES = [
-  { currency: "USD", symbol: "$", rate: "83.45", trend: "+0.12%", isUp: true },
-  { currency: "EUR", symbol: "€", rate: "90.12", trend: "-0.05%", isUp: false },
-  { currency: "GBP", symbol: "£", rate: "105.67", trend: "+0.21%", isUp: true },
-  { currency: "AED", symbol: "د.إ", rate: "22.72", trend: "0.00%", isUp: true },
-];
 
-const CIRCULARS = [
-  {
-    id: 1,
-    date: "June 05, 2026",
-    number: "Circular No. 12/2026-Customs",
-    title: "Amendments to the Customs Tariff Act for specific electronic goods.",
-    description: "Notification regarding changes in basic customs duty for imported electronic components falling under chapter 85.",
-  },
-  {
-    id: 2,
-    date: "May 28, 2026",
-    number: "Circular No. 11/2026-Customs",
-    title: "Streamlining of AEO (Authorized Economic Operator) certification process.",
-    description: "Guidelines for expedited clearance and reduced compliance burden for Tier 2 and Tier 3 AEO certified entities.",
-  },
-  {
-    id: 3,
-    date: "May 15, 2026",
-    number: "Circular No. 10/2026-Customs",
-    title: "Mandatory e-Sealing of export cargo by authorized exporters.",
-    description: "Instructions and protocols for the implementation of RFID e-seals for factory-stuffed containers to facilitate faster port entry.",
-  },
-  {
-    id: 4,
-    date: "April 30, 2026",
-    number: "Circular No. 09/2026-Customs",
-    title: "Clarification on valuation of imported capital goods under EPCG scheme.",
-    description: "Detailed methodology for calculating the assessable value and duty saved amount for imports under the Export Promotion Capital Goods scheme.",
-  },
-];
 
 export default function UpdatesPage() {
   const ratesRef = useRef(null);
@@ -50,8 +15,49 @@ export default function UpdatesPage() {
   const circularsRef = useRef(null);
   const areCircularsVisible = useFadeIn(circularsRef, 0.05);
 
+  const [exchangeRates, setExchangeRates] = useState([
+    { currency: "USD", symbol: "$", rate: "...", trend: "0.00%", isUp: true },
+    { currency: "EUR", symbol: "€", rate: "...", trend: "0.00%", isUp: true },
+    { currency: "GBP", symbol: "£", rate: "...", trend: "0.00%", isUp: true },
+    { currency: "AED", symbol: "د.إ", rate: "...", trend: "0.00%", isUp: true },
+  ]);
+  const [circulars, setCirculars] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/exchange-rates/`)
+      .then(res => res.json())
+      .then(data => {
+        if (data) {
+          setExchangeRates([
+            { currency: "USD", symbol: "$", rate: data.usd || "0.00", trend: "0.00%", isUp: true },
+            { currency: "EUR", symbol: "€", rate: data.eur || "0.00", trend: "0.00%", isUp: true },
+            { currency: "GBP", symbol: "£", rate: data.gbp || "0.00", trend: "0.00%", isUp: true },
+            { currency: "AED", symbol: "د.إ", rate: data.aed || "0.00", trend: "0.00%", isUp: true },
+          ]);
+        }
+      })
+      .catch(err => console.error("Failed to fetch exchange rates", err));
+
+    fetch(`${API_BASE_URL}/api/circulars/`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const dynamicCirculars = data.map(circ => ({
+            id: circ.id,
+            date: circ.date || "Recent",
+            number: circ.circular_name || `Circular No. ${circ.id}`,
+            title: circ.title || "Customs Circular",
+            description: circ.description || "",
+            pdf_url: circ.pdf_url
+          }));
+          setCirculars(dynamicCirculars);
+        }
+      })
+      .catch(err => console.error("Failed to fetch circulars", err));
+  }, []);
+
   return (
-    <main style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#f5f4f0", overflowX: "hidden", overflowY: "auto", fontFamily: "inherit" }}>
+    <main className="font-sans" style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#f5f4f0", overflowX: "hidden", overflowY: "auto" }}>
       {/* ── Image Header ── */}
       <header style={{ position: "relative", height: "40%", overflow: "hidden", flexShrink: 0 }}>
         <img
@@ -62,17 +68,17 @@ export default function UpdatesPage() {
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(13,12,10,0.25) 0%, rgba(13,12,10,0.55) 55%, rgba(13,12,10,0.88) 100%)" }} />
 
         <div style={{ position: "absolute", bottom: 28, left: 40 }}>
-          <p style={{ fontFamily: "'Georgia',serif", fontSize: 9, letterSpacing: "0.22em", textTransform: "uppercase", color: "#c8b98a", margin: "0 0 8px", opacity: 0.9 }}>
+          <p style={{ fontSize: 9, letterSpacing: "0.22em", textTransform: "uppercase", color: "#c8b98a", margin: "0 0 8px", opacity: 0.9 }}>
             Canaan Global International
           </p>
-          <h1 style={{ fontFamily: "'Georgia',serif", fontSize: "clamp(1.8rem, 4.5vw, 3rem)", fontWeight: 700, color: "#fff", letterSpacing: "-0.035em", margin: 0, lineHeight: 1 }}>
+          <h1 style={{ fontSize: "clamp(1.8rem, 4.5vw, 3rem)", fontWeight: 700, color: "#fff", letterSpacing: "-0.035em", margin: 0, lineHeight: 1 }}>
             Updates & Circulars
           </h1>
         </div>
       </header>
 
       {/* Content wrapper */}
-      <div style={{ flex: 1, padding: "40px 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div className="flex-1 px-4 py-8 sm:px-10 sm:py-10 flex flex-col items-center">
         <div className="w-full max-w-5xl">
 
         {/* Exchange Rates Section */}
@@ -91,7 +97,7 @@ export default function UpdatesPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-            {EXCHANGE_RATES.map((rate, i) => (
+            {exchangeRates.map((rate, i) => (
               <div 
                 key={rate.currency}
                 className="bg-white border border-black/[0.08] rounded-2xl p-4 sm:p-5 flex flex-col justify-between hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 group"
@@ -133,7 +139,7 @@ export default function UpdatesPage() {
           </div>
 
           <div className="flex flex-col gap-3">
-            {CIRCULARS.map((circular, i) => (
+            {circulars.map((circular, i) => (
               <div 
                 key={circular.id}
                 className="bg-white border border-black/[0.08] rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 hover:border-black/[0.15] hover:shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300 group cursor-pointer"
@@ -164,9 +170,9 @@ export default function UpdatesPage() {
                 </div>
                 
                 <div className="shrink-0 flex items-center justify-end sm:justify-center">
-                  <button className="flex items-center justify-center w-10 h-10 rounded-full border border-black/10 bg-[#fbfaf9] text-neutral-600 group-hover:bg-neutral-900 group-hover:text-white group-hover:border-neutral-900 transition-all duration-300 active:scale-95">
+                  <a href={circular.pdf_url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-10 h-10 rounded-full border border-black/10 bg-[#fbfaf9] text-neutral-600 group-hover:bg-neutral-900 group-hover:text-white group-hover:border-neutral-900 transition-all duration-300 active:scale-95">
                     <Download size={16} className="group-hover:-translate-y-0.5 transition-transform duration-300" />
-                  </button>
+                  </a>
                 </div>
               </div>
             ))}

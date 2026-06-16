@@ -3,17 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import timeline1 from "../../company photos/timeline1.png";
-import timeline2 from "../../company photos/timeline2.png";
-import timeline3a from "../../company photos/timeline 3a.png";
-import timeline3b from "../../company photos/timeline 3b.png";
-import timeline3c from "../../company photos/timeline 3c.png";
-import timeline4 from "../../company photos/timeline4.png";
-import timeline5a from "../../company photos/timeline5a.png";
-import timeline5b from "../../company photos/timeline5b.png";
-import timeline5c from "../../company photos/timeline5c.png";
-import timeline5d from "../../company photos/timeline5d.png";
-import trucks1 from "../../company photos/trucks1.png";
+import timeline1 from "@/app/assets/images/company/timeline1.png";
+import timeline2 from "@/app/assets/images/company/timeline2.png";
+import timeline3a from "@/app/assets/images/company/timeline 3a.png";
+import timeline3b from "@/app/assets/images/company/timeline 3b.png";
+import timeline3c from "@/app/assets/images/company/timeline 3c.png";
+import timeline4 from "@/app/assets/images/company/timeline4.png";
+import timeline5a from "@/app/assets/images/company/timeline5a.png";
+import timeline5b from "@/app/assets/images/company/timeline5b.png";
+import timeline5c from "@/app/assets/images/company/timeline5c.png";
+import timeline5d from "@/app/assets/images/company/timeline5d.png";
+import trucks1 from "@/app/assets/images/company/trucks1.png";
 import {
   Anchor, Globe, Truck, MapPin, Award, ArrowRight,
 } from "lucide-react";

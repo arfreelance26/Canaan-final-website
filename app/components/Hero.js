@@ -1,5 +1,6 @@
 "use client";
-import { useRef, useCallback, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
+import { API_BASE_URL } from "@/app/lib/api";
 import { ArrowDown } from "lucide-react";
 
 export default function DavidHazHero() {
@@ -8,6 +9,24 @@ export default function DavidHazHero() {
   const sectionRef = useRef(null);
   const rafRef = useRef(null);
   const scrollRaf = useRef(null);
+
+  const [rates, setRates] = useState({ usd: "-", eur: "-", gbp: "-", aed: "-" });
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/exchange-rates/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.detail) {
+          setRates({
+            usd: data.usd || "-",
+            eur: data.eur || "-",
+            gbp: data.gbp || "-",
+            aed: data.aed || "-",
+          });
+        }
+      })
+      .catch((err) => console.error("Failed to fetch exchange rates", err));
+  }, []);
 
   // ── #2 Cursor micro-parallax ──────────────────────────────────
   const handleMouseMove = useCallback((e) => {
@@ -114,16 +133,16 @@ export default function DavidHazHero() {
         onMouseLeave={handleMouseLeave}
       >
 
-        {/* Background image */}
-        <img
+        {/* Background video */}
+        <video
           ref={imgRef}
-          src="https://plus.unsplash.com/premium_photo-1661884720911-91cd3f823298?fm=jpg&q=60&w=1600&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FyZ28lMjBib2F0fGVufDB8fDB8fHww"
-          alt="Canaan Global International — cargo vessel at sea"
-          fetchPriority="high"
-          loading="eager"
-          decoding="async"
+          src="/promo.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
           className="w-full h-full object-cover absolute inset-0"
-          style={{ objectPosition: "center 60%", transform: "scale(1.06)", willChange: "transform" }}
+          style={{ objectPosition: "center", transform: "scale(1.06)", willChange: "transform" }}
         />
 
         {/* Gradient scrim */}
@@ -244,16 +263,16 @@ export default function DavidHazHero() {
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="flex gap-12 sm:gap-20 px-6 sm:px-10 items-center">
                   <span className="text-white/90 font-medium tracking-widest flex items-center gap-2 drop-shadow-sm text-[13px] sm:text-[14px]">
-                    <span className="text-lg opacity-90 drop-shadow-none">🇺🇸</span> USD - <span className="text-amber-400 font-semibold drop-shadow-none">₹83.45</span>
+                     USD - <span className="text-amber-400 font-semibold drop-shadow-none">₹{rates.usd}</span>
                   </span>
                   <span className="text-white/90 font-medium tracking-widest flex items-center gap-2 drop-shadow-sm text-[13px] sm:text-[14px]">
-                    <span className="text-lg opacity-90 drop-shadow-none">🇪🇺</span> EUR - <span className="text-amber-400 font-semibold drop-shadow-none">₹90.12</span>
+                     EUR - <span className="text-amber-400 font-semibold drop-shadow-none">₹{rates.eur}</span>
                   </span>
                   <span className="text-white/90 font-medium tracking-widest flex items-center gap-2 drop-shadow-sm text-[13px] sm:text-[14px]">
-                    <span className="text-lg opacity-90 drop-shadow-none">🇬🇧</span> GBP - <span className="text-amber-400 font-semibold drop-shadow-none">₹105.67</span>
+                     GBP - <span className="text-amber-400 font-semibold drop-shadow-none">₹{rates.gbp}</span>
                   </span>
                   <span className="text-white/90 font-medium tracking-widest flex items-center gap-2 drop-shadow-sm text-[13px] sm:text-[14px]">
-                    <span className="text-lg opacity-90 drop-shadow-none">🇦🇪</span> AED - <span className="text-amber-400 font-semibold drop-shadow-none">₹22.72</span>
+                     AED - <span className="text-amber-400 font-semibold drop-shadow-none">₹{rates.aed}</span>
                   </span>
                 </div>
               ))}

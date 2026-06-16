@@ -2,203 +2,10 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, ArrowDown, ZoomIn } from "lucide-react";
-
-// ─── Cargo Categories ─────────────────────────────────────────────────────────
-
-const CATEGORIES = [
-  {
-    id: "all",
-    label: "All Cargo",
-    desc: "Every shipment we've moved — 14 cargo categories, one gallery.",
-    photos: [
-      "/cargo/c1/1.jpeg",  "/cargo/c1/2.jpeg",
-      "/cargo/c2/1.jpeg",  "/cargo/c2/2.jpeg",
-      "/cargo/c3/1.jpeg",  "/cargo/c3/2.jpeg",
-      "/cargo/c4/p1.jpeg",  "/cargo/c4/p2.jpeg",
-      "/cargo/c5/p1.jpeg",  "/cargo/c5/p2.jpeg",
-      "/cargo/c6/1.jpeg",  "/cargo/c6/2.jpeg",
-      "/cargo/c7/p1.jpeg",  "/cargo/c7/p2.jpeg",
-      "/cargo/c8/1.jpeg",  "/cargo/c8/2.jpeg",
-      "/cargo/c9/1.jpeg",  "/cargo/c9/2.jpeg",
-      "/cargo/c10/1.jpeg", "/cargo/c10/2.jpeg",
-      "/cargo/c11/1.jpeg", "/cargo/c11/2.jpeg",
-      "/cargo/c12/1.jpeg", "/cargo/c12/2.jpeg",
-      "/cargo/c13/1.jpeg", "/cargo/c13/2.jpeg",
-      "/cargo/special/s1.jpeg", "/cargo/special/s2.jpeg",
-      "/cargo/special/s3.jpeg", "/cargo/special/s4.jpeg",
-    ],
-  },
-  {
-    id: "c1",
-    label: "Coir & Natural Fibre",
-    desc: "Coconut-fibre rolls and natural-fibre products containerised for export.",
-    photos: [
-      "/cargo/c1/1.jpeg",
-      "/cargo/c1/2.jpeg",
-      "/cargo/c1/3.jpeg",
-      "/cargo/c1/4.jpeg",
-      "/cargo/c1/5.jpeg",
-    ],
-  },
-  {
-    id: "c2",
-    label: "Agricultural Machinery",
-    desc: "Tractors, farm equipment, and implements loaded and shipped.",
-    photos: [
-      "/cargo/c2/1.jpeg",
-      "/cargo/c2/2.jpeg",
-      "/cargo/c2/3.jpeg",
-      "/cargo/c2/4.jpeg",
-      "/cargo/c2/5.jpeg",
-    ],
-  },
-  {
-    id: "c3",
-    label: "Palletised Cargo",
-    desc: "Shrink-wrapped pallets — general merchandise handled with care.",
-    photos: [
-      "/cargo/c3/1.jpeg",
-      "/cargo/c3/2.jpeg",
-      "/cargo/c3/3.jpeg",
-      "/cargo/c3/4.jpeg",
-    ],
-  },
-  {
-    id: "c4",
-    label: "Industrial Rolls & Coils",
-    desc: "HDPE rolls, geotextile coils, and industrial reels in high-cube containers.",
-    photos: [
-      "/cargo/c4/p1.jpeg",
-      "/cargo/c4/p2.jpeg",
-      "/cargo/c4/p3.jpeg",
-      "/cargo/c4/p4.jpeg",
-      "/cargo/c4/p5.jpeg",
-    ],
-  },
-  {
-    id: "c5",
-    label: "Stones & Marbles",
-    desc: "Granite blocks, marble slabs, and natural stone cargo handled at port and loaded for export.",
-    photos: [
-      "/cargo/c5/p1.jpeg",
-      "/cargo/c5/p2.jpeg",
-      "/cargo/c5/p3.jpeg",
-      "/cargo/c5/p4.jpeg",
-      "/cargo/c5/p5.jpeg",
-      "/cargo/c5/p6.jpeg",
-      "/cargo/c5/p7.jpeg",
-      "/cargo/c5/p8.jpeg",
-      "/cargo/c5/p9.jpeg",
-      "/cargo/c5/p10.jpeg",
-      "/cargo/c5/p11.jpeg",
-    ],
-  },
-  {
-    id: "c6",
-    label: "Chemical Drums & Barrels",
-    desc: "Regulated liquid cargo in steel drums, handled safely at port.",
-    photos: [
-      "/cargo/c6/1.jpeg",
-      "/cargo/c6/2.jpeg",
-      "/cargo/c6/3.jpeg",
-    ],
-  },
-  {
-    id: "c7",
-    label: "Bulk Grain & Seeds",
-    desc: "Bulk grain, rice, and seed cargo loaded in containers.",
-    photos: [
-      "/cargo/c7/p1.jpeg",
-      "/cargo/c7/p2.jpeg",
-      "/cargo/c7/p3.jpeg",
-      "/cargo/c7/p4.jpeg",
-      "/cargo/c7/p5.jpeg",
-      "/cargo/c7/p6.jpeg",
-    ],
-  },
-  {
-    id: "c8",
-    label: "Bagged Cargo",
-    desc: "PP-sacked goods — minerals, chemicals, and processed materials.",
-    photos: [
-      "/cargo/c8/1.jpeg",
-      "/cargo/c8/2.jpeg",
-      "/cargo/c8/3.jpeg",
-    ],
-  },
-  {
-    id: "c9",
-    label: "Bale Cargo",
-    desc: "Cargo compressed and wrapped in bales for easy handling and transportation.",
-    photos: [
-      "/cargo/c9/1.jpeg",
-      "/cargo/c9/2.jpeg",
-      "/cargo/c9/3.jpeg",
-      "/cargo/c9/4.jpeg",
-      "/cargo/c9/5.jpeg",
-      "/cargo/c9/6.jpeg",
-      "/cargo/c9/7.jpeg",
-      "/cargo/c9/8.jpeg",
-    ],
-  },
-  {
-    id: "c10",
-    label: "Cashew & Agri Commodities",
-    desc: "Jute-sacked cashew nuts and bulk agricultural produce in containers.",
-    photos: [
-      "/cargo/c10/1.jpeg",
-      "/cargo/c10/2.jpeg",
-      "/cargo/c10/3.jpeg",
-      "/cargo/c10/4.jpeg",
-    ],
-  },
-  {
-    id: "c11",
-    label: "Pipes",
-    desc: "Heavy pipes used for construction and infrastructure projects.",
-    photos: [
-      "/cargo/c11/1.jpeg",
-      "/cargo/c11/2.jpeg",
-      "/cargo/c11/3.jpeg",
-    ],
-  },
-  {
-    id: "c12",
-    label: "Heavy Machinery",
-    desc: "JCBs, excavators, bulldozers, and construction equipment transported across India.",
-    photos: [
-      "/cargo/c12/1.jpeg",
-      "/cargo/c12/2.jpeg",
-      "/cargo/c12/3.jpeg",
-      "/cargo/c12/4.jpeg",
-    ],
-  },
-  {
-    id: "c13",
-    label: "Bulk Liquid & Gas Cargo",
-    desc: "Tankers, ISO tanks, and pressurised vessels carrying liquid and gas commodities.",
-    photos: [
-      "/cargo/c13/1.jpeg",
-      "/cargo/c13/2.jpeg",
-      "/cargo/c13/3.jpeg",
-      "/cargo/c13/4.jpeg",
-      "/cargo/c13/5.jpeg",
-    ],
-  },
-  {
-    id: "special",
-    label: "Special Cargo",
-    desc: "Out-of-gauge, high-value, and unique consignments that needed extra attention.",
-    photos: [
-      "/cargo/special/s1.jpeg",
-      "/cargo/special/s2.jpeg",
-      "/cargo/special/s3.jpeg",
-      "/cargo/special/s4.jpeg",
-    ],
-  },
-];
+import { API_BASE_URL } from "@/app/lib/api";
 
 // ─── Photo Card ───────────────────────────────────────────────────────────────
+
 
 function PhotoCard({ src, index, onClick }) {
   const ref = useRef(null);
@@ -228,6 +35,7 @@ function PhotoCard({ src, index, onClick }) {
       }}
     >
       <Image
+        unoptimized={process.env.NODE_ENV === 'development'}
         src={src}
         alt={`Cargo photo ${index + 1}`}
         fill
@@ -287,7 +95,7 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }) {
       {/* Prev */}
       <button
         onClick={(e) => { e.stopPropagation(); onPrev(); }}
-        className="absolute left-4 sm:left-8 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        className="absolute left-2 sm:left-8 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors z-10 backdrop-blur-sm"
       >
         <ChevronLeft size={20} className="text-white" />
       </button>
@@ -298,6 +106,7 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }) {
         onClick={(e) => e.stopPropagation()}
       >
         <Image
+          unoptimized={process.env.NODE_ENV === 'development'}
           key={photos[index]}
           src={photos[index]}
           alt={`Cargo ${index + 1}`}
@@ -312,7 +121,7 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }) {
       {/* Next */}
       <button
         onClick={(e) => { e.stopPropagation(); onNext(); }}
-        className="absolute right-4 sm:right-8 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+        className="absolute right-2 sm:right-8 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center transition-colors z-10 backdrop-blur-sm"
       >
         <ChevronRight size={20} className="text-white" />
       </button>
@@ -324,6 +133,7 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }) {
 
 export default function CargoPage() {
   const [pageVisible, setPageVisible] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [activeCat, setActiveCat] = useState("all");
   const [gridKey, setGridKey] = useState(0);
   const [galleryVisible, setGalleryVisible] = useState(true);
@@ -335,7 +145,32 @@ export default function CargoPage() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const currentCat = CATEGORIES.find((c) => c.id === activeCat) || CATEGORIES[0];
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/cargos/`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const dynamicCats = data.map(cat => ({
+            id: cat.id.toString(),
+            label: cat.name,
+            desc: "",
+            photos: cat.images ? cat.images.map(img => img.image_url) : []
+          })).filter(cat => cat.photos.length > 0);
+
+          const allPhotos = dynamicCats.flatMap(c => c.photos);
+          const allCat = {
+            id: "all",
+            label: "All Cargo",
+            desc: `Every shipment we've moved — ${dynamicCats.length} cargo categories, one gallery.`,
+            photos: allPhotos
+          };
+          setCategories([allCat, ...dynamicCats]);
+        }
+      })
+      .catch(err => console.error("Failed to fetch cargos", err));
+  }, []);
+
+  const currentCat = categories.find((c) => c.id === activeCat) || categories[0] || { id: 'all', label: 'Loading...', desc: '', photos: [] };
 
   const switchCat = useCallback((id) => {
     if (id === activeCat) return;
@@ -419,7 +254,7 @@ export default function CargoPage() {
             <div className="absolute top-0 right-0 bg-black/30 backdrop-blur-md px-4 py-3 sm:px-6 sm:py-4 rounded-bl-2xl border-l border-b border-white/10 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
               <span className="text-[11px] sm:text-sm font-medium text-white/70 tracking-tight">
-                {CATEGORIES.slice(1).length} cargo types · 50+ photos
+                {categories.length > 1 ? categories.length - 1 : 0} cargo types · {categories.length > 0 ? categories[0].photos.length : 0} photos
               </span>
             </div>
 
@@ -463,7 +298,7 @@ export default function CargoPage() {
               className="flex gap-2 overflow-x-auto pb-1 px-2"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
-              {CATEGORIES.map((cat) => {
+              {categories.map((cat) => {
                 const isActive = activeCat === cat.id;
                 return (
                   <button

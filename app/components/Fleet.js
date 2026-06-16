@@ -1,72 +1,35 @@
 "use client"
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { API_BASE_URL } from "@/app/lib/api";
 import { ArrowRight, Weight } from "lucide-react";
 
-const FLEET = [
-  {
-    name: "20 Feet Trailer",
-    type: "Standard Trailer",
-    capacity: "15 Tons",
-    image: "/company/20feetb.png",
-    tag: "Trailer",
-    objectFit: "cover",
-    objectPosition: "center 65%",
-  },
-  {
-    name: "40 Feet Trailer",
-    type: "Standard Trailer",
-    capacity: "26 Tons",
-    image: "/company/40feetb.png",
-    tag: "Trailer",
-    objectFit: "cover",
-    objectPosition: "center 55%",
-  },
-  {
-    name: "45 Feet Trailer",
-    type: "Extended Trailer",
-    capacity: "30 Tons",
-    image: "/company/45feet.jpeg",
-    tag: "Trailer",
-    objectFit: "cover",
-  },
-  {
-    name: "6x4 Truck",
-    type: "10 Wheeler",
-    capacity: "16 Tons",
-    image: "/company/10wheeler.png",
-    tag: "Truck",
-    objectFit: "cover",
-  },
-  {
-    name: "8x4 Truck",
-    type: "12 Wheeler",
-    capacity: "20 Tons",
-    image: "/company/12wheeler.png",
-    tag: "Truck",
-    objectFit: "cover",
-  },
-  {
-    name: "10x4 Truck",
-    type: "14 Wheeler",
-    capacity: "25 Tons",
-    image: "/company/14wheeler.png",
-    tag: "Truck",
-    objectFit: "cover",
-  },
-  {
-    name: "Tractor Head",
-    type: "4x2 & 6x4 Variants",
-    capacity: "Prime Mover",
-    image: "/company/tractorhead.png",
-    tag: "Tractor",
-    objectFit: "cover",
-  },
-];
+
 
 export default function FleetSection() {
   const sectionRef = useRef(null);
   const stickyRef = useRef(null);
   const trackRef = useRef(null);
+  const [fleetItems, setFleetItems] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/fleets/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const dynamicFleet = data.map((item) => ({
+            name: item.title || "Fleet Vehicle",
+            type: item.description || "Standard",
+            capacity: "N/A",
+            image: item.image_url,
+            tag: "Fleet",
+            objectFit: "cover",
+            objectPosition: "center",
+          }));
+          setFleetItems(dynamicFleet);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch fleet", err));
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -102,7 +65,7 @@ export default function FleetSection() {
 
   // Section height = viewport height + extra scroll distance (one card width * cards)
   // We give 150vh extra per card so each card gets enough scroll to reveal cleanly
-  const extraScroll = `${FLEET.length * 50}vh`;
+  const extraScroll = `${fleetItems.length * 50}vh`;
 
   return (
     <section
@@ -139,7 +102,7 @@ export default function FleetSection() {
             className="flex gap-3 will-change-transform"
             style={{ transition: "none" }}
           >
-            {FLEET.map((vehicle) => (
+            {fleetItems.map((vehicle) => (
               <div
                 key={vehicle.name}
                 className="relative rounded-2xl overflow-hidden shrink-0 group cursor-pointer"

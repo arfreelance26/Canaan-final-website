@@ -45,7 +45,7 @@ export default function ChatbotWidget() {
 
   // Context-aware hooks based on pathname
   const getHooksForPage = (path) => {
-    if (path.includes("/canaan-shipping-services") || path.includes("/cargo")) {
+    if (path.includes("/services") || path.includes("/cargo")) {
       return [
         { prefix: "Need Help?", suffix: "Ask me about our Services", actionText: "Our Services" },
         { prefix: "Heavy Cargo?", suffix: "See our transport fleet", actionText: "Our Fleet" },
