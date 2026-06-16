@@ -4,6 +4,17 @@ import { useRef, useState, useEffect } from "react";
 import { API_BASE_URL } from "@/app/lib/api";
 import Image from "next/image";
 import { Globe, Award, TrendingUp, Quote, Mail, MapPin, Trophy, Star, ShieldCheck, Target } from "lucide-react";
+
+// Only allow http/https URLs from API data to prevent javascript: URI injection
+function safeUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:" ? url : null;
+  } catch {
+    return null;
+  }
+}
 import useFadeIn from "../hooks/useFadeIn";
 import team1 from "@/app/assets/images/company/team1.jpeg";
 
@@ -270,7 +281,7 @@ function AchievementsSection() {
               icon: IconComp,
               title: ach.title || "Achievement",
               desc: ach.description || "",
-              image: ach.image_url || "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070"
+              image: ach.image_url || ""
             };
           });
           setAchievements(dynamicAchievements);
@@ -278,6 +289,8 @@ function AchievementsSection() {
       })
       .catch(() => {});
   }, []);
+
+  if (achievements.length === 0) return null;
 
   return (
     <section
@@ -386,8 +399,8 @@ function BranchesSection() {
                 <p className="text-[13px] sm:text-sm font-medium leading-relaxed text-neutral-500">
                   {branch.desc}
                 </p>
-                {branch.mapLink && (
-                  <a href={branch.mapLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-[11px] font-semibold tracking-wide text-amber-700 hover:text-amber-900 transition-colors uppercase">
+                {safeUrl(branch.mapLink) && (
+                  <a href={safeUrl(branch.mapLink)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-[11px] font-semibold tracking-wide text-amber-700 hover:text-amber-900 transition-colors uppercase">
                     View on Map &rarr;
                   </a>
                 )}
@@ -421,6 +434,8 @@ function HierarchySection() {
       })
       .catch(() => {});
   }, []);
+
+  if (teamMembers.length === 0) return null;
 
   return (
     <section
@@ -474,12 +489,18 @@ function HierarchySection() {
 
               <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-black/5">
                 <Mail size={11} className="text-neutral-300 shrink-0" />
-                <a
-                  href={`mailto:${member.email}`}
-                  className="text-[10px] font-medium text-neutral-400 hover:text-neutral-800 transition-colors duration-200 truncate"
-                >
-                  {member.email}
-                </a>
+                {/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(member.email) ? (
+                  <a
+                    href={`mailto:${member.email}`}
+                    className="text-[10px] font-medium text-neutral-400 hover:text-neutral-800 transition-colors duration-200 truncate"
+                  >
+                    {member.email}
+                  </a>
+                ) : (
+                  <span className="text-[10px] font-medium text-neutral-400 truncate">
+                    {member.email}
+                  </span>
+                )}
               </div>
             </div>
           </div>

@@ -5,19 +5,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isDev = process.env.NODE_ENV === "development";
 
 // Content-Security-Policy directives
-// - script-src keeps 'unsafe-inline' because Next.js App Router inlines hydration scripts
-// - img-src allows 'https:' broadly because API-served images may come from unknown CDNs
-// - connect-src is locked to the known API domain and CDN used by react-globe.gl
+// NOTE: script-src retains 'unsafe-inline' because Next.js 15+ App Router inlines
+// hydration scripts at build time without nonce injection support in the open-source
+// runtime. Nonce-based CSP requires a custom server or Next.js Enterprise features.
+// All other directives are locked as tightly as the dependencies allow.
 const CSP = [
   "default-src 'self'",
-  isDev ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
+  isDev
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+    : "script-src 'self' 'unsafe-inline'",
+  // style-src: unsafe-inline needed for Tailwind's runtime style injection & AOS
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https:",
+  // img-src: locked to self + data URIs + known CDN hostnames (not wildcard https:)
+  "img-src 'self' data: blob: https://api.canaanglobalinternational.com https://images.unsplash.com https://*.amazonaws.com https://*.cloudfront.net",
   "font-src 'self' data: https://fonts.gstatic.com",
   [
     "connect-src 'self'",
     "https://api.canaanglobalinternational.com",
-    "https://unpkg.com",
     "https://fonts.googleapis.com",
     "https://fonts.gstatic.com",
     isDev ? "http://localhost:8000 http://127.0.0.1:8000 ws://localhost:3000" : "",
@@ -28,7 +32,8 @@ const CSP = [
   "frame-ancestors 'none'",
   "object-src 'none'",
   "base-uri 'self'",
-  "form-action 'self'",
+  // form-action: only allow submissions to own origin and the API
+  "form-action 'self' https://api.canaanglobalinternational.com",
   isDev ? "" : "upgrade-insecure-requests",
 ].filter(Boolean).join("; ");
 

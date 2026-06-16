@@ -5,7 +5,6 @@ export default function robots() {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: "/private/",
     },
     sitemap: "https://canaaanglobalinternational.com/sitemap.xml",
   };

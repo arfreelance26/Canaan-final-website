@@ -25,6 +25,22 @@ body {
   font-family: var(--font-geist-sans), Arial, sans-serif;
 }
 
+/* ── PREMIUM GLOBAL SCROLLBAR ── */
+::-webkit-scrollbar {
+  width: 0.01px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
 /* ── PREMIUM ANIMATIONS SYSTEM ── */
 
 /* About curtain transition (Layer D) */

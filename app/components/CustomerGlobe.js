@@ -302,8 +302,8 @@ export default function CustomerGlobeSection() {
               waitForGlobeReady={false}
               width={globeSize.width}
               height={globeSize.height}
-              globeImageUrl="https://unpkg.com/three-globe@2.33.0/example/img/earth-blue-marble.jpg"
-              bumpImageUrl="https://unpkg.com/three-globe@2.33.0/example/img/earth-topology.png"
+              globeImageUrl="/earth.jpg"
+              bumpImageUrl="/earth-tropo.png"
               backgroundImageUrl=""
               backgroundColor="rgba(0,0,0,0)"
               atmosphereColor="rgb(120, 185, 255)"

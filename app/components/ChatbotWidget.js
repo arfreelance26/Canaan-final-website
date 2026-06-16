@@ -286,9 +286,9 @@ export default function ChatbotWidget() {
           100% { transform: scale(1)   rotate(0deg);  opacity: 1; }
         }
         /* Scrollbar styling for messages */
-        .joshine-messages::-webkit-scrollbar { width: 4px; }
+        .joshine-messages::-webkit-scrollbar { width: 0.1px; }
         .joshine-messages::-webkit-scrollbar-track { background: transparent; }
-        .joshine-messages::-webkit-scrollbar-thumb { background: rgba(15,32,39,0.18); border-radius: 99px; }
+        .joshine-messages::-webkit-scrollbar-thumb { background: rgba(15,32,39,0.25); border-radius: 99px; }
       `}</style>
 
       {/* ── Chat Window ── */}
@@ -757,6 +757,7 @@ export default function ChatbotWidget() {
           id="chatbot-trigger"
           onClick={handleWidgetClick}
           className={`
+            bg-white
             relative w-16 h-16 rounded-full
             shadow-[0_8px_24px_rgba(0,0,0,0.22),0_0_18px_6px_rgba(56,139,255,0.28)]
             hover:shadow-[0_12px_36px_rgba(0,0,0,0.32),0_0_28px_10px_rgba(56,139,255,0.42)]

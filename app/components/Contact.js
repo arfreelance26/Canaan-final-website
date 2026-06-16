@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ArrowRight, Mail, Phone, MapPin, Clock } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
+import { API_BASE_URL } from "@/app/lib/api";
 
 const CONTACT_INFO = [
   { icon: Mail, label: "Email us", value: "canaanglobal@canaanglobal.com" },
@@ -114,6 +115,8 @@ export default function ContactSection() {
     rfidPan: null,
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [errors, setErrors] = useState({});
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -143,7 +146,7 @@ export default function ContactSection() {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const next = {};
     if (!form.name.trim())                        next.name    = "Name is required.";
     if (!form.email.trim())                       next.email   = "Email is required.";
@@ -153,7 +156,31 @@ export default function ContactSection() {
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
-    setSubmitted(true);
+
+    setSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const payload = new FormData();
+      payload.append("inquiry_type", inquiryType);
+      Object.entries(form).forEach(([key, value]) => {
+        if (value !== null && value !== undefined && value !== "") {
+          payload.append(key, value);
+        }
+      });
+
+      const res = await fetch(`${API_BASE_URL}/api/contact/`, {
+        method: "POST",
+        body: payload,
+      });
+
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError("Failed to send your message. Please try again or email us directly.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -476,11 +503,15 @@ export default function ContactSection() {
               </div>
 
               {/* Submit */}
+              {submitError && (
+                <p className="text-[12px] text-red-500 mb-2 text-center">{submitError}</p>
+              )}
               <button
                 onClick={handleSubmit}
-                className="group flex items-center justify-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl hover:bg-neutral-800 transition-colors duration-300 w-full active:scale-[0.98] mt-auto"
+                disabled={submitting}
+                className="group flex items-center justify-center gap-2 bg-neutral-900 text-white text-sm font-semibold px-5 py-3 rounded-2xl hover:bg-neutral-800 transition-colors duration-300 w-full active:scale-[0.98] mt-auto disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Send message <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" />
+                {submitting ? "Sending…" : <><span>Send message</span><ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" /></>}
               </button>
               </div>
             </div>
