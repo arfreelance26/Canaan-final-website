@@ -40,7 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# large media assets — deployed via direct cPanel upload, not git
-# (exceeds GitHub's 100MB push limit; keep these on disk, not in version control)
-public/promo.mp4
+# large media assets that would exceed GitHub's 100MB push limit
+# (promo.mp4 was 170MB and is now tracked normally after being compressed to ~25MB)
 public/ship.glb

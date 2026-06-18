@@ -77,7 +77,7 @@ public/
 ├── .htaccess                            Apache security headers + 404 routing for the static export (cPanel deployment)
 ├── favicon.ico, apple-touch-icon.png   Generated from canaan.png's emblem mark
 ├── canaan.png                          Primary logo (wordmark + emblem), used for OG/Twitter image
-├── promo.mp4                            Hero background video — not tracked in git, see note below
+├── promo.mp4                            Hero background video (~25MB, compressed)
 ├── earth.jpg, earth-tropo.png           Globe texture + bump maps
 ├── Chatbot.png                          Chatbot avatar
 ├── cargo/, company/                     Gallery and group-company photography
@@ -90,7 +90,7 @@ jsconfig.json        "@/*" path alias → project root
 openapi.json          Backend's published OpenAPI schema (reference only, not consumed at runtime)
 ```
 
-> **`public/promo.mp4` (and any future large media like `.glb` models) is intentionally excluded from git** via `.gitignore` — it's well past GitHub's 100MB push limit, and since deployment is a manual zip-upload to cPanel (Section 12) rather than a git-based deploy, version-controlling it serves no purpose. The file must exist on disk under `public/` before running `npm run build` (anyone cloning this repo fresh needs to drop the video in manually); it is not fetched or restored automatically.
+> **Large media stays out of git by default** (`.gitignore` excludes `public/ship.glb`) — deployment is a manual zip-upload to cPanel (Section 12), not a git-based deploy, so version-controlling heavy binaries serves no purpose. `promo.mp4` is the exception: it's tracked normally now that it's compressed to ~25MB, comfortably under GitHub's 100MB push limit. If a future asset needs the same treatment, add it to `.gitignore` and document it here.
 
 ---
 
