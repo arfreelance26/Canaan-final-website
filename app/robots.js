@@ -6,6 +6,6 @@ export default function robots() {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://canaaanglobalinternational.com/sitemap.xml",
+    sitemap: "https://canaanglobalinternational.com/sitemap.xml",
   };
 }

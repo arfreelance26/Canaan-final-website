@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ArrowRight, Mail, Phone, MapPin, Clock } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import useFadeIn from "../hooks/useFadeIn";
-import { API_BASE_URL } from "@/app/lib/api";
+import { EMAILJS_CONFIG } from "@/app/lib/emailjs";
 
 const CONTACT_INFO = [
   { icon: Mail, label: "Email us", value: "canaanglobal@canaanglobal.com" },
@@ -57,24 +58,6 @@ function CustomSelect({ value, onChange, options, placeholder, name }) {
   );
 }
 
-function FileUpload({ value, onChange, name }) {
-  return (
-    <div className="relative group w-full">
-      <input 
-        type="file" 
-        name={name} 
-        onChange={onChange} 
-        accept=".pdf" 
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
-      />
-      <div className="bg-[#f5f4f0] border border-black/10 rounded-xl px-4 py-3 text-sm text-neutral-500 flex items-center justify-between group-hover:bg-white group-hover:border-neutral-900 group-hover:ring-4 group-hover:ring-neutral-900/5 transition-all duration-300">
-        <span className="truncate pr-4">{value ? value.name : "Upload PDF..."}</span>
-        <svg className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-      </div>
-    </div>
-  );
-}
-
 export default function ContactSection() {
   const sectionRef = useRef(null);
   const isVisible = useFadeIn(sectionRef, 0.05);
@@ -122,6 +105,13 @@ export default function ContactSection() {
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const PHONE_RE = /^[+]?[\d\s\-().]{7,20}$/;
 
+  const COMMON_FIELDS = ["name", "email", "phone", "message"];
+  const TYPE_FIELDS = {
+    Shipping: ["companyName", "shippingMode", "portOfLoading", "portOfDischarge", "containerType", "weight", "factoryLocation"],
+    Transportation: ["transportExportImport", "pickupLocation", "deliveryLocation", "transportCargoType", "containerType", "weight"],
+    "RFID Seals": ["quantity", "rfidOrgName"],
+  };
+
   useEffect(() => {
     const updateSlider = () => {
       const el = typeRefs.current[inquiryType];
@@ -161,20 +151,22 @@ export default function ContactSection() {
     setSubmitError("");
 
     try {
-      const payload = new FormData();
-      payload.append("inquiry_type", inquiryType);
-      Object.entries(form).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== "") {
-          payload.append(key, value);
-        }
+      const { serviceId, templateId, publicKey } = EMAILJS_CONFIG[inquiryType] || {};
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error(`Missing EmailJS credentials for inquiry type: ${inquiryType}`);
+      }
+
+      const templateParams = {
+        inquiry_type: inquiryType,
+        time: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }),
+      };
+      [...COMMON_FIELDS, ...TYPE_FIELDS[inquiryType]].forEach((key) => {
+        const value = form[key];
+        templateParams[key] = typeof value === "string" && value.trim() !== "" ? value : "Not provided";
       });
 
-      const res = await fetch(`${API_BASE_URL}/api/contact/`, {
-        method: "POST",
-        body: payload,
-      });
+      await emailjs.send(serviceId, templateId, templateParams, { publicKey });
 
-      if (!res.ok) throw new Error(`Server error: ${res.status}`);
       setSubmitted(true);
     } catch (err) {
       setSubmitError("Failed to send your message. Please try again or email us directly.");

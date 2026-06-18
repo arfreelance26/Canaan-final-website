@@ -6,6 +6,7 @@ import { API_BASE_URL } from "@/app/lib/api";
 export default function AccreditationsPage() {
   const [hovered, setHovered] = useState(null);
   const [accreditations, setAccreditations] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/licenses/`)
@@ -23,8 +24,11 @@ export default function AccreditationsPage() {
           setAccreditations(dynamicAccs);
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoaded(true));
   }, []);
+
+  if (!loaded || accreditations.length === 0) return null;
 
   return (
     <main className="font-sans" style={{ height: "100vh", display: "flex", flexDirection: "column", background: "#f5f4f0", overflowX: "hidden", overflowY: "auto" }}>

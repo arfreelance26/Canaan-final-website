@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { ArrowRight, FileText, Download, Calendar, TrendingUp, TrendingDown } from "lucide-react";
+import { Download, Calendar } from "lucide-react";
 import useFadeIn from "../hooks/useFadeIn";
 import ship1 from "@/app/assets/images/company/ship1.png";
 import { API_BASE_URL } from "@/app/lib/api";

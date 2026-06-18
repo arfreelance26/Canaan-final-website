@@ -1,7 +1,7 @@
 export const dynamic = 'force-static';
 
 export default function sitemap() {
-  const baseUrl = "https://canaaanglobalinternational.com";
+  const baseUrl = "https://canaanglobalinternational.com";
 
   return [
     {
@@ -27,6 +27,18 @@ export default function sitemap() {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
-    }
+    },
+    {
+      url: `${baseUrl}/accreditations`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/updates`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
   ];
 }

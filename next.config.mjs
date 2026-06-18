@@ -22,6 +22,7 @@ const CSP = [
   [
     "connect-src 'self'",
     "https://api.canaanglobalinternational.com",
+    "https://api.emailjs.com",
     "https://fonts.googleapis.com",
     "https://fonts.gstatic.com",
     isDev ? "http://localhost:8000 http://127.0.0.1:8000 ws://localhost:3000" : "",
@@ -59,7 +60,8 @@ const SECURITY_HEADERS = [
 const nextConfig = {
   // Strip the X-Powered-By: Next.js response header
   poweredByHeader: false,
-
+  output:"export",
+  trailingSlash:true,
   devIndicators: false,
   transpilePackages: ["three", "react-globe.gl", "three-globe", "globe.gl"],
   turbopack: {
@@ -77,6 +79,9 @@ const nextConfig = {
   },
 
   images: {
+    // Static export has no server, so the Image Optimization API isn't available.
+    // next/image falls back to serving the original file unresized/unoptimized.
+    unoptimized: true,
     remotePatterns: [
       // Production API — images served by the backend or its CDN
       {

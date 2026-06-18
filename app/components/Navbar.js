@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Anchor } from "lucide-react";
 import Image from "next/image";
 import companylogo from "@/app/assets/images/company/companylogo.png";
+import { API_BASE_URL } from "@/app/lib/api";
 
-const NAV_ITEMS = ["Home", "About", "Service", "Cargo", "Accreditations", "Updates", "Clients", "Contact"];
+const ALL_NAV_ITEMS = ["Home", "About", "Service", "Cargo", "Accreditations", "Updates", "Clients", "Contact"];
 
 // ── Hot reload for logo position tweak ──
 function LogoPlaceholder() {
@@ -30,6 +30,16 @@ export default function Navbar() {
   const [transitioning, setTransitioning] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const [hasAccreditations, setHasAccreditations] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/licenses/`)
+      .then((res) => res.json())
+      .then((data) => setHasAccreditations(Array.isArray(data) && data.length > 0))
+      .catch(() => {});
+  }, []);
+
+  const NAV_ITEMS = ALL_NAV_ITEMS.filter((item) => item !== "Accreditations" || hasAccreditations);
 
   const routeToNavItem = (path) => {
     if (!path) return "Home";

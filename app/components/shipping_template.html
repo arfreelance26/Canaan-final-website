@@ -1,0 +1,58 @@
+<div style="font-family: system-ui, sans-serif, Arial; font-size: 12px;">
+    <div>A new <strong>Shipping</strong> inquiry from <strong>{{name}}</strong> has been received via the Canaan Global International website. Kindly respond at your earliest convenience.</div>
+
+    <div style="margin-top: 20px; padding: 15px 0; border-width: 1px 0; border-style: dashed; border-color: lightgrey;">
+      <div style="color: #2c3e50; font-size: 16px;"><strong>{{name}}</strong></div>
+      <div style="color: #aaaaaa; font-size: 12px;">Received on {{time}}</div>
+
+      <table role="presentation" style="margin-top: 12px; border-collapse: collapse;">
+        <tbody>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Email</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;"><a href="mailto:{{email}}" style="color: #2c3e50;">{{email}}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Phone</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;">{{phone}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Company</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;">{{companyName}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Trade Type</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;">{{shippingMode}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Port of Loading</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;">{{portOfLoading}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Port of Discharge</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;">{{portOfDischarge}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Container Type & Size</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;">{{containerType}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Weight</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;">{{weight}}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 12px 4px 0; color: #888888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; vertical-align: top;">Factory Location</td>
+            <td style="padding: 4px 0; font-size: 13px; color: #2c3e50; vertical-align: top;">{{factoryLocation}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 14px; padding: 12px 14px; background-color: #f9f9f9; border-left: 3px solid #d4a017; border-radius: 4px;">
+        <div style="color: #888888; font-size: 11px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Message</div>
+        <p style="font-size: 14px; color: #2c3e50; margin: 0; line-height: 1.6;">{{message}}</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 16px; color: #cccccc; font-size: 11px;">
+      This email was sent from the Shipping inquiry form at canaanglobalinternational.com. Do not reply to this automated message — reply directly to <a href="mailto:{{email}}" style="color: #aaaaaa;">{{email}}</a>.
+    </div>
+  </div>

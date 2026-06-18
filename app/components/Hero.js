@@ -1,7 +1,6 @@
 "use client";
 import { useRef, useCallback, useEffect, useState } from "react";
 import { API_BASE_URL } from "@/app/lib/api";
-import { ArrowDown } from "lucide-react";
 
 export default function DavidHazHero() {
   const imgRef = useRef(null);

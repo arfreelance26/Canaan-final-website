@@ -17,7 +17,10 @@ export const viewport = {
 };
 
 export const metadata = {
-  title: "Canaan Global International",
+  title: {
+    default: "Canaan Global International — Freight Forwarders, Customs Brokers & Transporters",
+    template: "%s | Canaan Global International",
+  },
   description:
     "Canaan Global International — Freight Forwarders, Customs Brokers & Transporters. Commit · Endure · Achieve · Satisfy. Serving worldwide from Tuticorin, India.",
   keywords: [
@@ -34,20 +37,32 @@ export const metadata = {
   authors: [{ name: "Arun Samuel Alfred" }],
   creator: "Canaan Global International",
   publisher: "Canaan Global International",
-  metadataBase: new URL("https://canaaanglobalinternational.com"),
+  metadataBase: new URL("https://canaanglobalinternational.com"),
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
   icons: {
-    icon: "/canaan.png",
-    shortcut: "/canaan.png",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
     title: "Canaan Global International",
     description:
       "Freight Forwarders, Customs Brokers & Transporters. Commit · Endure · Achieve · Satisfy.",
-    url: "https://canaaanglobalinternational.com",
+    url: "https://canaanglobalinternational.com",
     siteName: "Canaan Global International",
     locale: "en_IN",
     type: "website",
+    images: ["/canaan.png"],
   },
   twitter: {
     card: "summary_large_image",
@@ -56,16 +71,11 @@ export const metadata = {
       "Freight Forwarders, Customs Brokers & Transporters. Commit · Endure · Achieve · Satisfy.",
     images: ["/canaan.png"],
   },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
   contact: {
     phone: "+91 90470 12891",
     tel: "0461 2900886",
     email: "canaanglobal@canaanglobal.com",
-    website: "canaaanglobalinternational.com",
+    website: "canaanglobalinternational.com",
   },
 };
 
@@ -76,10 +86,6 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} h-full antialiased`}
     >
       <head>
-        {/* Canonical */}
-        <link rel="canonical" href="https://canaaanglobalinternational.com" />
-        <link rel="icon" href="/canaan.png" type="image/png" sizes="any" />
-
         {/* Contact schema — structured data for Google */}
         <script
           type="application/ld+json"
@@ -121,7 +127,7 @@ export default function RootLayout({ children }) {
                 },
               ],
               email: "canaanglobal@canaanglobal.com",
-              sameAs: ["https://canaaanglobalinternational.com"],
+              sameAs: ["https://canaanglobalinternational.com"],
               serviceArea: {
                 "@type": "AdministrativeArea",
                 name: "Worldwide",

@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
 import { API_BASE_URL } from "@/app/lib/api";
-import { ArrowRight, Weight } from "lucide-react";
+import { Weight } from "lucide-react";
 
 
 
@@ -83,17 +83,6 @@ export default function FleetSection() {
         <p className="text-[22px] sm:text-[40px] text-center font-medium tracking-[0.12em] uppercase text-neutral-500 shrink-0">
           Our Fleet
         </p>
-
-        {/* Progress dots */}
-        {/* <div className="flex justify-center gap-2 shrink-0">
-          {FLEET.map((v, i) => (
-            <span
-              key={i}
-              className="w-1.5 h-1.5 rounded-full bg-neutral-300"
-              id={`fleet-dot-${i}`}
-            />
-          ))}
-        </div> */}
 
         {/* Scrolling track */}
         <div className="flex-1 flex items-stretch overflow-visible">
