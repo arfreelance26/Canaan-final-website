@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { getResponse } from "../lib/joshine-engine";
@@ -43,9 +43,10 @@ export default function ChatbotWidget() {
   const [hookIndex, setHookIndex] = useState(0);
   const [cycleAuto, setCycleAuto] = useState(false);
 
-  // Context-aware hooks based on pathname
-  const getHooksForPage = (path) => {
-    if (path.includes("/services") || path.includes("/cargo")) {
+  // Context-aware hooks based on pathname — memoized so it only changes
+  // when the route actually changes, instead of on every component re-render.
+  const currentHooks = useMemo(() => {
+    if (pathname.startsWith("/services")) {
       return [
         { prefix: "Need Help?", suffix: "Ask me about our Services", actionText: "Our Services" },
         { prefix: "Heavy Cargo?", suffix: "See our transport fleet", actionText: "Our Fleet" },
@@ -53,10 +54,10 @@ export default function ChatbotWidget() {
         { prefix: "Quick Info:", suffix: "Get a Freight Quote", actionText: "Get a Quote" },
       ];
     }
-    if (path.includes("/about") || path.includes("/accreditations")) {
+    if (pathname.startsWith("/about") || pathname.startsWith("/accreditations")) {
       return [
         { prefix: "Curious?", suffix: "Want to see our Achievements?", actionText: "Our Achievements" },
-        { prefix: "Discover:", suffix: "Meet the Canaan Crew", actionText: "Our Crew" },
+        { prefix: "Want Proof?", suffix: "See our Accreditations", actionText: "Accreditations" },
         { prefix: "Need Help?", suffix: "Ask me anything", actionText: null },
       ];
     }
@@ -67,36 +68,32 @@ export default function ChatbotWidget() {
       { prefix: "Quick Info:", suffix: "Get a Freight Quote!", actionText: "Get a Quote" },
       { prefix: "Want to see", suffix: "our latest Achievements?", actionText: "Our Achievements" },
     ];
-  };
+  }, [pathname]);
 
-  const currentHooks = getHooksForPage(pathname);
-
-  // Cycle hooks and periodically pop the bubble up to grab attention
-  useEffect(() => {
-    if (open || isHidden) return;
-    
-    const interval = setInterval(() => {
-      // Move to the next hook
-      setHookIndex((prev) => (prev + 1) % currentHooks.length);
-      
-      // Pop the bubble up automatically
-      setCycleAuto(true);
-      
-      // Hide the bubble after 4.5 seconds
-      setTimeout(() => {
-        setCycleAuto(false);
-      }, 4500);
-      
-    }, 12000); // Pops up every 12 seconds
-    
-    return () => clearInterval(interval);
-  }, [open, isHidden, currentHooks.length]);
-  
-  // Reset index when page changes
+  // Reset to this page's first hook, then cycle + auto-pop the bubble every
+  // 12s. Keyed on `pathname` (not just hook count) so navigating to a page
+  // restarts the cadence immediately instead of inheriting leftover timing
+  // from whatever page the user was just on. The nested "hide after 4.5s"
+  // timeout is tracked so it can't fire after this effect has already torn
+  // down (e.g. user navigated away or opened the chat mid-pop).
   useEffect(() => {
     setHookIndex(0);
     setCycleAuto(false);
-  }, [pathname]);
+
+    if (open || isHidden) return;
+
+    let hideTimeout = null;
+    const interval = setInterval(() => {
+      setHookIndex((prev) => (prev + 1) % currentHooks.length);
+      setCycleAuto(true);
+      hideTimeout = setTimeout(() => setCycleAuto(false), 4500);
+    }, 12000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(hideTimeout);
+    };
+  }, [pathname, open, isHidden, currentHooks.length]);
 
   // Session persistence removed per user request: Memory is now erased on browser refresh.
 
@@ -140,14 +137,22 @@ export default function ChatbotWidget() {
     }
   }, [messages, open, isHidden]);
 
-  /* ── Body Scroll Lock when Chatbot is Open ── */
+  /* ── Body Scroll Lock when Chatbot is Open ──
+     Locks both <html> and <body> — on this site <html> (not <body>) is the
+     actual scrolling element (it carries h-full with no overflow of its own),
+     so locking body alone left the page free to scroll behind the chat. */
   useEffect(() => {
     if (isHidden) return;
     if (open) {
-      const originalStyle = window.getComputedStyle(document.body).overflow;
-      document.body.style.overflow = "hidden";
+      const html = document.documentElement;
+      const body = document.body;
+      const originalHtmlOverflow = html.style.overflow;
+      const originalBodyOverflow = body.style.overflow;
+      html.style.overflow = "hidden";
+      body.style.overflow = "hidden";
       return () => {
-        document.body.style.overflow = originalStyle;
+        html.style.overflow = originalHtmlOverflow;
+        body.style.overflow = originalBodyOverflow;
       };
     }
   }, [open, isHidden]);
@@ -314,6 +319,8 @@ export default function ChatbotWidget() {
         }}
         aria-hidden={!open}
         aria-label="Joshine — Canaan Chatbot"
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
       >
         {/* ── Header ── */}
         <div
@@ -725,7 +732,8 @@ export default function ChatbotWidget() {
               borderRadius: "18px 18px 4px 18px",
               padding: "10px 16px",
               boxShadow: "0 8px 32px rgba(15,32,39,0.22), 0 2px 8px rgba(15,32,39,0.12)",
-              whiteSpace: "nowrap",
+              whiteSpace: "normal",
+              maxWidth: "calc(100vw - 3.5rem)",
               border: "1px solid rgba(255,255,255,0.10)",
             }}
           >

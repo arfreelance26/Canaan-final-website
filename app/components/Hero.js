@@ -205,7 +205,9 @@ export default function DavidHazHero() {
           }} />
 
           {/* Tagline — each word slides in one by one */}
-          <p className="text-[16px] sm:text-[18px] font-medium uppercase text-white/75 flex items-center gap-[0.55em]" style={{ letterSpacing: "0.18em" }}>
+          <p
+            className="text-[12px] sm:text-[16px] md:text-[18px] font-medium uppercase text-white/75 flex flex-wrap items-center gap-x-[0.5em] gap-y-1 tracking-[0.1em] sm:tracking-[0.18em]"
+          >
             {["Commit", "·", "Endure", "·", "Achieve", "·", "Satisfy"].map((word, i) => (
               <span
                 key={i}

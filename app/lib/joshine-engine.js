@@ -21,7 +21,6 @@ const KB = {
     phone: "+91 90470 12891",
     branches: ["Tuticorin (HQ)", "Chennai", "Madurai", "Cochin"],
     achievements: ["Best Logistics Partner", "AEO Certified", "ISO 9001:2015", "100% Delivery Success"],
-    crew: ["Jonathan Davis (Operations Director)", "Sarah Jenkins (Head of Customs Clearance)", "Michael Chen (Logistics Coordinator)", "David Smith (Fleet Manager)", "Emily Davis (Client Relations Manager)"]
   },
   accreditations: {
     title: "Accreditations & Licenses",
@@ -297,11 +296,10 @@ const CONTEXT_BOOSTS = {
   fleet:        ["transportation", "div_rehoboth"],
   documentation: ["import_ops", "export_ops", "div_cgss"],
   lashing:      ["documentation", "export_ops"],
-  about:        ["ecosystem", "branches", "granite", "crew", "achievements", "accreditations"],
+  about:        ["ecosystem", "branches", "granite", "achievements", "accreditations"],
   granite:      ["cargo_types", "transportation"],
   accreditations: ["about", "documentation", "ecosystem"],
   updates:      ["import_ops", "export_ops", "documentation"],
-  crew:         ["about", "ecosystem", "branches"],
   achievements: ["about", "ecosystem"],
 };
 
@@ -342,7 +340,6 @@ const INTENT_LABELS = {
   accreditations: "Accreditations",
   updates: "Latest Updates",
   achievements: "Our Achievements",
-  crew: "Our Crew",
 };
 
 /**
@@ -756,13 +753,7 @@ const INTENTS = [
     ],
   },
 
-  // ── Complaint ──
-  {
-    id: "lashing",
-    keywords: [
-      { w: 10, p: /\b(lash|lashing|fumigation|fumigate|pallet|palletisation|crate|crating|ispm|heat treatment)\b/i },
-    ],
-  },
+  // ── Service catch-alls ──
   {
     id: "warehousing",
     keywords: [
@@ -820,16 +811,6 @@ const INTENTS = [
       { w: 5, p: /\b(achievements?|awards?|success\s*rate)\b/ },
       { w: 4, p: /\b(best\s*logistics|aeo\s*certified)\b/ },
       { w: 3, p: /\bwhat\s*have\s*you\s*(achieved|won|accomplished)\b/ },
-    ],
-  },
-
-  // ── Crew ──
-  {
-    id: "crew",
-    keywords: [
-      { w: 5, p: /\b(crew|team|staff|employees?)\b/ },
-      { w: 4, p: /\bwho\s*(works|runs|manages)\b/ },
-      { w: 3, p: /\byour\s*(people|team|crew)\b/ },
     ],
   },
 
@@ -1052,15 +1033,6 @@ const RESPONSES = {
     navLink: { href: "/services", label: "See Services Page" },
   }),
 
-  lashing_detail: () => ({
-    text:
-      `🪵 More on Lashing & Fumigation\n\n` +
-      `${KB.services.lashing.detail}\n\n` +
-      `Do you need custom crating for a delicate shipment? Let me know!`,
-    chips: ["Contact Us", "Get a Quote"],
-    navLink: { href: "/services", label: "See Services Page" },
-  }),
-
   warehousing: () => ({
     text:
       "📦 *Warehousing & Storage*\n\n" +
@@ -1240,17 +1212,12 @@ const RESPONSES = {
 
   fleet: () => ({
     text:
-      `🚛 Our Fleet — 42 Vehicles Strong\n\n` +
-      `Operated by *Rehoboth Transports*, our ground fleet covers the full load spectrum:\n\n` +
-      `🚨  40 Ft Container Trailer — up to 40 Tons\n` +
-      `🚨  45 Ft Extended Trailer — up to 30 Tons\n` +
-      `🚚  10 Wheeler (6x4) — up to 16 Tons\n` +
-      `🚚  12 Wheeler (8x4) — up to 20 Tons\n` +
-      `🚚  14 Wheeler (10x4) — up to 25 Tons\n` +
-      `🚚  20 Ft Container Trailer — up to 20 Tons\n` +
-      `🚚  22 Wheeler — up to 30 Tons\n\n` +
-      `Every vehicle is GPS-tracked and dispatched through a computerised routing system for on-time delivery.`,
+      `🚛 Our Fleet\n\n` +
+      `Operated by *Rehoboth Transports*, our ground fleet covers a wide range of container trailers and multi-axle trucks to match your cargo's size and weight.\n\n` +
+      `Every vehicle is GPS-tracked and dispatched through a computerised routing system for on-time delivery.\n\n` +
+      `Check out our current fleet and vehicle types on the Cargo page!`,
     chips: ["Transportation", "What We Carry", "Contact Us"],
+    navLink: { href: "/cargo", label: "View Our Fleet" },
   }),
 
   pricing: () => ({
@@ -1379,19 +1346,8 @@ const RESPONSES = {
       `We take pride in our track record. Our key achievements include:\n` +
       `⭐ ${KB.company.achievements.join("\n⭐ ")}\n\n` +
       `Learn more about our legacy on the About page!`,
-    chips: ["Our Crew", "About Canaan", "Accreditations"],
+    chips: ["About Canaan", "Accreditations"],
     navLink: { href: "/about", label: "Visit About Page" },
-  }),
-
-  // ── Crew ──
-  crew: () => ({
-    text:
-      `👥 *Our Crew*\n\n` +
-      `Our operations are driven by a dedicated team of logistics experts:\n\n` +
-      `🔹 ${KB.company.crew.join("\n🔹 ")}\n\n` +
-      `Meet the faces behind Canaan Global on our About page.`,
-    chips: ["Our Achievements", "About Canaan", "Our Branches"],
-    navLink: { href: "/about", label: "Meet the Team" },
   }),
 
   // ── Import Operations ──
@@ -1608,7 +1564,6 @@ export const CHIP_TO_INTENT = {
   "Exchange Rates": "updates",
   "Customs Circulars": "updates",
   "Our Achievements": "achievements",
-  "Our Crew": "crew",
   "Inquiry Forms": "contact",
   "Customs Clearance": "documentation",
   "Warehousing": "warehousing",
@@ -1623,7 +1578,7 @@ const TOPIC_INTENTS = new Set([
   "contact", "address", "branches", "about", "granite",
   "import_ops", "export_ops",
   "ecosystem", "div_cgl", "div_cgss", "div_cgi", "div_rehoboth",
-  "accreditations", "updates", "achievements", "crew",
+  "accreditations", "updates", "achievements",
 ]);
 
 // ── MAIN ENGINE FUNCTION ──────────────────────────────────────────────────────
