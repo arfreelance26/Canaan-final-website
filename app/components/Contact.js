@@ -10,7 +10,7 @@ const CONTACT_INFO = [
   { icon: Mail, label: "Email us", value: "canaanglobal@canaanglobal.com" },
   { icon: Phone, label: "Call us", value: "+91 90470 12891" },
   { icon: MapPin, label: "Head office", value: "Tuticorin, India" },
-  { icon: Clock, label: "Working hours", value: "Mon–Sat, 9am–6pm" },
+  { icon: Clock, label: "Working hours", value: "Mon–Sat, 10am–6pm" },
 ];
 
 function CustomSelect({ value, onChange, options, placeholder, name }) {
