@@ -155,7 +155,7 @@ export default function ClientsSection() {
         </div>
 
         <p className="text-sm text-neutral-400 leading-relaxed max-w-xs sm:text-right">
-          The world's top shipping lines trust Canaan Global to move what matters — on time, every time.
+          The world's top shipping lines trust Canaan Global to move what matters, on time, every time.
         </p>
       </div>
 

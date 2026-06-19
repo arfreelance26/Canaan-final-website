@@ -102,7 +102,7 @@ function FounderSection() {
             <p className="text-white text-lg sm:text-xl font-medium tracking-[-0.02em] leading-[1.5] relative z-10">
               &quot;Our mission is to bridge businesses across borders with
               reliability, integrity, and a relentless commitment to
-              delivering on time — every time.&quot;
+              delivering on time, every time.&quot;
             </p>
             <div className="mt-5 flex items-center gap-3">
               <div className="w-8 h-0.5 bg-white/30" />
@@ -154,9 +154,9 @@ function FounderSection() {
             <div className="pt-8 flex flex-col gap-4">
               <p className="text-sm sm:text-[15px] text-neutral-600 leading-relaxed">
                 Arun Samuel Alfred founded Canaan Global International with a singular
-                vision — to create a logistics company that treats every shipment
+                vision: to create a logistics company that treats every shipment
                 as a promise. With over 15 years of experience in international
-                freight and supply chain management, Arun has built Canaan from
+                freight and supply chain management, Arun has built Canaan Global from
                 the ground up into a trusted name across 30+ countries.
               </p>
               <p className="text-sm sm:text-[15px] text-neutral-600 leading-relaxed">

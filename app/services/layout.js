@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Our Services",
   description:
-    "Freight forwarding, customs brokerage, and transportation services from Canaan Global International — serving import/export businesses worldwide from Tuticorin, India.",
+    "Freight forwarding, customs brokerage, and transportation services from Canaan Global International, serving import/export businesses worldwide from Tuticorin, India.",
   alternates: {
     canonical: "/services",
   },

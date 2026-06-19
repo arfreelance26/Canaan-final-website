@@ -318,7 +318,7 @@ export default function ChatbotWidget() {
           boxShadow: "0 32px 80px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(255,255,255,0.06) inset, 0 1px 0 rgba(255,255,255,0.12) inset",
         }}
         aria-hidden={!open}
-        aria-label="Joshine — Canaan Chatbot"
+        aria-label="Joshine — Canaan Global Chatbot"
         onWheel={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
       >
@@ -347,7 +347,7 @@ export default function ChatbotWidget() {
                 className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0"
                 style={{ boxShadow: "0 0 6px rgba(52,211,153,0.8)", animation: "pulse 2s ease-in-out infinite" }}
               />
-              Canaan Assistant
+              Canaan Global Assistant
             </p>
           </div>
 
@@ -789,7 +789,7 @@ export default function ChatbotWidget() {
           )}
           <Image
             src="/Chatbot.png"
-            alt="Chat with Canaan"
+            alt="Chat with Canaan Global"
             fill
             sizes="64px"
             className="object-cover"

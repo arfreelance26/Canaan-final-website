@@ -308,7 +308,7 @@ export default function ContactSection() {
               — Direct inquiry
             </p>
             <p className="text-[15px] font-semibold tracking-[-0.01em] text-neutral-900">
-              Tell us what you need — we handle the rest.
+              Tell us what you need. We'll handle the rest.
             </p>
           </div>
 

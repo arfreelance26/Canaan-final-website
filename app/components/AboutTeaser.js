@@ -141,7 +141,7 @@ export default function AboutTeaserSection() {
             marginBottom: 18,
           }}
         >
-          The People Behind Canaan
+          The People Behind Canaan Global
         </span>
 
         {/* Headline */}
@@ -182,7 +182,7 @@ export default function AboutTeaserSection() {
             }}
           >
             &ldquo;Our mission is to bridge businesses across borders with reliability,
-            integrity, and a relentless commitment to delivering on time — every time.&rdquo;
+            integrity, and a relentless commitment to delivering on time, every time.&rdquo;
             <br />
             <span
               style={{

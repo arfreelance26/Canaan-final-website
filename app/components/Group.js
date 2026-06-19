@@ -11,7 +11,7 @@ const COMPANIES = [
     images: ["/company/logistics1b.png", "/company/logistics2.png", "/company/logistics3.png"],
     tagline: "Where cargo, oceans, and infrastructure move in synchronized rhythm.",
     role: "The operational backbone of the network.",
-    body: "From freight movement to cargo coordination, CGL orchestrates the complex mechanics behind global transportation — whether cargo moves by land, sea, or through interconnected transit systems.",
+    body: "From freight movement to cargo coordination, CGL orchestrates the complex mechanics behind global transportation, whether cargo moves by land, sea, or through interconnected transit systems.",
     ops: ["Freight Forwarding", "Multimodal Transportation", "Vessel Operations", "NVOCC Services", "Cargo Consolidation"],
     abstract: "Where cargo movement becomes synchronized precision.",
   },
@@ -22,7 +22,7 @@ const COMPANIES = [
     images: ["/company/shipping1b.png", "/company/shipping2.png", "/company/shipping3.png"],
     tagline: "Behind every successful shipment lies precision invisible to the eye.",
     role: "The regulatory and clearance arm.",
-    body: "CGSS operates at the intersection of compliance and movement — managing customs procedures, import/export clearances, and documentation flow required to keep cargo crossing borders without friction.",
+    body: "CGSS operates at the intersection of compliance and movement, managing customs procedures, import/export clearances, and documentation flow required to keep cargo crossing borders without friction.",
     ops: ["Customs Brokerage", "Import Handling", "Export Processing", "Trade Documentation", "Port Clearance Coordination"],
     abstract: "Navigating borders before cargo even reaches them.",
   },
@@ -33,7 +33,7 @@ const COMPANIES = [
     images: ["/company/cgi1b.png", "/company/cgi2.png", "/company/cgi3b.png"],
     tagline: "The operational nerve center connecting commerce, coordination, and execution.",
     role: "The commercial intelligence layer.",
-    body: "CGI manages the financial, nomination, and coordination infrastructure supporting the wider Canaan network — connecting operational execution with administrative control.",
+    body: "CGI manages the financial, nomination, and coordination infrastructure supporting the wider Canaan Global network, connecting operational execution with administrative control.",
     ops: ["Nominations & Coordination", "Billing Infrastructure", "Invoice Processing", "Transport Commercial Management", "Internal Operational Integration"],
     abstract: "Connecting operations with commercial flow.",
   },
@@ -44,7 +44,7 @@ const COMPANIES = [
     images: ["/company/rehoboth1.png", "/company/rehoboth2b.png", "/company/rehoboth3b.png"],
     tagline: "The final momentum behind the supply chain.",
     role: "The ground-movement engine.",
-    body: "Rehoboth handles transport execution for both internal logistics operations and external clients — designed for flexibility across raw material movement, customer logistics support, and multi-channel coordination.",
+    body: "Rehoboth handles transport execution for both internal logistics operations and external clients, designed for flexibility across raw material movement, customer logistics support, and multi-channel coordination.",
     ops: ["Cargo Transportation", "Fleet Coordination", "External Logistics Support", "Raw Material Movement", "Integrated Transport Handling"],
     abstract: "Keeping industries moving beyond the port.",
   },
@@ -553,7 +553,7 @@ export default function GroupSection() {
           transition: "opacity 0.6s ease, transform 0.6s ease",
         }}>
           <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "rgba(210,165,45,0.8)", textTransform: "uppercase", fontWeight: 700, display: "block", marginBottom: 5 }}>
-            The Canaan Group
+            The Canaan Global Group
           </span>
           <h2 style={{ fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)", fontWeight: 700, color: "#111", letterSpacing: "-0.025em", lineHeight: 1.15, margin: 0 }}>
             Four companies,{" "}

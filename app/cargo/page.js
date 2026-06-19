@@ -161,7 +161,7 @@ export default function CargoPage() {
           const allCat = {
             id: "all",
             label: "All Cargo",
-            desc: `Every shipment we've moved — ${dynamicCats.length} cargo categories, one gallery.`,
+            desc: `Every shipment we've moved, sorted into ${dynamicCats.length} cargo categories.`,
             photos: allPhotos
           };
           setCategories([allCat, ...dynamicCats]);
@@ -229,7 +229,7 @@ export default function CargoPage() {
             {/* Background photo */}
             <img
               src="/cargo/trucks2.png"
-              alt="Canaan fleet"
+              alt="Canaan Global fleet"
               className="absolute inset-0 w-full h-full object-cover"
               style={{ objectPosition: "center 55%" }}
             />
@@ -245,23 +245,9 @@ export default function CargoPage() {
               }}
             />
 
-            {/* TOP LEFT badge */}
-            <div className="absolute top-0 left-0 bg-black/30 backdrop-blur-md px-4 py-3 sm:px-6 sm:py-4 rounded-br-2xl border-r border-b border-white/10">
-              <span className="text-[10px] font-bold tracking-[0.15em] uppercase text-white/50">Cargo Gallery</span>
-            </div>
-
-            {/* TOP RIGHT — live count */}
-            <div className="absolute top-0 right-0 bg-black/30 backdrop-blur-md px-4 py-3 sm:px-6 sm:py-4 rounded-bl-2xl border-l border-b border-white/10 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <span className="text-[11px] sm:text-sm font-medium text-white/70 tracking-tight">
-                {categories.length > 1 ? categories.length - 1 : 0} cargo types · {categories.length > 0 ? categories[0].photos.length : 0} photos
-              </span>
-            </div>
-
+            
             <div className="relative z-10 flex flex-col gap-3 max-w-2xl">
-              <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-white/40">
-                Canaan Global International
-              </p>
+              
               <h1
                 className="text-white font-black tracking-[-0.04em] leading-[0.92]"
                 style={{ fontSize: "clamp(2.8rem, 4vw, 6.5rem)", textShadow: "0 4px 32px rgba(0,0,0,0.4)" }}

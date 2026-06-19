@@ -28,7 +28,7 @@ const CHAPTERS = [
     year: "2009",
     label: "FOUNDING",
     heading: "One idea.\nOne Promise.",
-    body: "Founded in Tuticorin, Tamil Nadu — a humble port city with global ambitions. Canaan Global International began with few trucks and an unshakeable commitment to reliable freight.",
+    body: "Founded in Tuticorin, Tamil Nadu, a humble port city with global ambitions. Canaan Global International began with a few trucks and an unshakeable commitment to reliable freight.",
     scripture: "Remember the Lord your God, for it is He who gives you the ability to produce wealth...",
     scriptureRef: "Deuteronomy 8:18",
     photo: timeline1.src,
@@ -43,7 +43,7 @@ const CHAPTERS = [
     year: "2010 – 2013",
     label: "EARLY GROWTH",
     heading: "Building the\nfoundation.",
-    body: "The fleet grew. The routes expanded. Word spread that Canaan delivered on time, every time. South India's industrial corridors became our home territory.",
+    body: "The fleet grew. The routes expanded. Word spread that Canaan Global delivered on time, every time. South India's industrial corridors became our home territory.",
     photo: timeline2.src,
     stat: { num: "12", label: "Trucks by 2013" },
     accent: "#1E8449",
@@ -70,7 +70,7 @@ const CHAPTERS = [
     year: "2018 – 2020",
     label: "GOING GLOBAL",
     heading: "Beyond borders.\nBeyond limits.",
-    body: "Freight forwarding, customs clearance, and international shipping. Canaan became a full-service global logistics partner — moving goods across continents with precision.",
+    body: "Freight forwarding, customs clearance, and international shipping. Canaan Global became a full-service logistics partner, moving goods across continents with precision.",
     photo: timeline4.src,
     stat: { num: "30+", label: "Countries served" },
     accent: "#D4A017",
@@ -83,7 +83,7 @@ const CHAPTERS = [
     year: "2021 – Today",
     label: "TODAY",
     heading: "A legacy of\nmovement.",
-    body: "Four divisions. Over 50,000 shipments. 42 vehicles strong. Canaan Global continues to redefine logistics — connecting India to the world, one shipment at a time.",
+    body: "Four divisions. Over 50,000 shipments. 42 vehicles strong. Canaan Global continues to redefine logistics, connecting India to the world one shipment at a time.",
     carouselImages: [timeline5a.src, timeline5b.src, timeline5c.src, timeline5d.src],
     stat: { num: "50K+", label: "Shipments delivered" },
     accent: "#C0392B",
@@ -358,7 +358,7 @@ export default function TimelineSection() {
       >
         <Image
           src={trucks1}
-          alt="Canaan Global — 15 years of logistics"
+          alt="Canaan Global, 15 years of logistics"
           fill
           className="object-cover object-center"
           sizes="100vw"
@@ -402,7 +402,7 @@ export default function TimelineSection() {
             }}
             className="text-white/60 text-[15px] sm:text-lg mt-4 max-w-xl leading-relaxed"
           >
-            From a single truck in Tuticorin to a global logistics network spanning 30+ countries — this is our story.
+            From a single truck in Tuticorin to a global logistics network spanning 30+ countries. This is our story.
           </p>
         </div>
       </div>
@@ -441,7 +441,7 @@ export default function TimelineSection() {
             Ready to move your cargo<br />with confidence?
           </h3>
           <p className="text-white/60 mt-4 text-[15px] max-w-md leading-relaxed">
-            Partner with a logistics team that has spent 15 years earning trust — one shipment at a time.
+            Partner with a logistics team that has spent 15 years earning trust, one shipment at a time.
           </p>
           <Link
             href="/#contact"

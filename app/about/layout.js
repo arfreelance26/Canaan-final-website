@@ -1,7 +1,7 @@
 export const metadata = {
   title: "About Us",
   description:
-    "Learn about Canaan Global International — our story, founder, achievements, leadership team, and branch network. Freight forwarding and customs brokerage rooted in Tuticorin, India since 2009.",
+    "Learn about Canaan Global International: our story, founder, achievements, leadership team, and branch network. Freight forwarding and customs brokerage rooted in Tuticorin, India since 2009.",
   alternates: {
     canonical: "/about",
   },

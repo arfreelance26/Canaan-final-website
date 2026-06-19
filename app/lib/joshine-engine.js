@@ -13,7 +13,7 @@ const KB = {
     overview:
       "Canaan Global International is a specialised shipping and logistics company that caters exclusively to the needs of the granite industry. " +
       "The company has extensive experience handling all types of granite, including marble, slate, limestone, and other natural and artificial stone. " +
-      "With a focus on providing end-to-end solutions, Canaan delivers reliable and cost-effective turnkey shipping and transportation services to customers across the global stone industry.",
+      "With a focus on providing end-to-end solutions, Canaan Global delivers reliable and cost-effective turnkey shipping and transportation services to customers across the global stone industry.",
     stoneTypes: ["Granite", "Marble", "Slate", "Limestone", "Natural Stone", "Artificial Stone"],
     address:
       "No. 3/802-123 & 124, Opp. to Emmanuel Believer's Church, Zion Nagar, Theri Road, Pudukottai, Tuticorin – 628103, Tamil Nadu, India",
@@ -24,7 +24,7 @@ const KB = {
   },
   accreditations: {
     title: "Accreditations & Licenses",
-    summary: "Canaan holds multiple prestigious licenses and certifications proving our excellence.",
+    summary: "Canaan Global holds multiple prestigious licenses and certifications proving our excellence.",
     list: ["Customs Broker License (Official EF Card)", "ISO Certificates", "FFFAI Membership", "Customs Broker Associations in Chennai, Cochin, and Tuticorin", "Bolt Seal & Warner Dealerships"]
   },
   updates: {
@@ -34,9 +34,9 @@ const KB = {
   services: {
     transportation: {
       title: "Transportation Services",
-      short: "GPS-tracked fleet that moves granite from quarry to destination port — safely and on time.",
+      short: "GPS-tracked fleet that moves granite from quarry to destination port, safely and on time.",
       detail:
-        "Our transportation division operates a modern, GPS-tracked fleet designed specifically for granite and heavy cargo. Every vehicle is monitored in real-time through our computerised dispatch system, which continuously optimises routes to ensure punctual, damage-free delivery — from the quarry gate all the way to the destination port.",
+        "Our transportation division operates a modern, GPS-tracked fleet designed specifically for granite and heavy cargo. Every vehicle is monitored in real-time through our computerised dispatch system, which continuously optimises routes to ensure punctual, damage-free delivery from the quarry gate all the way to the destination port.",
       features: [
         "Real-time GPS tracking on every vehicle",
         "Computerised dispatch & route optimisation",
@@ -48,7 +48,7 @@ const KB = {
       title: "Cargo Management",
       short: "End-to-end project cargo management for heavy, oversized and complex shipments.",
       detail:
-        "Handling oversized or multi-leg shipments requires precise coordination across carriers, terminals, and customs authorities. Our project cargo team takes full ownership — from procurement planning through final delivery — making sure nothing slips through the cracks, regardless of cargo weight or complexity.",
+        "Handling oversized or multi-leg shipments requires precise coordination across carriers, terminals, and customs authorities. Our project cargo team takes full ownership from procurement planning through final delivery, making sure nothing slips through the cracks regardless of cargo weight or complexity.",
       features: [
         "Dedicated project managers for every shipment",
         "Heavy & oversized cargo specialists",
@@ -60,7 +60,7 @@ const KB = {
       title: "Documentation & Compliance",
       short: "We handle all international shipping paperwork and regulatory compliance on your behalf.",
       detail:
-        "International shipping involves a maze of regulations that differ by country, commodity, and cargo type. Our compliance team is fluent in the rules of every major destination market. We prepare and file all documentation, manage customs declarations, and ensure full regulatory adherence — so your shipment clears without delays.",
+        "International shipping involves a maze of regulations that differ by country, commodity, and cargo type. Our compliance team is fluent in the rules of every major destination market. We prepare and file all documentation, manage customs declarations, and ensure full regulatory adherence, so your shipment clears without delays.",
       features: [
         "Experts in multi-country shipping regulations",
         "Full documentation preparation & filing",
@@ -84,7 +84,7 @@ const KB = {
   operations: {
     import: {
       title: "Import Operations",
-      summary: "A precise 5-step import workflow — from document receipt to final cargo delivery.",
+      summary: "A precise 5-step import workflow, from document receipt to final cargo delivery.",
       steps: [
         { num: "01", title: "Document Receipt", desc: "Import documentation is collected and verified from the customer upon shipment arrival." },
         { num: "02", title: "Arrival Confirmation & Bill of Entry Filing", desc: "Cargo arrival status is confirmed and the bill of entry is filed for customs processing." },
@@ -95,7 +95,7 @@ const KB = {
     },
     export: {
       title: "Export Operations",
-      summary: "A seamless 5-step export workflow — from document collection to vessel gate-in.",
+      summary: "A seamless 5-step export workflow, from document collection to vessel gate-in.",
       steps: [
         { num: "01", title: "Document Collection", desc: "Required export documents are received and verified from the customer for shipment processing." },
         { num: "02", title: "Cargo Readiness Confirmation", desc: "Cargo availability, packing status, and shipment readiness are confirmed prior to movement." },
@@ -107,7 +107,7 @@ const KB = {
   },
   ecosystem: {
     overview:
-      "The Canaan Global Ecosystem is a network of four specialised divisions that work together to manage the complete logistics and supply chain process — from cargo movement and customs clearance to commercial coordination and transportation.",
+      "The Canaan Global Ecosystem is a network of four specialised divisions that work together to manage the complete logistics and supply chain process, from cargo movement and customs clearance to commercial coordination and transportation.",
     divisions: [
       {
         id: "cgl",
@@ -124,7 +124,7 @@ const KB = {
       {
         id: "cgi",
         name: "Canaan Global International (CGI)",
-        role: "The commercial and administrative hub that supports the wider Canaan network.",
+        role: "The commercial and administrative hub that supports the wider Canaan Global network.",
         functions: ["Nominations & Coordination", "Billing Management", "Invoice Processing", "Commercial Transport Administration", "Internal Operational Integration"],
       },
       {
@@ -333,7 +333,7 @@ const INTENT_LABELS = {
   contact: "Contact Us",
   pricing: "Get a Quote",
   branches: "Our Branches",
-  about: "About Canaan",
+  about: "About Canaan Global",
   services_list: "Our Services",
   working_hours: "Working Hours",
   granite: "Granite Industry",
@@ -927,15 +927,15 @@ const RESPONSES = {
           `Good to have you back, ${ctx.name}! What can I do for you?`,
         ])
       : pickOne([
-          "Hello! I'm Joshine — your Canaan logistics guide. 🌊\nAsk me anything about our services, cargo, or operations!",
+          "Hello! I'm Joshine, your Canaan Global logistics guide. 🌊\nAsk me anything about our services, cargo, or operations!",
           "Hey there! Welcome to Canaan Global International. 🚢\nWhat would you like to know today?",
-          "Hi! I'm Joshine. ✨\nI'm here to help you explore Canaan's world-class logistics services.",
+          "Hi! I'm Joshine. ✨\nI'm here to help you explore Canaan Global's world-class logistics services.",
         ]),
     chips: ["Our Services", "What We Carry", "Contact Us"],
   }),
 
   farewell: () => ({
-    text: "Thanks for visiting Canaan Global International! 🚢\nSafe travels — come back anytime. We're always here to help.",
+    text: "Thanks for visiting Canaan Global International! 🚢\nSafe travels, and come back anytime. We're always here to help.",
     chips: ["Restart Chat", "Our Services"],
   }),
 
@@ -965,7 +965,7 @@ const RESPONSES = {
       "💰  Pricing & Quotes\n" +
       "📍  Our Location & Branches\n" +
       "📞  Contact Details\n" +
-      "🌊  About Canaan\n\n" +
+      "🌊  About Canaan Global\n\n" +
       "Just tap a topic or type your question!",
     chips: ["Our Services", "Import Process", "Export Process", "Contact Us"],
   }),
@@ -987,7 +987,7 @@ const RESPONSES = {
 
   services_list_detail: () => ({
     text:
-      "Our services are designed to work together as a seamless, end-to-end logistics chain. From the moment the cargo leaves the quarry on our trucks, through customs clearance and port handling, to its final international destination—we manage it all.\n\n" +
+      "Our services are designed to work together as a seamless, end-to-end logistics chain. From the moment the cargo leaves the quarry on our trucks, through customs clearance and port handling, to its final international destination, we manage it all.\n\n" +
       "Want to see real examples of what we carry?",
     chips: ["What We Carry", "Contact Us"],
     navLink: { href: "/services", label: "View Our Services Page" },
@@ -1028,7 +1028,7 @@ const RESPONSES = {
     text:
       `🏗️ More on Cargo Management\n\n` +
       `${KB.services.cargo.detail}\n\n` +
-      `Got an oversized or complex shipment? Let's talk — we handle it!`,
+      `Got an oversized or complex shipment? Let's talk, we'll handle it!`,
     chips: ["Get a Quote", "Contact Us", "Other Services"],
     navLink: { href: "/services", label: "See Services Page" },
   }),
@@ -1151,9 +1151,9 @@ const RESPONSES = {
 
   about_detail: () => ({
     text:
-      `🌊 *The Canaan Legacy*\n\n` +
-      `For over 15 years, we've built a reputation as the most trusted logistics partner for the Indian stone industry. We aren't just freight forwarders; we are end-to-end project managers who understand the nuances of heavy cargo.\n\n` +
-      `Our unique structure—comprising CGL, CGSS, CGI, and Rehoboth Transports—allows us to control every step of the journey.`,
+      `🌊 *The Canaan Global Legacy*\n\n` +
+      `For over 15 years, we've built a reputation as the most trusted logistics partner for the Indian stone industry. We're end-to-end project managers who understand the nuances of heavy cargo, not just freight forwarders.\n\n` +
+      `Our structure, made up of CGL, CGSS, CGI, and Rehoboth Transports, lets us control every step of the journey.`,
     chips: ["The Ecosystem", "Our Services", "Contact Us"],
     navLink: { href: "/about", label: "Visit About Page" },
   }),
@@ -1167,7 +1167,7 @@ const RESPONSES = {
       `🏗️  Handling heavy & oversized stone cargo\n` +
       `📋  Regulatory compliance for stone exports\n` +
       `🪵  Lashing & ISPM fumigation for all stone types\n\n` +
-      `We cover the full chain — from quarry to your customer's door.`,
+      `We cover the full chain, from quarry to your customer's door.`,
     chips: ["Transportation", "Cargo Management", "Documentation", "Lashing & Fumigation"],
     navLink: { href: "/cargo", label: "View Cargo Gallery" },
   }),
@@ -1198,7 +1198,7 @@ const RESPONSES = {
   cargo_types_detail: () => ({
     text:
       `📦 About Our Cargo Expertise\n\n` +
-      `Canaan has spent 15+ years building hands-on expertise across every category we handle. ` +
+      `Canaan Global has spent 15+ years building hands-on expertise across every category we handle. ` +
       `Our team knows exactly how to pack, lash, fumigate, and document each cargo type for its destination market.\n\n` +
       `🪨 Stones & Marbles — our core, with 15+ years moving granite blocks and marble slabs\n` +
       `🚜 Agricultural Machinery — tractors and farm equipment loaded by our specialist team\n` +
@@ -1223,7 +1223,7 @@ const RESPONSES = {
   pricing: () => ({
     text:
       `💰 Pricing & Quotes\n\n` +
-      `Our pricing depends on the cargo type, route, volume, and services needed — so every quote is tailored.\n\n` +
+      `Our pricing depends on the cargo type, route, volume, and services needed, so every quote is tailored.\n\n` +
       `The easiest way to get exact numbers is a quick chat with our operations team. Should I open the direct contact form for you?`,
     chips: ["Inquiry Forms", "Our Services"],
     contactEmbed: true,
@@ -1263,7 +1263,7 @@ const RESPONSES = {
   chitchat_howru: () => ({
     text: pickOne([
       "Doing great, thanks for asking! 😊 What can I help you with today?",
-      "All good over here! Ready to help with anything Canaan-related. What's on your mind?",
+      "All good over here! Ready to help with anything related to Canaan Global. What's on your mind?",
       "Running smoothly! 🚀 What would you like to know about our services?",
     ]),
     chips: ["Our Services", "Contact Us"],
@@ -1271,10 +1271,10 @@ const RESPONSES = {
 
   chitchat_name: () => ({
     text:
-      `I'm Joshine — Canaan Global International's assistant! 👋\n\n` +
+      `I'm Joshine, Canaan Global International's assistant! 👋\n\n` +
       `I know our services, operations, and company inside out. I might not answer everything, but I'll do my best.\n\n` +
       `What would you like to know?`,
-    chips: ["Our Services", "About Canaan", "Contact Us"],
+    chips: ["Our Services", "About Canaan Global", "Contact Us"],
   }),
 
   affirmation: (ctx) => {
@@ -1311,7 +1311,7 @@ const RESPONSES = {
   fallback: () => ({
     text: pickOne([
       "I'll be honest, I'm still learning the ropes and didn't quite catch that! 😅 Could you rephrase? I'm really good at answering questions about our services or how to get a quote.",
-      "My apologies—I'm just a bot and that one went over my head. 🙏 Let's try again! Are you looking for our services, or trying to reach the team?",
+      "My apologies, I'm just a bot and that one went over my head. 🙏 Let's try again! Are you looking for our services, or trying to reach the team?",
       "I might need a human to help with that one! 😅 In the meantime, I can definitely point you towards our logistics services or contact forms."
     ]),
     chips: ["Our Services", "Inquiry Forms"],
@@ -1325,7 +1325,7 @@ const RESPONSES = {
       `Our key licenses include:\n` +
       `✅ ${KB.accreditations.list.join("\n✅ ")}\n\n` +
       `Tap below to view our official certificates and dealership appointments.`,
-    chips: ["About Canaan", "Our Services"],
+    chips: ["About Canaan Global", "Our Services"],
     navLink: { href: "/accreditations", label: "View Accreditations" },
   }),
 
@@ -1346,7 +1346,7 @@ const RESPONSES = {
       `We take pride in our track record. Our key achievements include:\n` +
       `⭐ ${KB.company.achievements.join("\n⭐ ")}\n\n` +
       `Learn more about our legacy on the About page!`,
-    chips: ["About Canaan", "Accreditations"],
+    chips: ["About Canaan Global", "Accreditations"],
     navLink: { href: "/about", label: "Visit About Page" },
   }),
 
@@ -1449,7 +1449,7 @@ const RESPONSES = {
       `🔹 *Vessel Operations* — direct involvement in vessel scheduling and berth coordination\n` +
       `🔹 *NVOCC Services* — operates as a Non-Vessel Operating Common Carrier for flexible routing\n` +
       `🔹 *Cargo Consolidation* — combines smaller shipments for cost-efficient container loads\n\n` +
-      `CGL is the engine that keeps Canaan's entire logistics network moving.`,
+      `CGL is the engine that keeps Canaan Global's entire logistics network moving.`,
     chips: ["About CGSS", "About Rehoboth", "Contact Us"],
   }),
 
@@ -1519,7 +1519,7 @@ const RESPONSES = {
   div_rehoboth_detail: () => ({
     text:
       `🚛 *Rehoboth Transports — Ground Operations*\n\n` +
-      `🔹 *Cargo Transportation* — primary road carrier for all Canaan shipments on land\n` +
+      `🔹 *Cargo Transportation* — primary road carrier for all Canaan Global shipments on land\n` +
       `🔹 *Fleet Coordination* — schedules and manages the entire vehicle fleet for optimal utilisation\n` +
       `🔹 *Raw Material Movement* — transports raw stone and granite directly from quarry sites\n` +
       `🔹 *External Logistics* — supports third-party client logistics as an independent service\n` +
@@ -1542,7 +1542,7 @@ export const CHIP_TO_INTENT = {
   "Get a Quote": "pricing",
   "Our Branches": "branches",
   Address: "address",
-  "About Canaan": "about",
+  "About Canaan Global": "about",
   "Other Services": "services_list",
   "All Services": "services_list",
   "What else?": "help",

@@ -13,7 +13,7 @@ function LogoPlaceholder() {
   return (
     <Image 
       src={companylogo} 
-      alt="Canaan Logo" 
+      alt="Canaan Global Logo"
       className="h-14 sm:h-[68px] w-auto object-contain ml-2 sm:ml-3"
       priority
     />
