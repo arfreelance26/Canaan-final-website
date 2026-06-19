@@ -70,7 +70,7 @@ const CHAPTERS = [
     year: "2018 – 2020",
     label: "GOING GLOBAL",
     heading: "Beyond borders.\nBeyond limits.",
-    body: "Freight forwarding, customs clearance, and international shipping. Canaan Global became a full-service logistics partner, moving goods across continents with precision.",
+    body: "Freight forwarding, customs clearance, and international shipping. Canaan Global became a full-service logistics partner, moving goods across continents with care.",
     photo: timeline4.src,
     stat: { num: "30+", label: "Countries served" },
     accent: "#D4A017",

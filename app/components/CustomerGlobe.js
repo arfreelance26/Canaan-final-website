@@ -241,7 +241,7 @@ export default function CustomerGlobeSection() {
         <p className="text-sm sm:text-[15px] text-neutral-500 leading-[1.85] max-w-[400px] mb-6">
           From Tuticorin, India&apos;s southernmost major port, Canaan Global has built
           a freight network spanning four continents. Every route originates
-          here, tracked end-to-end with precision.
+          here, tracked end-to-end with accuracy.
         </p>
 
         {/* Stats grid */}

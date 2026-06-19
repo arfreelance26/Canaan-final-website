@@ -13,7 +13,7 @@ const COMPANIES = [
     role: "The operational backbone of the network.",
     body: "From freight movement to cargo coordination, CGL orchestrates the complex mechanics behind global transportation, whether cargo moves by land, sea, or through interconnected transit systems.",
     ops: ["Freight Forwarding", "Multimodal Transportation", "Vessel Operations", "NVOCC Services", "Cargo Consolidation"],
-    abstract: "Where cargo movement becomes synchronized precision.",
+    abstract: "Where cargo movement becomes effortless motion.",
   },
   {
     name: "Canaan Global Shipping Services",
