@@ -362,6 +362,8 @@ function BranchesSection() {
       .catch(() => {});
   }, []);
 
+  if (branches.length === 0) return null;
+
   return (
     <section
       ref={sectionRef}
