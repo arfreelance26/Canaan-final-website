@@ -27,7 +27,7 @@ const CSP = [
     "https://fonts.gstatic.com",
     isDev ? "http://localhost:8000 http://127.0.0.1:8000 ws://localhost:3000" : "",
   ].filter(Boolean).join(" "),
-  "media-src 'self'",
+  "media-src 'self' https://api.canaanglobalinternational.com",
   "worker-src 'self' blob:",
   "frame-src https://www.google.com https://maps.google.com",
   "frame-ancestors 'none'",

@@ -2,6 +2,17 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 import { API_BASE_URL } from "@/app/lib/api";
 
+// Only allow http/https URLs from API data to prevent javascript: URI injection
+function safeUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:" ? url : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function DavidHazHero() {
   const imgRef = useRef(null);
   const cardRef = useRef(null);
@@ -10,6 +21,25 @@ export default function DavidHazHero() {
   const scrollRaf = useRef(null);
 
   const [rates, setRates] = useState({ usd: "-", eur: "-", gbp: "-", aed: "-" });
+  const [videoUrl, setVideoUrl] = useState("/promo.mp4");
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/hero-video/`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && safeUrl(data.video_url)) {
+          setVideoUrl(data.video_url);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Reload the video element when the source changes after the initial fetch
+  useEffect(() => {
+    if (imgRef.current) {
+      imgRef.current.load();
+    }
+  }, [videoUrl]);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/exchange-rates/`)
@@ -133,7 +163,7 @@ export default function DavidHazHero() {
         {/* Background video */}
         <video
           ref={imgRef}
-          src="/promo.mp4"
+          src={videoUrl}
           autoPlay
           loop
           muted
