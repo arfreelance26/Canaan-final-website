@@ -21,7 +21,7 @@ export default function DavidHazHero() {
   const scrollRaf = useRef(null);
 
   const [rates, setRates] = useState({ usd: "-", eur: "-", gbp: "-", aed: "-" });
-  const [videoUrl, setVideoUrl] = useState("/promo.mp4");
+  const [videoUrl, setVideoUrl] = useState(null);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/hero-video/`)
@@ -33,13 +33,6 @@ export default function DavidHazHero() {
       })
       .catch(() => {});
   }, []);
-
-  // Reload the video element when the source changes after the initial fetch
-  useEffect(() => {
-    if (imgRef.current) {
-      imgRef.current.load();
-    }
-  }, [videoUrl]);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/exchange-rates/`)
@@ -160,17 +153,19 @@ export default function DavidHazHero() {
         
       >
 
-        {/* Background video */}
-        <video
-          ref={imgRef}
-          src={videoUrl}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover absolute inset-0"
-          style={{ objectPosition: "center", transform: "scale(1.06)", willChange: "transform" }}
-        />
+        {/* Background video — sourced from the backend only */}
+        {videoUrl && (
+          <video
+            ref={imgRef}
+            src={videoUrl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover absolute inset-0"
+            style={{ objectPosition: "center", transform: "scale(1.06)", willChange: "transform" }}
+          />
+        )}
 
         {/* Gradient scrim */}
         <div
