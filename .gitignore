@@ -43,3 +43,4 @@ next-env.d.ts
 # large media assets that would exceed GitHub's 100MB push limit
 # (promo.mp4 was 170MB and is now tracked normally after being compressed to ~25MB)
 public/ship.glb
+out.zip
