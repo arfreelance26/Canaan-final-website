@@ -145,13 +145,45 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
+  // Navigating to a new route should always land at its top — reset scroll
+  // before the push so it happens behind the opaque transition overlay.
+  function goToRoute(path) {
+    window.scrollTo(0, 0);
+    setTransitioning(true);
+    setTimeout(() => {
+      router.push(path);
+      setTimeout(() => setTransitioning(false), 400);
+    }, 180);
+  }
+
+  // Sections like Fleet reserve their height based on an async fetch, so they
+  // can grow taller *after* the initial scroll already landed — leaving the
+  // user inside Fleet instead of at the next section's top. Re-correct for a
+  // short window after layout settles, but back off as soon as the user scrolls.
+  function scrollToAnchor(id) {
+    let cancelled = false;
+    const stop = () => { cancelled = true; cleanup(); };
+    const cleanup = () => {
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchmove", stop);
+    };
+    window.addEventListener("wheel", stop, { passive: true });
+    window.addEventListener("touchmove", stop, { passive: true });
+
+    let attempts = 0;
+    const tick = () => {
+      if (cancelled) return;
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      attempts += 1;
+      if (attempts < 4) setTimeout(tick, 350);
+      else cleanup();
+    };
+    tick();
+  }
+
   async function handleLogoClick() {
     if (pathname !== "/") {
-      setTransitioning(true);
-      setTimeout(() => {
-        router.push("/");
-        setTimeout(() => setTransitioning(false), 400);
-      }, 180);
+      goToRoute("/");
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -161,85 +193,21 @@ export default function Navbar() {
     setActiveItem(item);
     const id = item.toLowerCase();
 
-    if (item === "Home") {
-      if (pathname !== "/") {
-        setTransitioning(true);
-        setTimeout(() => {
-          router.push("/");
-          setTimeout(() => setTransitioning(false), 400);
-        }, 180);
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      setMobileOpen(false);
-      return;
-    }
+    const ROUTES = {
+      Home: "/",
+      About: "/about",
+      Service: "/services",
+      Cargo: "/cargo",
+      Accreditations: "/accreditations",
+      Updates: "/updates",
+    };
 
-    if (item === "About") {
-      if (pathname === "/about") {
+    if (ROUTES[item]) {
+      const path = ROUTES[item];
+      if (pathname === path) {
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
-        setTransitioning(true);
-        setTimeout(() => {
-          router.push("/about");
-          setTimeout(() => setTransitioning(false), 400);
-        }, 180);
-      }
-      setMobileOpen(false);
-      return;
-    }
-
-    if (item === "Service") {
-      if (pathname === "/services") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        setTransitioning(true);
-        setTimeout(() => {
-          router.push("/services");
-          setTimeout(() => setTransitioning(false), 400);
-        }, 180);
-      }
-      setMobileOpen(false);
-      return;
-    }
-
-    if (item === "Cargo") {
-      if (pathname === "/cargo") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        setTransitioning(true);
-        setTimeout(() => {
-          router.push("/cargo");
-          setTimeout(() => setTransitioning(false), 400);
-        }, 180);
-      }
-      setMobileOpen(false);
-      return;
-    }
-
-    if (item === "Accreditations") {
-      if (pathname === "/accreditations") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        setTransitioning(true);
-        setTimeout(() => {
-          router.push("/accreditations");
-          setTimeout(() => setTransitioning(false), 400);
-        }, 180);
-      }
-      setMobileOpen(false);
-      return;
-    }
-
-    if (item === "Updates") {
-      if (pathname === "/updates") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        setTransitioning(true);
-        setTimeout(() => {
-          router.push("/updates");
-          setTimeout(() => setTransitioning(false), 400);
-        }, 180);
+        goToRoute(path);
       }
       setMobileOpen(false);
       return;
@@ -249,13 +217,9 @@ export default function Navbar() {
     if (pathname !== "/") {
       await router.push("/");
       // small delay to allow DOM to mount and settle
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: "smooth" });
-      }, 150);
+      setTimeout(() => scrollToAnchor(id), 150);
     } else {
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: "smooth" });
+      scrollToAnchor(id);
     }
 
     setMobileOpen(false);

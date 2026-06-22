@@ -30,6 +30,14 @@ const SECTION_NAV_ITEMS = [
   "Contact", // 6 — ContactSection
 ];
 
+// Anchor id for in-page nav (Navbar's getElementById fallback). Client.js and
+// Contact.js already declare their own "clients"/"contact" ids — only About
+// needs one added here. Keyed by component so reordering SECTIONS can't
+// silently detach the id from the wrong section.
+const SECTION_ANCHOR_IDS = new Map([
+  [AboutTeaserSection, "about"],
+]);
+
 export default function Home() {
   const wrapRefs = useRef([]);
   const snapRef = useRef({ cooldown: false, delta: 0, ticks: 0, lastTime: 0, quietTimer: null });
@@ -243,7 +251,7 @@ export default function Home() {
             key={i}
             ref={(el) => { wrapRefs.current[i] = el; }}
             data-nav-item={SECTION_NAV_ITEMS[i]}
-            {...(i === 4 ? { id: "about" } : {})}
+            {...(SECTION_ANCHOR_IDS.has(Section) ? { id: SECTION_ANCHOR_IDS.get(Section) } : {})}
             {...(i === 3 || i === 4 || i === 5 ? { "data-hide-navbar": "true" } : {})}
           >
             <Section />
