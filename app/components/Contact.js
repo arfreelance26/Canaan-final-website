@@ -2,9 +2,59 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ArrowRight, Mail, Phone, MapPin, Clock } from "lucide-react";
-import emailjs from "@emailjs/browser";
 import useFadeIn from "../hooks/useFadeIn";
-import { EMAILJS_CONFIG } from "@/app/lib/emailjs";
+import { API_BASE_URL } from "@/app/lib/api";
+
+const FIELD_KEY_MAP = {
+  name: "name",
+  email: "email",
+  phone: "phone",
+  message: "message",
+  companyName: "company_name",
+  shippingMode: "shipping_mode",
+  portOfLoading: "port_of_loading",
+  portOfDischarge: "port_of_discharge",
+  containerType: "container_type",
+  weight: "weight",
+  factoryLocation: "factory_location",
+  transportExportImport: "transport_export_import",
+  pickupLocation: "pickup_location",
+  deliveryLocation: "delivery_location",
+  transportCargoType: "transport_cargo_type",
+  quantity: "quantity",
+  rfidOrgName: "rfid_org_name",
+};
+
+const INITIAL_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  message: "",
+  shippingMode: "Import",
+  portOfOrigin: "",
+  portOfDestination: "",
+  pickupLocation: "",
+  deliveryLocation: "",
+  quantity: "",
+  deliveryAddress: "",
+  companyName: "",
+  orgType: "",
+  orgStatus: "",
+  portOfLoading: "",
+  portOfDischarge: "",
+  commodity: "",
+  dgStatus: "",
+  containerType: "",
+  weight: "",
+  factoryLocation: "",
+  transportCargoType: "",
+  transportExportImport: "",
+  rfidOrgName: "",
+  rfidSelfSealing: null,
+  rfidIec: null,
+  rfidGst: null,
+  rfidPan: null,
+};
 
 const CONTACT_INFO = [
   { icon: Mail, label: "Email us", value: "canaanglobal@canaanglobal.com" },
@@ -67,36 +117,7 @@ export default function ContactSection() {
   const [sliderStyle, setSliderStyle] = useState({ left: 0, width: 0 });
   const typeRefs = useRef({});
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-    shippingMode: "Import",
-    portOfOrigin: "",
-    portOfDestination: "",
-    pickupLocation: "",
-    deliveryLocation: "",
-    quantity: "",
-    deliveryAddress: "",
-    companyName: "",
-    orgType: "",
-    orgStatus: "",
-    portOfLoading: "",
-    portOfDischarge: "",
-    commodity: "",
-    dgStatus: "",
-    containerType: "",
-    weight: "",
-    factoryLocation: "",
-    transportCargoType: "",
-    transportExportImport: "",
-    rfidOrgName: "",
-    rfidSelfSealing: null,
-    rfidIec: null,
-    rfidGst: null,
-    rfidPan: null,
-  });
+  const [form, setForm] = useState(INITIAL_FORM);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -151,21 +172,20 @@ export default function ContactSection() {
     setSubmitError("");
 
     try {
-      const { serviceId, templateId, publicKey } = EMAILJS_CONFIG[inquiryType] || {};
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error(`Missing EmailJS credentials for inquiry type: ${inquiryType}`);
-      }
-
-      const templateParams = {
-        inquiry_type: inquiryType,
-        time: new Date().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }),
-      };
+      const payload = { inquiry_type: inquiryType };
       [...COMMON_FIELDS, ...TYPE_FIELDS[inquiryType]].forEach((key) => {
         const value = form[key];
-        templateParams[key] = typeof value === "string" && value.trim() !== "" ? value : "Not provided";
+        const apiKey = FIELD_KEY_MAP[key];
+        if (!apiKey) return;
+        payload[apiKey] = typeof value === "string" && value.trim() !== "" ? value.trim() : null;
       });
 
-      await emailjs.send(serviceId, templateId, templateParams, { publicKey });
+      const res = await fetch(`${API_BASE_URL}/api/contact/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Submission failed");
 
       setSubmitted(true);
     } catch (err) {
@@ -308,7 +328,7 @@ export default function ContactSection() {
               — Direct inquiry
             </p>
             <p className="text-[15px] font-semibold tracking-[-0.01em] text-neutral-900">
-              Tell us what you need. We'll handle the rest.
+              Tell us what you need. We&apos;ll handle the rest.
             </p>
           </div>
 
@@ -326,7 +346,7 @@ export default function ContactSection() {
                 Our team will get back to you within 24 hours.
               </p>
               <button
-                onClick={() => { setSubmitted(false); setForm({ name: "", email: "", phone: "", service: "", message: "" }); }}
+                onClick={() => { setSubmitted(false); setForm(INITIAL_FORM); }}
                 className="mt-2 flex items-center gap-2 border border-black/15 text-neutral-700 text-sm font-medium px-5 py-2.5 rounded-full hover:bg-black hover:text-white hover:border-black transition-[background-color,color,border-color] duration-300 active:scale-95"
               >
                 Send another message

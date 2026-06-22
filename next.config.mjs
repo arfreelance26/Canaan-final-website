@@ -22,7 +22,6 @@ const CSP = [
   [
     "connect-src 'self'",
     "https://api.canaanglobalinternational.com",
-    "https://api.emailjs.com",
     "https://fonts.googleapis.com",
     "https://fonts.gstatic.com",
     isDev ? "http://localhost:8000 http://127.0.0.1:8000 ws://localhost:3000" : "",
